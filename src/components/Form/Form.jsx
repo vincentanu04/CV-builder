@@ -10,7 +10,7 @@ export function ProfileForm({ formValue, onChange }) {
 
     const placeholders = {
         name: 'Vincent Tanuwidjaja',
-        email: 'vincenttanuwidjaja@gmail.com',
+        email: 'vincent@gmail.com',
         phoneNumber: '(60) 11 9987 2635',
         location: 'Subang Jaya, Malaysia'
     };
@@ -89,7 +89,7 @@ export function ExperienceForm( { formValue, onChange }) {
         dateFrom: '15/11/2023',
         dateUntil: '23/02/2024'
     };
-    console.log(formValue)
+
     return (
         <div className='form'>
             <h2>Your Working Experience</h2>

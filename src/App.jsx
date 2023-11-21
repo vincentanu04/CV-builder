@@ -3,13 +3,13 @@ import { useState } from 'react';
 import Buttons from './components/Buttons/Buttons'
 import { NavButton, Button } from './components/Buttons/Buttons'
 import { ProfileForm, EducationForm, ExperienceForm } from './components/Form/Form';
-
+import CV from './components/CV/CV';
 
 function App() {
     const [selectedButtonId, setSelectedButtonId] = useState(0);
     const [formData, setFormData] = useState({
         profile: {
-            name: 'Vincent',
+            name: '',
             email: '',
             phoneNumber: '',
             location: '',
@@ -70,9 +70,7 @@ function App() {
                     [formType]: newFormValue
                 }
             ))}/>
-            <div className='cv'>
-
-            </div>
+            <CV profile={formData.profile} education={formData.education} experience={formData.experience}/>
         </main>
     )
 }
