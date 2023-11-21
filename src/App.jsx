@@ -2,19 +2,78 @@ import './App.css'
 import { useState } from 'react';
 import Buttons from './components/Buttons/Buttons'
 import { NavButton, Button } from './components/Buttons/Buttons'
+import { ProfileForm, EducationForm, ExperienceForm } from './components/Form/Form';
+
 
 function App() {
-    const [selectedButtonId, setSelectedButtonId] = useState(null);
-    
+    const [selectedButtonId, setSelectedButtonId] = useState(0);
+    const [formData, setFormData] = useState({
+        profile: {
+            name: 'Vincent',
+            email: '',
+            phoneNumber: '',
+            location: '',
+        },
+        education: {
+            schoolName: '',
+            schoolLocation: '',
+            titleOfStudy: '',
+            gpa: '',
+            fromDate: '',
+            toDate: '',
+        },
+        experience: [
+            {   
+                jobId: 1,
+                companyName: '',
+                positionTitle: '',
+                responsibilities: [''],
+                dateFrom: '',
+                dateUntil: ''
+            }
+        ],
+    });
+
+    function handleNavButtonClick(id) {
+        setSelectedButtonId(id);
+    }
+
+    const formsData = [
+        { id: 0, text: "Profile", formComponent: ProfileForm},
+        { id: 1, text: "Education" , formComponent: EducationForm},
+        { id: 2, text: "Experience", formComponent: ExperienceForm}
+    ];
+
+    const SelectedFormComponent = formsData[selectedButtonId].formComponent;
+    const formType = formsData[selectedButtonId].text.toLowerCase();
+
     return (
-        <div className='buttons-bar'>
-            <Buttons>
-                <NavButton text="Profile" isSelected={selectedButtonId === 0} onClick={() => setSelectedButtonId(0)}/>
-                <NavButton text="Education" isSelected={selectedButtonId === 1} onClick={() => setSelectedButtonId(1)}/>
-                <NavButton text="Experience" isSelected={selectedButtonId === 2} onClick={() => setSelectedButtonId(2)}/>
-            </Buttons>
-            <Button text="Create" isSelected={false}/>
-        </div>
+        <main>
+            <div className='buttons-bar'>
+                <Buttons>
+                    {formsData.map(button => (
+                        <NavButton 
+                        key={button.id} 
+                        text={button.text} 
+                        isSelected={selectedButtonId === button.id} 
+                        onClick={() => handleNavButtonClick(button.id)}>
+                        </NavButton>
+                    ))}
+                </Buttons>
+                <Button text="Create" isSelected={false}/>
+            </div>
+            <SelectedFormComponent 
+            formValue={formData[formType]} 
+            onChange={newFormValue => setFormData(prevFormValue => (
+                {   
+                    ...prevFormValue,
+                    [formType]: newFormValue
+                }
+            ))}/>
+            <div className='cv'>
+
+            </div>
+        </main>
     )
 }
 

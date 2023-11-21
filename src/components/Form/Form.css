@@ -1,0 +1,47 @@
+@import '../../App.css';
+
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+input {
+    background-color: var(--background-clr);
+    border: none;
+    border-bottom: 1px solid rgb(69, 69, 69);
+    padding: .5rem 0rem;
+    outline: none;
+    font-size: .75em;
+    color: var(--accent-clr);
+    transition: border-bottom .4s ease;
+    height: 2rem;
+}
+
+input:focus {
+    border-bottom: 1px solid var(--accent-clr);
+}   
+
+::placeholder {
+    color: rgb(94, 94, 94);
+}   
+
+.form {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+    gap: 1rem;
+}
+
+h2 {
+    color: var(--accent-clr)
+}
+
+hr {
+    background-color: var(--primary-clr);
+    border: none;
+    min-height: .05rem; 
+    margin-block: .5rem; 
+}

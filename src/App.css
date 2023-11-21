@@ -36,3 +36,7 @@ input, textarea, button {
     flex-direction: column;
     gap: 3rem;
 }
+
+main {
+    display: flex;
+}
