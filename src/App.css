@@ -1,0 +1,38 @@
+:root {
+    --background-clr: #14141a;
+    --text-clr: #f3f3f6;
+    --primary-clr: #8a886a;
+    --secondary-clr: #293428;
+    --accent-clr: #a2a186;
+    --light-background-clr: #e5e5eb;
+    --light-text-clr: #09090c;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--background-clr);
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-clr);
+}   
+
+input, textarea, button {
+    font: inherit;
+    color: inherit;
+}
+
+.buttons-bar {
+    min-height: 100vh;
+    justify-content: center;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
