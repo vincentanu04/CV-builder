@@ -32,10 +32,17 @@ button {
     opacity: 1;
 }   
 
-.nav-buttons {
+.buttons {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+}
+
+.buttons button {
+    margin-block: 1rem;
+}
+
+.buttons .button{
+    margin-block: 0.5rem;
 }
 
 .selected {
@@ -54,3 +61,14 @@ button {
 .button:hover {
     background: linear-gradient(45deg,var(--secondary-clr), var(--accent-clr));
 }
+
+
+.buttons-bar {
+    min-height: 100vh;
+    justify-content: center;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+

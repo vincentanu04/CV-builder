@@ -28,15 +28,6 @@ input, textarea, button {
     color: inherit;
 }
 
-.buttons-bar {
-    min-height: 100vh;
-    justify-content: center;
-    padding: 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-}
-
 main {
     display: flex;
 }

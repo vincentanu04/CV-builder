@@ -2,7 +2,7 @@ import './Buttons.css'
 
 export default function Buttons({ children }) {
     return (
-        <div className='nav-buttons'>{children}</div>
+        <div className='buttons'>{children}</div>
     )
 }
 
