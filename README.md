@@ -1,8 +1,8 @@
 # CV-builder
 
-Live site: 
+Live site: https://cv-builder-04.vercel.app/
 
-![My cool looking CV builder](image.png)
+![Alt text](image-1.png)
 
 Enter your personal details in order to get a personalized CV! 
 
