@@ -6,13 +6,13 @@ export default function Buttons({ children }) {
     )
 }
 
-export function Button({ text, onClick }) {
+export function Button({ text, onClick, disabled }) {
     return (
-        <button className='button' onClick={onClick}>{text}</button>
+        <button className='button' onClick={onClick} disabled={disabled}>{text}</button>
     )
 }
 
-export function NavButton({ text, isSelected, onClick}) {
+export function NavButton({ text, isSelected, onClick }) {
     return (
         <button className={"nav-button " + (isSelected ? "selected" : null)} onClick={onClick}>{text}</button>
     )

@@ -26,14 +26,34 @@ input:focus {
     color: rgb(94, 94, 94);
 }   
 
-.form {
+.form-container {
     height: 100vh;
+    display: grid;
+    place-items: center;
+}
+
+.form-container:has(.scroll){
+    overflow-y: scroll;
+
+}
+
+.form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    padding: 4rem;
+    padding: 4rem 4rem 4rem 3rem;
     gap: 1rem;
+}
+
+.job-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form:not(.scroll){
+    height: 100vh;
 }
 
 h2 {
@@ -44,5 +64,19 @@ h2 {
     background-color: var(--primary-clr);
     border: none;
     min-height: .05rem; 
-    margin-block: .5rem; 
+    margin-block: .125rem; 
+}
+
+.form .job-hr {
+    min-height: .75rem;
+    margin-block: 1rem;
+}
+
+.form .buttons {
+    flex-direction: row;
+    gap: .5rem;
+}
+
+.form .button {
+    font-size: .75rem;
 }

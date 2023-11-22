@@ -36,7 +36,7 @@ const initialFormData = {
 const exampleFormData = {
     profile: {
         name: 'Vincent Tanuwidjaja',
-        email: 'vincentanu@gmail.com',
+        email: 'vincentanu04@gmail.com',
         phoneNumber: '(60) 11 2832 3824',
         location: 'Subang Jaya, Malaysia',
     },
@@ -57,6 +57,24 @@ const exampleFormData = {
             responsibilities: ['Writing new React components'],
             dateFrom: '15/11/2023',
             dateUntil: '23/02/2024',
+        },
+        {
+            jobId: 2,
+            companyName: 'Tiger Sugar Malaysia',
+            location: 'Bandar Sunway, Malaysia',
+            positionTitle: 'Barista',
+            responsibilities: ['Training new employees'],
+            dateFrom: '15/11/2022',
+            dateUntil: '23/02/2023',
+        },
+        {
+            jobId: 3,
+            companyName: 'Robogals Monash Malaysia',
+            location: 'Bandar Sunway, Malaysia',
+            positionTitle: 'Event Organizer',
+            responsibilities: ['Organizing events'],
+            dateFrom: '15/11/2022',
+            dateUntil: 'Present',
         }
     ],
 }
@@ -114,14 +132,16 @@ function App() {
                     }}/>
                 </Buttons>
             </div>
-            <SelectedFormComponent 
-            formValue={formData[formType]} 
-            onChange={newFormValue => setFormData(prevFormValue => (
-                {   
-                    ...prevFormValue,
-                    [formType]: newFormValue
-                }
-            ))}/>
+            <div className="form-container">
+                <SelectedFormComponent
+                formValue={formData[formType]}
+                onChange={newFormValue => setFormData(prevFormValue => (
+                    {
+                        ...prevFormValue,
+                        [formType]: newFormValue
+                    }
+                ))}/>
+            </div>
             <CV profile={displayedData.profile} education={displayedData.education} experience={displayedData.experience}/>
         </main>
     )

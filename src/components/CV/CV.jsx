@@ -27,12 +27,12 @@ export default function CV({ profile, education, experience }) {
                         <ul className="content">
                             {titleOfStudy !== '' && (
                                 <li>
-                                <p>- {titleOfStudy}</p>
+                                <p>&bull; {titleOfStudy}</p>
                                 </li>
                             )}
                             {gpa !== '' && (
                                 <li>
-                                    <p>- <b>GPA: </b>{gpa}</p>
+                                    <p>&bull; <b>GPA: </b>{gpa}</p>
                                 </li>
                             )}
                         </ul>
@@ -50,23 +50,23 @@ export default function CV({ profile, education, experience }) {
                         <hr />
                         {experience.map(job => {
                             return (
-                                <>
+                                <div key={job} className='job-cv'>
                                     <div className="subtitle">
                                         <h3 className='subtitle-left'>{job.positionTitle}</h3>
                                         <h3 className='subtitle-center'>{job.companyName}</h3>
-                                        <h3 className='subtitle-right'>{job.dateFrom} - {job.dateUntil}</h3>
+                                        <h3 className='subtitle-right'>{job.dateFrom} {(job.dateFrom || job.dateFrom) && "-"} {job.dateUntil}</h3>
                                     </div>
                                     <p>{job.location}</p>
                                     <ul className="content">
                                         {job.responsibilities.map(responsibility => responsibility !== '' && (
                                             <li key={responsibility}>
                                                 <p>
-                                                    - {responsibility}
+                                                    &bull; {responsibility}
                                                 </p>
                                             </li>
                                         ))}
                                     </ul>
-                                </>
+                                </div>
                             );
                         })}
                     </div>
