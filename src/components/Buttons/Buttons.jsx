@@ -6,9 +6,9 @@ export default function Buttons({ children }) {
     )
 }
 
-export function Button({ text }) {
+export function Button({ text, onClick }) {
     return (
-        <button className='button'>{text}</button>
+        <button className='button' onClick={onClick}>{text}</button>
     )
 }
 

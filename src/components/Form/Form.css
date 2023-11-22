@@ -40,7 +40,7 @@ h2 {
     color: var(--accent-clr)
 }
 
-hr {
+.form hr {
     background-color: var(--primary-clr);
     border: none;
     min-height: .05rem; 

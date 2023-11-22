@@ -5,34 +5,38 @@ import { NavButton, Button } from './components/Buttons/Buttons'
 import { ProfileForm, EducationForm, ExperienceForm } from './components/Form/Form';
 import CV from './components/CV/CV';
 
+const initialFormData = {
+    profile: {
+        name: '',
+        email: '',
+        phoneNumber: '',
+        location: '',
+    },
+    education: {
+        schoolName: '',
+        schoolLocation: '',
+        titleOfStudy: '',
+        gpa: '',
+        fromDate: '',
+        toDate: '',
+    },
+    experience: [
+        {   
+            jobId: 1,
+            companyName: '',
+            location: '',
+            positionTitle: '',
+            responsibilities: [''],
+            dateFrom: '',
+            dateUntil: '',
+        }
+    ],
+};
+
 function App() {
     const [selectedButtonId, setSelectedButtonId] = useState(0);
-    const [formData, setFormData] = useState({
-        profile: {
-            name: '',
-            email: '',
-            phoneNumber: '',
-            location: '',
-        },
-        education: {
-            schoolName: '',
-            schoolLocation: '',
-            titleOfStudy: '',
-            gpa: '',
-            fromDate: '',
-            toDate: '',
-        },
-        experience: [
-            {   
-                jobId: 1,
-                companyName: '',
-                positionTitle: '',
-                responsibilities: [''],
-                dateFrom: '',
-                dateUntil: ''
-            }
-        ],
-    });
+    const [formData, setFormData] = useState(initialFormData);
+    const [displayedData, setDisplayedData] = useState(initialFormData)
 
     function handleNavButtonClick(id) {
         setSelectedButtonId(id);
@@ -46,7 +50,7 @@ function App() {
 
     const SelectedFormComponent = formsData[selectedButtonId].formComponent;
     const formType = formsData[selectedButtonId].text.toLowerCase();
-
+    console.log(displayedData.experience)
     return (
         <main>
             <div className='buttons-bar'>
@@ -60,7 +64,7 @@ function App() {
                         </NavButton>
                     ))}
                 </Buttons>
-                <Button text="Create" isSelected={false}/>
+                <Button text="Create" onClick={() => setDisplayedData(formData)}/>
             </div>
             <SelectedFormComponent 
             formValue={formData[formType]} 
@@ -70,7 +74,7 @@ function App() {
                     [formType]: newFormValue
                 }
             ))}/>
-            <CV profile={formData.profile} education={formData.education} experience={formData.experience}/>
+            <CV profile={displayedData.profile} education={displayedData.education} experience={displayedData.experience}/>
         </main>
     )
 }

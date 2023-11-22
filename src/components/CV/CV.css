@@ -19,4 +19,60 @@
     padding: 2em;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: .1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.paper h2 {
+    color: var(--light-text-clr);
+}
+
+.paper p {
+    font-size: .5rem;
+}
+
+.profile {
+    display: grid;
+    place-items: center;
+    gap: .25rem;
+}
+
+.profile-subtitle {
+    display: flex;
+    gap: .25rem;
+}
+
+.paper h3,
+.paper p {
+    font-size: .5rem;
+}
+
+.paper hr {
+    margin: 0;
+}
+
+.subtitle {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    gap: .25rem ;
+    margin-bottom: .25rem;
+}
+
+.subtitle-left {
+    position: absolute;
+    left: 0;
+}
+
+.subtitle-right {
+    position: absolute;
+    right: 0;
+}
+
+.paper ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
 }

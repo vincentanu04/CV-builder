@@ -48,14 +48,14 @@ export function EducationForm({ formValue, onChange }) {
         schoolName: 'Monash University Malaysia',
         schoolLocation: 'Subang Jaya, Malaysia',
         titleOfStudy: "Bachelor's in Computer Science",
-        gpa: '3.8',
+        gpa: '3.8/4',
         fromDate: '12/10/2022',
         toDate: '12/10/2024'
     };
 
     return (
         <div className='form'>
-            <h2>Your Educational Background</h2>
+            <h2>Your Education Background</h2>
             <hr />
             {Object.keys(formValue).map(label => (
                 <div key={label} className="input">
@@ -79,7 +79,8 @@ export function ExperienceForm( { formValue, onChange }) {
         positionTitle: 'Position Title',
         responsibilities: 'Responsibilities',
         dateFrom: 'Date (from)',
-        dateUntil: 'Date (until)'
+        dateUntil: 'Date (until)',
+        location: 'Location'
     };
 
     const placeholders = {
@@ -87,7 +88,8 @@ export function ExperienceForm( { formValue, onChange }) {
         positionTitle: 'Web Dev Intern',
         responsibilities: ['Writing new React components'],
         dateFrom: '15/11/2023',
-        dateUntil: '23/02/2024'
+        dateUntil: '23/02/2024',
+        location: 'Puchong, Malaysia'
     };
 
     return (
@@ -113,10 +115,23 @@ export function ExperienceForm( { formValue, onChange }) {
                                     value={responsibility}  
                                     placeholder={placeholders[label]}
                                     onChange={(e) => {
-                                        const updatedFormValue = [...formValue];
-                                        updatedFormValue[i1].responsibilities[i2] = e.target.value;
+                                        const updatedFormValue = formValue.map((job, index1) => {
+                                            if (index1 === i1) {
+                                              return {
+                                                ...job,
+                                                responsibilities: job.responsibilities.map((res, index2) => {
+                                                  if (index2 === i2) {
+                                                    return e.target.value;
+                                                  }
+                                                  return res;
+                                                }),
+                                              };
+                                            }
+                                            return j;
+                                          });
                                         onChange(updatedFormValue);
-                                      }}
+                                      }
+                                    }
                                     />
                                 ))}
                             </div>
@@ -134,9 +149,13 @@ export function ExperienceForm( { formValue, onChange }) {
                                     value={job[label]}  
                                     placeholder={placeholders[label]}
                                     onChange={(e => {
-                                        const updatedFormValue = [...formValue];
-                                        updatedFormValue[i1][label] = e.target.value;
-                                        onChange(updatedFormValue)
+                                        const updatedFormValue = formValue.map((job, index) => {
+                                            if (index === i1) {
+                                              return { ...job, [label]: e.target.value };
+                                            }
+                                            return job;
+                                        });
+                                        onChange(updatedFormValue);
                                     })}
                                 />
                             </div>
