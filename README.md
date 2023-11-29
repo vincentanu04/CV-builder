@@ -6,4 +6,4 @@ Live site: https://cv-builder-04.vercel.app/
 
 Enter your personal details in order to get a personalized CV! 
 
-Learning goal: ReactJS.
+Learning goal: ReactJS, state, props.
