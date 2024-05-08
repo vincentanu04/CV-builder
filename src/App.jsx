@@ -19,11 +19,12 @@ const initialFormData = {
   },
   education: {
     schoolName: '',
-    schoolLocation: '',
-    titleOfStudy: '',
-    gpa: '',
+    // schoolLocation: '',
     fromDate: '',
     toDate: '',
+    titleOfStudy: '',
+    gpa: '',
+    relevantCoursework: [''],
   },
   experience: [
     {
@@ -47,11 +48,19 @@ const exampleFormData = {
   },
   education: {
     schoolName: 'Monash University Malaysia',
-    schoolLocation: 'Subang Jaya, Malaysia',
-    titleOfStudy: "Bachelor's in Computer Science",
-    gpa: '3.8/4',
+    // schoolLocation: 'Subang Jaya, Malaysia',
     fromDate: '23/02/2022',
     toDate: '23/11/2024',
+    titleOfStudy: "Bachelor's in Computer Science",
+    gpa: '3.8/4',
+    relevantCoursework: [
+      'Collaborative engineering for web applications',
+      'Databases using Oracle',
+      'Object-oriented design & implementation, Mobile application development (Android)',
+      'Data structures and algorithms',
+      'Fundamentals of Java and Python',
+      'Discrete and continuous mathematics',
+    ],
   },
   experience: [
     {

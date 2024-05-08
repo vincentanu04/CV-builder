@@ -9,32 +9,67 @@ import {
 import './CV.css';
 import LibreBaskervilleRegular from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
 import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold.ttf';
+import List, { Item } from './components/List';
 
 const styles = StyleSheet.create({
   page: {
-    padding: 45,
+    padding: '45 40',
     fontFamily: 'Libre',
-    fontSize: 7.5,
+    fontSize: 9,
+    lineHeight: 1.5,
+    letterSpacing: 0.325,
   },
   header: {
     position: 'relative',
     textAlign: 'center',
+    letterSpacing: 0,
   },
   phoneNumber: {
     position: 'absolute',
-    left: 0,
-    top: '40%',
+    left: '0',
+    top: '30%',
+    paddingLeft: 5,
   },
   name: {
     fontFamily: 'Libre Bold',
-    fontWeight: 'bold',
     fontSize: 19,
     letterSpacing: 0.075,
   },
   email: {
     position: 'absolute',
+    right: '0',
+    top: '30%',
+    paddingRight: 5,
+  },
+  sectionTitle: {
+    fontFamily: 'Libre Bold',
+    paddingLeft: 5,
+    marginBottom: 0,
+  },
+  educationContent: {
+    marginTop: 15,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+  hr: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    marginBottom: 3,
+  },
+  justify: {
+    fontSize: 20,
+  },
+  educationHeader: {
+    fontFamily: 'Libre Bold',
+    paddingHorizontal: 5,
+    textAlign: 'center',
+    position: 'relative',
+  },
+  educationDate: {
+    position: 'absolute',
+    paddingRight: 5,
     right: 0,
-    top: '40%',
   },
 });
 
@@ -50,24 +85,53 @@ Font.register({
 
 export default function CV({ profile, education, experience }) {
   const { name, email, phoneNumber, location } = profile;
-  const { schoolName, schoolLocation, titleOfStudy, gpa, fromDate, toDate } =
-    education;
+  const {
+    schoolName,
+    titleOfStudy,
+    gpa,
+    fromDate,
+    toDate,
+    relevantCoursework,
+  } = education;
 
   return (
     <Document
-      title={profile.name ? `${profile.name}_resume` : 'resume'}
+      title={name ? `${name}_resume` : 'resume'}
       pageLayout='singlePage'
       pageMode='fullScreen'
     >
-      <Page size='A4' orientation='portrait' style={styles.page} debug>
+      <Page size='A4' orientation='portrait' style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.phoneNumber}>{profile.phoneNumber}</Text>
-          <Text style={styles.name}>{profile.name}</Text>
-          <Text style={styles.email}>{profile.email}</Text>
+          <Text style={styles.phoneNumber}>{phoneNumber}</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
-        <Text>
-          <hr />
-        </Text>
+        {Object.values(education).some((v) =>
+          Array.isArray(v) ? v.some((l) => l !== '') : v !== ''
+        ) && (
+          <View>
+            <Text style={styles.sectionTitle}>Education</Text>
+            <View style={styles.hr} />
+            <View style={styles.educationHeader}>
+              <Text>{schoolName}</Text>
+              <Text
+                style={styles.educationDate}
+              >{`${fromDate} - ${toDate}`}</Text>
+            </View>
+            <View style={styles.educationContent}>
+              <Item style={{ marginBottom: 40 }}>
+                {titleOfStudy}
+                {gpa && `  (${gpa})`}.
+              </Item>
+              {relevantCoursework.some((v) => v !== '') && (
+                <Item style={styles.justify}>
+                  Relevant coursework:{'  '}
+                  {relevantCoursework.join(', ')}.
+                </Item>
+              )}
+            </View>
+          </View>
+        )}
       </Page>
     </Document>
     // <div className='cv'>
