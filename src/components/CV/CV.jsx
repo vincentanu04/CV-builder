@@ -132,6 +132,15 @@ export default function CV({ profile, education, experience }) {
             </View>
           </View>
         )}
+        {experience.some((exp) =>
+          Object.entries(exp).some(
+            ([key, value]) =>
+              key !== 'jobId' &&
+              (Array.isArray(value)
+                ? value.some((l) => l !== '')
+                : value !== '')
+          )
+        ) && <Text>show experience</Text>}
       </Page>
     </Document>
     // <div className='cv'>
