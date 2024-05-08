@@ -1,18 +1,26 @@
-import { Document, Page, StyleSheet, Text } from '@react-pdf/renderer';
+import { Document, Font, Page, StyleSheet, Text } from '@react-pdf/renderer';
 import './CV.css';
+import LibreBaskervilleFont from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
+
+const styles = StyleSheet.create({
+  page: {
+    padding: 20,
+    fontFamily: 'Libre Baskerville',
+  },
+  name: {
+    // fontSize: 12,
+  },
+});
+
+Font.register({
+  family: 'Libre Baskerville',
+  src: LibreBaskervilleFont,
+});
 
 export default function CV({ profile, education, experience }) {
   const { name, email, phoneNumber, location } = profile;
   const { schoolName, schoolLocation, titleOfStudy, gpa, fromDate, toDate } =
     education;
-
-  const styles = StyleSheet.create({
-    page: {
-      padding: '3rem',
-      display: 'grid',
-      placeItems: 'center',
-    },
-  });
 
   return (
     <Document
@@ -21,7 +29,10 @@ export default function CV({ profile, education, experience }) {
       pageMode='fullScreen'
     >
       <Page size='A4' orientation='portrait' style={styles.page}>
-        <Text>HELLOOO</Text>
+        <Text style={styles.name}>{profile.name}</Text>
+        <Text>
+          <hr />
+        </Text>
       </Page>
     </Document>
     // <div className='cv'>
