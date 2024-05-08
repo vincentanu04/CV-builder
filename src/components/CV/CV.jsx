@@ -1,20 +1,51 @@
-import { Document, Font, Page, StyleSheet, Text } from '@react-pdf/renderer';
+import {
+  Document,
+  Font,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+} from '@react-pdf/renderer';
 import './CV.css';
-import LibreBaskervilleFont from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
+import LibreBaskervilleRegular from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
+import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold.ttf';
 
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
-    fontFamily: 'Libre Baskerville',
+    padding: 45,
+    fontFamily: 'Libre',
+    fontSize: 7.5,
+  },
+  header: {
+    position: 'relative',
+    textAlign: 'center',
+  },
+  phoneNumber: {
+    position: 'absolute',
+    left: 0,
+    top: '40%',
   },
   name: {
-    // fontSize: 12,
+    fontFamily: 'Libre Bold',
+    fontWeight: 'bold',
+    fontSize: 19,
+    letterSpacing: 0.075,
+  },
+  email: {
+    position: 'absolute',
+    right: 0,
+    top: '40%',
   },
 });
 
 Font.register({
-  family: 'Libre Baskerville',
-  src: LibreBaskervilleFont,
+  family: 'Libre',
+  src: LibreBaskervilleRegular,
+});
+
+Font.register({
+  family: 'Libre Bold',
+  src: LibreBaskervilleBold,
 });
 
 export default function CV({ profile, education, experience }) {
@@ -28,8 +59,12 @@ export default function CV({ profile, education, experience }) {
       pageLayout='singlePage'
       pageMode='fullScreen'
     >
-      <Page size='A4' orientation='portrait' style={styles.page}>
-        <Text style={styles.name}>{profile.name}</Text>
+      <Page size='A4' orientation='portrait' style={styles.page} debug>
+        <View style={styles.header}>
+          <Text style={styles.phoneNumber}>{profile.phoneNumber}</Text>
+          <Text style={styles.name}>{profile.name}</Text>
+          <Text style={styles.email}>{profile.email}</Text>
+        </View>
         <Text>
           <hr />
         </Text>
