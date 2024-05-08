@@ -14,7 +14,7 @@ const List = ({ children }) => children;
 export const Item = ({ children }) => (
   <View style={styles.item}>
     <Text style={styles.bulletPoint}>•</Text>
-    <Text>{children}</Text>
+    <Text style={{ width: '100%', paddingRight: 5 }}>{children}</Text>
   </View>
 );
 

@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     lineHeight: 1.5,
     letterSpacing: 0.325,
+    textAlign: 'justify',
   },
   header: {
     position: 'relative',
@@ -51,25 +52,34 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 10,
+    marginBottom: 10,
   },
   hr: {
     borderBottomColor: 'black',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.85,
     marginBottom: 3,
   },
   justify: {
     fontSize: 20,
   },
-  educationHeader: {
+  sectionHeader: {
     fontFamily: 'Libre Bold',
-    paddingHorizontal: 5,
     textAlign: 'center',
     position: 'relative',
   },
-  educationDate: {
+  sectionHeaderLeft: {
+    position: 'absolute',
+    paddingLeft: 5,
+    left: 0,
+  },
+  sectionHeaderRight: {
     position: 'absolute',
     paddingRight: 5,
     right: 0,
+  },
+  experienceContent: {
+    marginTop: 5,
+    marginBottom: 10,
   },
 });
 
@@ -112,10 +122,10 @@ export default function CV({ profile, education, experience }) {
           <View>
             <Text style={styles.sectionTitle}>Education</Text>
             <View style={styles.hr} />
-            <View style={styles.educationHeader}>
+            <View style={styles.sectionHeader}>
               <Text>{schoolName}</Text>
               <Text
-                style={styles.educationDate}
+                style={styles.sectionHeaderRight}
               >{`${fromDate} - ${toDate}`}</Text>
             </View>
             <View style={styles.educationContent}>
@@ -140,7 +150,30 @@ export default function CV({ profile, education, experience }) {
                 ? value.some((l) => l !== '')
                 : value !== '')
           )
-        ) && <Text>show experience</Text>}
+        ) && (
+          <View>
+            <Text style={styles.sectionTitle}>Work Experience</Text>
+            <View style={styles.hr} />
+            {experience.map((exp, i) => (
+              <View key={i}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionHeaderLeft}>
+                    {exp.positionTitle}
+                  </Text>
+                  <Text>{exp.companyName}</Text>
+                  <Text style={styles.sectionHeaderRight}>
+                    {exp.dateFrom} - {exp.dateUntil}
+                  </Text>
+                </View>
+                <View style={styles.experienceContent}>
+                  {exp.responsibilities.map((resp, i) => (
+                    <Item key={i}>{resp}</Item>
+                  ))}
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
       </Page>
     </Document>
     // <div className='cv'>
