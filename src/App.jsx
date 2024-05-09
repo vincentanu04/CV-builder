@@ -6,6 +6,7 @@ import {
   ProfileForm,
   EducationForm,
   ExperienceForm,
+  ProjectsForm,
 } from './components/Form/Form';
 import CV from './components/CV/CV';
 import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
@@ -35,6 +36,14 @@ const initialFormData = {
       responsibilities: [''],
       dateFrom: '',
       dateUntil: '',
+    },
+  ],
+  projects: [
+    {
+      projectId: 1,
+      projectTitle: '',
+      projectDescription: '',
+      projectTechStack: [''],
     },
   ],
 };
@@ -95,14 +104,14 @@ const exampleFormData = {
       dateFrom: '15/11/2022',
       dateUntil: '23/02/2023',
     },
+  ],
+  projects: [
     {
-      jobId: 3,
-      companyName: 'Robogals Monash Malaysia',
-      location: 'Bandar Sunway, Malaysia',
-      positionTitle: 'Event Organizer',
-      responsibilities: ['Organizing events'],
-      dateFrom: '15/11/2022',
-      dateUntil: 'Present',
+      projectId: 1,
+      projectTitle: 'CV (Resume) Builder',
+      projectDescription:
+        'A React web application for creating and printing personalized resumes as PDFs. In fact, it is what generated this resume.',
+      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
     },
   ],
 };
@@ -120,6 +129,7 @@ function App() {
     { id: 0, text: 'Profile', formComponent: ProfileForm },
     { id: 1, text: 'Education', formComponent: EducationForm },
     { id: 2, text: 'Experience', formComponent: ExperienceForm },
+    { id: 3, text: 'Projects', formComponent: ProjectsForm },
   ];
 
   const SelectedFormComponent = formsData[selectedButtonId].formComponent;

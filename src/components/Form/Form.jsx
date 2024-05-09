@@ -226,3 +226,122 @@ export function ExperienceForm({ formValue, onChange }) {
     </div>
   );
 }
+
+export function ProjectsForm({ formValue, onChange }) {
+  const labels = {
+    projectTitle: 'Project Title',
+    projectDescription: 'Project Description',
+    projectTechStack: 'Tech stack',
+  };
+
+  const placeholders = {
+    projectTitle: 'CV Builder',
+    projectDescription: 'CV Builder description..',
+    projectTechStack: 'React',
+  };
+
+  function addProject() {
+    formValue.push({
+      projectId: formValue.length + 1,
+      projectTitle: '',
+      projectDescription: '',
+      projectTechStack: [''],
+    });
+    onChange(formValue);
+  }
+
+  function removeProject() {
+    formValue.pop();
+    onChange(formValue);
+  }
+
+  return (
+    <div className='form scroll'>
+      <h2>Your Projects</h2>
+      <hr />
+      {formValue.map((proj, i1) => {
+        return (
+          <div key={i1} className='job-form'>
+            {Object.keys(proj).map((label) => {
+              if (label === 'projectId') {
+                return null;
+              } else if (label === 'projectTechStack') {
+                return (
+                  <div key={label} className='input'>
+                    <label htmlFor={label} placeholder={placeholders[label]}>
+                      {labels[label]}
+                    </label>
+                    {proj.projectTechStack.map((tech, i2) => (
+                      <input
+                        key={i2}
+                        type='text'
+                        name={label}
+                        value={tech}
+                        placeholder={placeholders[label]}
+                        onChange={(e) => {
+                          const updatedFormValue = formValue.map(
+                            (proj, index1) => {
+                              if (index1 === i1) {
+                                return {
+                                  ...proj,
+                                  projectTechStack: proj.projectTechStack.map(
+                                    (res, index2) => {
+                                      if (index2 === i2) {
+                                        return e.target.value;
+                                      }
+                                      return res;
+                                    }
+                                  ),
+                                };
+                              }
+                              return proj;
+                            }
+                          );
+                          onChange(updatedFormValue);
+                        }}
+                      />
+                    ))}
+                  </div>
+                );
+              } else {
+                return (
+                  <div key={label} className='input'>
+                    <label htmlFor={label} placeholder={placeholders[label]}>
+                      {labels[label]}
+                    </label>
+                    <input
+                      type='text'
+                      name={label}
+                      value={proj[label]}
+                      placeholder={placeholders[label]}
+                      onChange={(e) => {
+                        const updatedFormValue = formValue.map(
+                          (proj, index) => {
+                            if (index === i1) {
+                              return { ...proj, [label]: e.target.value };
+                            }
+                            return proj;
+                          }
+                        );
+                        onChange(updatedFormValue);
+                      }}
+                    />
+                  </div>
+                );
+              }
+            })}
+            {i1 !== formValue.length - 1 && <hr className='job-hr' />}
+          </div>
+        );
+      })}
+      <Buttons>
+        <Button text='Add' onClick={() => addProject()} />
+        <Button
+          text='Remove'
+          disabled={formValue.length > 1 ? false : true}
+          onClick={() => removeProject()}
+        />
+      </Buttons>
+    </div>
+  );
+}
