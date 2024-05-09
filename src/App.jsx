@@ -7,6 +7,7 @@ import {
   EducationForm,
   ExperienceForm,
   ProjectsForm,
+  AdditionalForm,
 } from './components/Form/Form';
 import CV from './components/CV/CV';
 import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
@@ -46,6 +47,15 @@ const initialFormData = {
       projectTechStack: [''],
     },
   ],
+  additional: [
+    {
+      additionalId: 1,
+      additionalTitle: '',
+      additionalDescription: '',
+      additionalDate: '',
+    },
+  ],
+  skills: [{}],
 };
 
 const exampleFormData = {
@@ -121,6 +131,15 @@ const exampleFormData = {
       projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
     },
   ],
+  additional: [
+    {
+      additionalId: 1,
+      additionalTitle: 'Python Workshop Mentor',
+      additionalDescription:
+        'Volunteered as a Python Workshop mentor in the Monash Robogals’ Python workshop. Taught the basics/foundations of python programming to new computer science as well as engineering students.',
+      additionalDate: '2023',
+    },
+  ],
 };
 
 function App() {
@@ -133,14 +152,36 @@ function App() {
   }
 
   const formsData = [
-    { id: 0, text: 'Profile', formComponent: ProfileForm },
-    { id: 1, text: 'Education', formComponent: EducationForm },
-    { id: 2, text: 'Experience', formComponent: ExperienceForm },
-    { id: 3, text: 'Projects', formComponent: ProjectsForm },
+    { id: 0, formType: 'profile', text: 'Profile', formComponent: ProfileForm },
+    {
+      id: 1,
+      formType: 'education',
+      text: 'Education',
+      formComponent: EducationForm,
+    },
+    {
+      id: 2,
+      formType: 'experience',
+      text: 'Experience',
+      formComponent: ExperienceForm,
+    },
+    {
+      id: 3,
+      formType: 'projects',
+      text: 'Projects',
+      formComponent: ProjectsForm,
+    },
+    {
+      id: 4,
+      formType: 'additional',
+      text: 'Additional experience',
+      formComponent: AdditionalForm,
+    },
+    // { id: 5, text: 'Skills', formComponent: ProjectsForm },
   ];
 
   const SelectedFormComponent = formsData[selectedButtonId].formComponent;
-  const formType = formsData[selectedButtonId].text.toLowerCase();
+  const formType = formsData[selectedButtonId].formType;
 
   const styles = StyleSheet.create({
     viewer: {
@@ -162,7 +203,7 @@ function App() {
               text={button.text}
               isSelected={selectedButtonId === button.id}
               onClick={() => handleNavButtonClick(button.id)}
-            ></NavButton>
+            />
           ))}
         </Buttons>
         <Button text='Create' onClick={() => setDisplayedData(formData)} />
@@ -206,6 +247,7 @@ function App() {
           education={displayedData.education}
           experience={displayedData.experience}
           projects={displayedData.projects}
+          additional={displayedData.additional}
         />
       </PDFViewer>
     </main>

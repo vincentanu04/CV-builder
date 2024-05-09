@@ -9,7 +9,7 @@ import {
 import './CV.css';
 import LibreBaskervilleRegular from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
 import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold.ttf';
-import List, { Item } from './components/List';
+import { Item } from './components/List';
 import { ItemWithTitle } from './components/ItemWithTitle';
 
 const styles = StyleSheet.create({
@@ -94,7 +94,13 @@ Font.register({
   src: LibreBaskervilleBold,
 });
 
-export default function CV({ profile, education, experience, projects }) {
+export default function CV({
+  profile,
+  education,
+  experience,
+  projects,
+  additional,
+}) {
   const { name, email, phoneNumber, location } = profile;
   const {
     schoolName,
@@ -192,6 +198,7 @@ export default function CV({ profile, education, experience, projects }) {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 5,
+                marginBottom: 10,
               }}
             >
               {projects.map((proj, i) => (
@@ -207,6 +214,35 @@ export default function CV({ profile, education, experience, projects }) {
                       noBulletpoint
                     />
                   </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+        {additional.some((exp) =>
+          Object.entries(exp).some(
+            ([key, value]) => key !== 'additionalId' && value !== ''
+          )
+        ) && (
+          <View>
+            <Text style={styles.sectionTitle}>
+              Additional Experience / Volunteering
+            </Text>
+            <View style={styles.hr} />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 5,
+                marginBottom: 10,
+              }}
+            >
+              {additional.map((exp, i) => (
+                <View key={i}>
+                  <ItemWithTitle
+                    title={`${exp.additionalTitle} (${exp.additionalDate})`}
+                    data={exp.additionalDescription}
+                  />
                 </View>
               ))}
             </View>

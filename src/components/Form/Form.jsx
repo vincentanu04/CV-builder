@@ -1,7 +1,6 @@
 import './Form.css';
 import { Button } from '../Buttons/Buttons';
 import Buttons from '../Buttons/Buttons';
-import { Fragment } from 'react';
 
 export function ProfileForm({ formValue, onChange }) {
   const labels = {
@@ -334,6 +333,74 @@ export function ProjectsForm({ formValue, onChange }) {
           </div>
         );
       })}
+      <Buttons>
+        <Button text='Add' onClick={() => addProject()} />
+        <Button
+          text='Remove'
+          disabled={formValue.length > 1 ? false : true}
+          onClick={() => removeProject()}
+        />
+      </Buttons>
+    </div>
+  );
+}
+
+export function AdditionalForm({ formValue, onChange }) {
+  const labels = {
+    additionalTitle: 'Experience Title',
+    additionalDescription: 'Experience Description',
+    additionalDate: 'Date',
+  };
+
+  const placeholders = {
+    additionalTitle: 'Java Mentor',
+    additionalDescription: 'Taught fundamentals of Java',
+    additionalDate: '2021',
+  };
+
+  function addProject() {
+    formValue.push({
+      additionalId: formValue.length + 1,
+      additionalTitle: '',
+      additionalDescription: '',
+      additionalDate: '',
+    });
+    onChange(formValue);
+  }
+
+  function removeProject() {
+    formValue.pop();
+    onChange(formValue);
+  }
+
+  return (
+    <div className='form scroll'>
+      <h2>Your Additional Experience</h2>
+      <hr />
+      {formValue.map((exp, i) => (
+        <div key={i} className='job-form'>
+          {Object.keys(exp).map(
+            (label) =>
+              label !== 'additionalId' && (
+                <div key={label} className='input'>
+                  <label htmlFor={label} placeholder={placeholders[label]}>
+                    {labels[label]}
+                  </label>
+                  <input
+                    type='text'
+                    name={label}
+                    value={formValue[i][label]}
+                    placeholder={placeholders[label]}
+                    onChange={(e) =>
+                      onChange({ ...formValue, [label]: e.target.value })
+                    }
+                  />
+                </div>
+              )
+          )}
+          {i !== formValue.length - 1 && <hr className='job-hr' />}
+        </div>
+      ))}
       <Buttons>
         <Button text='Add' onClick={() => addProject()} />
         <Button
