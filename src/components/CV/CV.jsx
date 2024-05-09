@@ -9,6 +9,7 @@ import {
 import './CV.css';
 import LibreBaskervilleRegular from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
 import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold.ttf';
+import LibreBaskervilleItalic from '/fonts/Libre_Baskerville/LibreBaskerville-Italic.ttf';
 import { Item } from './components/List';
 import { ItemWithTitle } from './components/ItemWithTitle';
 
@@ -33,8 +34,8 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   name: {
-    fontFamily: 'Libre Bold',
     fontSize: 19,
+    fontWeight: 700,
     letterSpacing: 0.075,
   },
   email: {
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   sectionTitle: {
-    fontFamily: 'Libre Bold',
+    fontWeight: 700,
     paddingLeft: 5,
     marginBottom: 0,
   },
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   sectionHeader: {
-    fontFamily: 'Libre Bold',
+    fontWeight: 700,
     textAlign: 'center',
     position: 'relative',
   },
@@ -82,16 +83,26 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
   },
+  sectionContent: {
+    marginTop: 2,
+    marginBottom: 10,
+  },
 });
 
 Font.register({
   family: 'Libre',
-  src: LibreBaskervilleRegular,
+  fonts: [
+    {
+      src: LibreBaskervilleRegular,
+      fontWeight: 400,
+    },
+    { src: LibreBaskervilleBold, fontWeight: 700 },
+  ],
 });
 
 Font.register({
-  family: 'Libre Bold',
-  src: LibreBaskervilleBold,
+  family: 'Libre Italic',
+  src: LibreBaskervilleItalic,
 });
 
 export default function CV({
@@ -100,6 +111,7 @@ export default function CV({
   experience,
   projects,
   additional,
+  skills,
 }) {
   const { name, email, phoneNumber, location } = profile;
   const {
@@ -198,7 +210,7 @@ export default function CV({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 5,
-                marginBottom: 10,
+                ...styles.sectionContent,
               }}
             >
               {projects.map((proj, i) => (
@@ -231,10 +243,10 @@ export default function CV({
             <View style={styles.hr} />
             <View
               style={{
+                ...styles.sectionContent,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 5,
-                marginBottom: 10,
               }}
             >
               {additional.map((exp, i) => (
@@ -245,6 +257,27 @@ export default function CV({
                   />
                 </View>
               ))}
+            </View>
+          </View>
+        )}
+        {Object.values(skills).some((v) => v.some((l) => l !== '')) && (
+          <View>
+            <Text style={styles.sectionTitle}>Technical Skills</Text>
+            <View style={styles.hr} />
+            <View style={styles.sectionContent}>
+              <Item>{skills.general.join(', ')}.</Item>
+              <ItemWithTitle
+                title={'Databases'}
+                data={`${skills.databases.join(', ')}.`}
+              />
+              <ItemWithTitle
+                title={'Languages'}
+                data={`${skills.languages.join(', ')}.`}
+              />
+              <ItemWithTitle
+                title={'Others'}
+                data={`${skills.others.join(', ')}.`}
+              />
             </View>
           </View>
         )}

@@ -8,6 +8,7 @@ import {
   ExperienceForm,
   ProjectsForm,
   AdditionalForm,
+  SkillsForm,
 } from './components/Form/Form';
 import CV from './components/CV/CV';
 import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
@@ -55,7 +56,7 @@ const initialFormData = {
       additionalDate: '',
     },
   ],
-  skills: [{}],
+  skills: { general: [''], databases: [''], languages: [''], others: [''] },
 };
 
 const exampleFormData = {
@@ -68,8 +69,8 @@ const exampleFormData = {
   education: {
     schoolName: 'Monash University Malaysia',
     // schoolLocation: 'Subang Jaya, Malaysia',
-    fromDate: '23/02/2022',
-    toDate: '23/11/2024',
+    fromDate: '2022',
+    toDate: '2024',
     titleOfStudy: "Bachelor's in Computer Science",
     gpa: '3.8/4',
     relevantCoursework: [
@@ -98,33 +99,31 @@ const exampleFormData = {
       dateFrom: 'Nov 2023',
       dateUntil: 'Feb 2024',
     },
-    // {
-    //   jobId: 2,
-    //   companyName: 'Tiger Sugar Malaysia',
-    //   location: 'Bandar Sunway, Malaysia',
-    //   positionTitle: 'Barista',
-    //   responsibilities: [
-    //     'Created reusable React components and pages based of Figma designs using TypeScript for type safety and MUI for styling with customized CSS.',
-    //     'Integrated the frontend with backend APIs using GraphQL, while working closely with backend developers.',
-    //     'Debug and troubleshoot bugs reported by clients and internal teams.',
-    //     'Researched and utilized npm packages to optimize project functionality & streamline development processes.',
-    //     'Attained a comprehensive understanding of Git for version control.',
-    //     'Actively participated in Agile methodologies and contributing to sprints, utilising Jira.',
-    //   ],
-    //   dateFrom: '15/11/2022',
-    //   dateUntil: '23/02/2023',
-    // },
   ],
   projects: [
     {
       projectId: 1,
       projectTitle: 'CV (Resume) Builder',
       projectDescription:
-        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
+        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs. In fact, this was used to generate this very resume.',
       projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
     },
     {
       projectId: 2,
+      projectTitle: 'CV (Resume) Builder',
+      projectDescription:
+        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
+      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
+    },
+    {
+      projectId: 3,
+      projectTitle: 'CV (Resume) Builder',
+      projectDescription:
+        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
+      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
+    },
+    {
+      projectId: 4,
       projectTitle: 'CV (Resume) Builder',
       projectDescription:
         'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
@@ -140,6 +139,22 @@ const exampleFormData = {
       additionalDate: '2023',
     },
   ],
+  skills: {
+    general: [
+      'React',
+      'HTML',
+      'CSS(SASS, Tailwind)',
+      'Material UI',
+      'GraphQL',
+      'Express.js',
+      'Node.js',
+      'Fetch/REST APIs',
+      'Pug/Jade',
+    ],
+    databases: ['Oracle', 'MongoDB(Mongoose)'],
+    languages: ['JavaScript', 'TypeScript', 'Java', 'Python'],
+    others: ['WSL2', 'Git', 'Agile', 'OOP'],
+  },
 };
 
 function App() {
@@ -177,7 +192,7 @@ function App() {
       text: 'Additional experience',
       formComponent: AdditionalForm,
     },
-    // { id: 5, text: 'Skills', formComponent: ProjectsForm },
+    { id: 5, formType: 'skills', text: 'Skills', formComponent: SkillsForm },
   ];
 
   const SelectedFormComponent = formsData[selectedButtonId].formComponent;
@@ -248,6 +263,7 @@ function App() {
           experience={displayedData.experience}
           projects={displayedData.projects}
           additional={displayedData.additional}
+          skills={displayedData.skills}
         />
       </PDFViewer>
     </main>

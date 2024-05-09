@@ -1,6 +1,4 @@
-import { Text, View, StyleSheet, Font } from '@react-pdf/renderer';
-import LibreBaskervilleRegular from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
-import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold.ttf';
+import { Text, View, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   item: {
@@ -12,22 +10,11 @@ const styles = StyleSheet.create({
   },
   invisible: { opacity: 0 },
   boldText: {
-    fontFamily: 'Libre Bold',
+    fontWeight: 700,
   },
   normalText: {
-    fontFamily: 'Libre',
-    fontWeight: 'normal',
+    fontWeight: 400,
   },
-});
-
-Font.register({
-  family: 'Libre Bold',
-  src: LibreBaskervilleBold,
-});
-
-Font.register({
-  family: 'Libre',
-  src: LibreBaskervilleRegular,
 });
 
 export const ItemWithTitle = ({ title, data, noBulletpoint = false }) => (
@@ -35,10 +22,10 @@ export const ItemWithTitle = ({ title, data, noBulletpoint = false }) => (
     <Text style={[noBulletpoint && styles.invisible, styles.bulletPoint]}>
       •
     </Text>
-    <Text style={{ display: 'flex', width: '100%', fontFamily: 'Libre' }}>
-      <Text style={{ fontWeight: 700 }}>{title}</Text>
-      <Text>: </Text>
-      <Text style={{ ...styles.normalText }}>{data}</Text>
+    <Text style={{ display: 'flex', width: '100%' }}>
+      <Text style={styles.boldText}>{title}</Text>
+      <Text>:{'  '}</Text>
+      <Text style={styles.normalText}>{data}</Text>
     </Text>
   </View>
 );

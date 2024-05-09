@@ -412,3 +412,44 @@ export function AdditionalForm({ formValue, onChange }) {
     </div>
   );
 }
+
+export function SkillsForm({ formValue, onChange }) {
+  const labels = {
+    general: 'General Skills',
+    databases: 'Databases',
+    languages: 'Programming Languages',
+    others: 'Others',
+  };
+
+  const placeholders = {
+    general: 'GraphQL',
+    databases: 'MongoDB',
+    languages: 'Go',
+    others: 'Linux',
+  };
+  return (
+    <div className='form'>
+      <h2>Your Skills</h2>
+      <hr />
+      {Object.entries(formValue).map(([label, value]) => (
+        <div key={label} className='input'>
+          <label htmlFor={label} placeholder={placeholders[label]}>
+            {labels[label]}
+          </label>
+          {value.map((skill, i) => (
+            <input
+              key={i}
+              type='text'
+              name={label}
+              value={skill}
+              placeholder={placeholders[label]}
+              onChange={(e) =>
+                onChange({ ...formValue, [label]: e.target.value })
+              }
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
