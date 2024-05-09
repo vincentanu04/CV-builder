@@ -88,29 +88,36 @@ const exampleFormData = {
       dateFrom: 'Nov 2023',
       dateUntil: 'Feb 2024',
     },
-    {
-      jobId: 2,
-      companyName: 'Tiger Sugar Malaysia',
-      location: 'Bandar Sunway, Malaysia',
-      positionTitle: 'Barista',
-      responsibilities: [
-        'Created reusable React components and pages based of Figma designs using TypeScript for type safety and MUI for styling with customized CSS.',
-        'Integrated the frontend with backend APIs using GraphQL, while working closely with backend developers.',
-        'Debug and troubleshoot bugs reported by clients and internal teams.',
-        'Researched and utilized npm packages to optimize project functionality & streamline development processes.',
-        'Attained a comprehensive understanding of Git for version control.',
-        'Actively participated in Agile methodologies and contributing to sprints, utilising Jira.',
-      ],
-      dateFrom: '15/11/2022',
-      dateUntil: '23/02/2023',
-    },
+    // {
+    //   jobId: 2,
+    //   companyName: 'Tiger Sugar Malaysia',
+    //   location: 'Bandar Sunway, Malaysia',
+    //   positionTitle: 'Barista',
+    //   responsibilities: [
+    //     'Created reusable React components and pages based of Figma designs using TypeScript for type safety and MUI for styling with customized CSS.',
+    //     'Integrated the frontend with backend APIs using GraphQL, while working closely with backend developers.',
+    //     'Debug and troubleshoot bugs reported by clients and internal teams.',
+    //     'Researched and utilized npm packages to optimize project functionality & streamline development processes.',
+    //     'Attained a comprehensive understanding of Git for version control.',
+    //     'Actively participated in Agile methodologies and contributing to sprints, utilising Jira.',
+    //   ],
+    //   dateFrom: '15/11/2022',
+    //   dateUntil: '23/02/2023',
+    // },
   ],
   projects: [
     {
       projectId: 1,
       projectTitle: 'CV (Resume) Builder',
       projectDescription:
-        'A React web application for creating and printing personalized resumes as PDFs. In fact, it is what generated this resume.',
+        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
+      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
+    },
+    {
+      projectId: 2,
+      projectTitle: 'CV (Resume) Builder',
+      projectDescription:
+        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
       projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
     },
   ],
@@ -198,6 +205,7 @@ function App() {
           profile={displayedData.profile}
           education={displayedData.education}
           experience={displayedData.experience}
+          projects={displayedData.projects}
         />
       </PDFViewer>
     </main>

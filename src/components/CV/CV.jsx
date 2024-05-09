@@ -10,6 +10,7 @@ import './CV.css';
 import LibreBaskervilleRegular from '/fonts/Libre_Baskerville/LibreBaskerville-Regular.ttf';
 import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold.ttf';
 import List, { Item } from './components/List';
+import { ItemWithTitle } from './components/ItemWithTitle';
 
 const styles = StyleSheet.create({
   page: {
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     right: 0,
   },
-  experienceContent: {
+  jobContent: {
     marginTop: 5,
     marginBottom: 10,
   },
@@ -93,7 +94,7 @@ Font.register({
   src: LibreBaskervilleBold,
 });
 
-export default function CV({ profile, education, experience }) {
+export default function CV({ profile, education, experience, projects }) {
   const { name, email, phoneNumber, location } = profile;
   const {
     schoolName,
@@ -165,13 +166,50 @@ export default function CV({ profile, education, experience }) {
                     {exp.dateFrom} - {exp.dateUntil}
                   </Text>
                 </View>
-                <View style={styles.experienceContent}>
+                <View style={styles.jobContent}>
                   {exp.responsibilities.map((resp, i) => (
                     <Item key={i}>{resp}</Item>
                   ))}
                 </View>
               </View>
             ))}
+          </View>
+        )}
+        {projects.some((proj) =>
+          Object.entries(proj).some(
+            ([key, value]) =>
+              key !== 'projectId' &&
+              (Array.isArray(value)
+                ? value.some((l) => l !== '')
+                : value !== '')
+          )
+        ) && (
+          <View>
+            <Text style={styles.sectionTitle}>Projects</Text>
+            <View style={styles.hr} />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 5,
+              }}
+            >
+              {projects.map((proj, i) => (
+                <View key={i}>
+                  <View>
+                    <ItemWithTitle
+                      title={proj.projectTitle}
+                      data={proj.projectDescription}
+                    />
+                    <ItemWithTitle
+                      title={'Tech stack'}
+                      data={`${proj.projectTechStack.join(', ')}.`}
+                      noBulletpoint
+                    />
+                  </View>
+                </View>
+              ))}
+            </View>
           </View>
         )}
       </Page>
