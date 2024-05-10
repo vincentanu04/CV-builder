@@ -139,14 +139,23 @@ export default function CV({
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.email}>{email}</Text>
         </View>
-        <View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 7.5,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+          }}
+        >
           {github !== '' && (
             <Link href={github}>
               <Svg
-                width='98'
-                height='96'
+                width='30'
+                height='30'
+                viewBox='0 0 98 96'
                 xmlns='http://www.w3.org/2000/svg'
-                style={{ size: 20 }}
+                style={{}}
               >
                 <Path
                   fill-rule='evenodd'
@@ -160,9 +169,9 @@ export default function CV({
           {linkedin !== '' && (
             <Link href={linkedin}>
               <Svg
-                height='72'
+                width='27'
+                height='27'
                 viewBox='0 0 72 72'
-                width='72'
                 xmlns='http://www.w3.org/2000/svg'
               >
                 <G fill='none' fill-rule='evenodd'>
