@@ -428,7 +428,7 @@ export function SkillsForm({ formValue, onChange }) {
     others: 'Linux',
   };
   return (
-    <div className='form'>
+    <div className='form scroll'>
       <h2>Your Skills</h2>
       <hr />
       {Object.entries(formValue).map(([label, value]) => (
