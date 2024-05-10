@@ -8,6 +8,8 @@ export function ProfileForm({ formValue, onChange }) {
     email: 'Email',
     phoneNumber: 'Phone Number',
     location: 'Location',
+    github: 'Link to Github',
+    linkedin: 'Link to Linkedin',
   };
 
   const placeholders = {
@@ -15,6 +17,8 @@ export function ProfileForm({ formValue, onChange }) {
     email: 'vincent@gmail.com',
     phoneNumber: '(60) 11 9987 2635',
     location: 'Subang Jaya, Malaysia',
+    github: 'https://github.com',
+    linkedin: 'https://linkedin.com',
   };
   return (
     <div className='form'>
@@ -427,6 +431,7 @@ export function SkillsForm({ formValue, onChange }) {
     languages: 'Go',
     others: 'Linux',
   };
+
   return (
     <div className='form scroll'>
       <h2>Your Skills</h2>

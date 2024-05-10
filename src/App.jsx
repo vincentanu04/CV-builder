@@ -19,6 +19,8 @@ const initialFormData = {
     email: '',
     phoneNumber: '',
     location: '',
+    github: '',
+    linkedin: '',
   },
   education: {
     schoolName: '',
@@ -65,6 +67,8 @@ const exampleFormData = {
     email: 'vincentanu04@gmail.com',
     phoneNumber: '(60) 11 2832 3824',
     location: 'Subang Jaya, Malaysia',
+    github: 'https://github.com/vincentanu04',
+    linkedin: 'http://www.linkedin.com/in/vincent-tanuwidjaja',
   },
   education: {
     schoolName: 'Monash University Malaysia',
