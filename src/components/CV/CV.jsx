@@ -131,6 +131,7 @@ export default function CV({
   return (
     <Document
       title={name ? `${name}_resume` : 'resume'}
+      subject={name ? `${name}_resume` : 'resume'}
       pageLayout='singlePage'
       pageMode='fullScreen'
     >

@@ -12,7 +12,7 @@ import {
   RemarkForm,
 } from './components/Form/Form';
 import CV from './components/CV/CV';
-import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
+import { PDFDownloadLink, PDFViewer, StyleSheet } from '@react-pdf/renderer';
 
 const initialFormData = {
   profile: {
@@ -235,8 +235,17 @@ function App() {
     },
   });
 
-  console.log(SelectedFormComponent);
-  console.log(formType);
+  const CVComponent = (
+    <CV
+      profile={displayedData.profile}
+      education={displayedData.education}
+      experience={displayedData.experience}
+      projects={displayedData.projects}
+      additional={displayedData.additional}
+      skills={displayedData.skills}
+      remarks={displayedData.remarks}
+    />
+  );
 
   return (
     <main>
@@ -286,17 +295,36 @@ function App() {
           }
         />
       </div>
-      <PDFViewer style={styles.viewer}>
-        <CV
-          profile={displayedData.profile}
-          education={displayedData.education}
-          experience={displayedData.experience}
-          projects={displayedData.projects}
-          additional={displayedData.additional}
-          skills={displayedData.skills}
-          remarks={displayedData.remarks}
-        />
-      </PDFViewer>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
+      >
+        <PDFDownloadLink
+          document={CVComponent}
+          fileName={
+            displayedData.profile.name
+              ? `${displayedData.profile.name}_resume`
+              : 'resume'
+          }
+          style={{ textDecoration: 'none' }}
+        >
+          <button className='downloadButton'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              width='40'
+              height='40'
+              viewBox='0 0 20 20'
+              className='svg'
+            >
+              <path d='M17 12v5H3v-5H1v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z' />
+              <path d='M10 15l5-6h-4V1H9v8H5l5 6z' />
+            </svg>
+            <p style={{ padding: '0.4rem' }}>Download</p>
+          </button>
+        </PDFDownloadLink>
+        <PDFViewer style={styles.viewer} showToolbar={false}>
+          {CVComponent}
+        </PDFViewer>
+      </div>
     </main>
   );
 }

@@ -9,7 +9,7 @@ export function ProfileForm({ formValue, onChange }) {
     phoneNumber: 'Phone Number',
     location: 'Location',
     github: 'Link to Github',
-    linkedin: 'Link to Linkedin',
+    linkedin: 'Link to LinkedIn',
   };
 
   const placeholders = {

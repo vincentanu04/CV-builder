@@ -1,33 +1,66 @@
 :root {
-    --background-clr: #14141a;
-    --text-clr: #f3f3f6;
-    --primary-clr: #8a886a;
-    --secondary-clr: #293428;
-    --accent-clr: #a2a186;
-    --light-background-clr: #e5e5eb;
-    --light-text-clr: #09090c;
+  --background-clr: #14141a;
+  --text-clr: #f3f3f6;
+  --primary-clr: #8a886a;
+  --secondary-clr: #293428;
+  --accent-clr: #a2a186;
+  --light-background-clr: #e5e5eb;
+  --light-text-clr: #09090c;
 }
 
-*, *::before, *::after {
-    box-sizing: border-box;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    background-color: var(--background-clr);
-    font-family: 'Roboto', sans-serif;
-    color: var(--text-clr);
-}   
+  background-color: var(--background-clr);
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-clr);
+}
 
-input, textarea, button {
-    font: inherit;
-    color: inherit;
+input,
+textarea,
+button {
+  font: inherit;
+  color: inherit;
 }
 
 main {
-    display: flex;
+  display: flex;
+}
+
+.downloadButton {
+  background: var(--accent-clr);
+  color: var(--background-clr);
+  text-decoration: none;
+  display: flex;
+  gap: 0.25em;
+  align-items: center;
+  border-radius: 3px;
+  width: 100%;
+  font-weight: bold;
+  font-size: medium;
+  border: 3px solid transparent;
+}
+
+.svg {
+  padding: 0.4rem;
+  background: #8c8c78;
+  border-radius: 2px;
+}
+
+.downloadButton:hover {
+  background: linear-gradient(45deg, var(--accent-clr), var(--secondary-clr));
+  border: 3px solid var(--accent-clr);
+}
+
+.downloadButton:hover .svg {
+  background: var(--accent-clr);
 }
