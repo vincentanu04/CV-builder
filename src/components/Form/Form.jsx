@@ -467,6 +467,7 @@ export function RemarkForm({ formValue, onChange }) {
   const placeholders = {
     remarks: 'Available from ..',
   };
+
   return (
     <div className='form'>
       <h2>Remarks</h2>

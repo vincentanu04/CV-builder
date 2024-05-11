@@ -19,11 +19,11 @@ import { ItemWithTitle } from './components/ItemWithTitle';
 
 const styles = StyleSheet.create({
   page: {
-    padding: '45 40',
+    padding: '45',
     fontFamily: 'Libre',
     fontSize: 9,
     lineHeight: 1.5,
-    letterSpacing: 0.325,
+    letterSpacing: 0.3,
     textAlign: 'justify',
   },
   header: {
@@ -116,6 +116,7 @@ export default function CV({
   projects,
   additional,
   skills,
+  remarks,
 }) {
   const { name, email, phoneNumber, github, linkedin } = profile;
   const {
@@ -146,6 +147,7 @@ export default function CV({
             gap: 7.5,
             justifyContent: 'flex-end',
             alignItems: 'flex-end',
+            paddingRight: 5,
           }}
         >
           {github !== '' && (
@@ -334,83 +336,17 @@ export default function CV({
             </View>
           </View>
         )}
+        <View
+          style={{
+            textAlign: 'center',
+            marginTop: 10,
+            fontWeight: 700,
+            fontSize: 12,
+          }}
+        >
+          <Text>{remarks.remarks}</Text>
+        </View>
       </Page>
     </Document>
-    // <div className='cv'>
-    //   <div className='paper'>
-    //     <div className='profile'>
-    //       <h2>{name}</h2>
-    //       <div className='profile-subtitle'>
-    //         <p>{location}</p>
-    //         <p>{email}</p>
-    //         <p>{phoneNumber}</p>
-    //       </div>
-    //     </div>
-    //     {Object.values(education).some((value) => value !== '') && (
-    //       <div className='education'>
-    //         <h3>Education</h3>
-    //         <hr />
-    //         <div className='subtitle'>
-    //           <h3 className='subtitle-left'>{schoolLocation}</h3>
-    //           <h3 className='subtitle-center'>{schoolName}</h3>
-    //           <h3 className='subtitle-right'>
-    //             {fromDate} - {toDate}
-    //           </h3>
-    //         </div>
-    //         <ul className='content'>
-    //           {titleOfStudy !== '' && (
-    //             <li>
-    //               <p>&bull; {titleOfStudy}</p>
-    //             </li>
-    //           )}
-    //           {gpa !== '' && (
-    //             <li>
-    //               <p>
-    //                 &bull; <b>GPA: </b>
-    //                 {gpa}
-    //               </p>
-    //             </li>
-    //           )}
-    //         </ul>
-    //       </div>
-    //     )}
-    //     {Object.entries(experience[0]).some(([key, value]) => {
-    //       if (key === 'jobId') return false;
-    //       else if (key === 'responsibilities') {
-    //         return value[0] !== '';
-    //       } else return value !== '';
-    //     }) && (
-    //       <div className='experience'>
-    //         <h3>Work Experience</h3>
-    //         <hr />
-    //         {experience.map((job) => {
-    //           return (
-    //             <div key={job} className='job-cv'>
-    //               <div className='subtitle'>
-    //                 <h3 className='subtitle-left'>{job.positionTitle}</h3>
-    //                 <h3 className='subtitle-center'>{job.companyName}</h3>
-    //                 <h3 className='subtitle-right'>
-    //                   {job.dateFrom} {(job.dateFrom || job.dateFrom) && '-'}{' '}
-    //                   {job.dateUntil}
-    //                 </h3>
-    //               </div>
-    //               <p>{job.location}</p>
-    //               <ul className='content'>
-    //                 {job.responsibilities.map(
-    //                   (responsibility) =>
-    //                     responsibility !== '' && (
-    //                       <li key={responsibility}>
-    //                         <p>&bull; {responsibility}</p>
-    //                       </li>
-    //                     )
-    //                 )}
-    //               </ul>
-    //             </div>
-    //           );
-    //         })}
-    //       </div>
-    //     )}
-    //   </div>
-    // </div>
   );
 }

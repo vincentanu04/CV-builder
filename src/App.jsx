@@ -160,8 +160,8 @@ const exampleFormData = {
     databases: ['Oracle', 'MongoDB(Mongoose)'],
     languages: ['JavaScript', 'TypeScript', 'Java', 'Python'],
     others: ['WSL2', 'Git', 'Agile', 'OOP'],
-    remarks: { remarks: 'Available from November 18, 2024 onwards' },
   },
+  remarks: { remarks: 'Available from November 18, 2024 onwards' },
 };
 
 function App() {
@@ -216,6 +216,9 @@ function App() {
     },
   });
 
+  console.log(SelectedFormComponent);
+  console.log(formType);
+
   return (
     <main>
       <div className='buttons-bar'>
@@ -253,7 +256,6 @@ function App() {
           />
         </Buttons>
       </div>
-      {console.log(formData)}
       <div className='form-container'>
         <SelectedFormComponent
           formValue={formData[formType]}
@@ -273,6 +275,7 @@ function App() {
           projects={displayedData.projects}
           additional={displayedData.additional}
           skills={displayedData.skills}
+          remarks={displayedData.remarks}
         />
       </PDFViewer>
     </main>
