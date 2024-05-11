@@ -9,6 +9,7 @@ import {
   ProjectsForm,
   AdditionalForm,
   SkillsForm,
+  RemarkForm,
 } from './components/Form/Form';
 import CV from './components/CV/CV';
 import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
@@ -59,6 +60,7 @@ const initialFormData = {
     },
   ],
   skills: { general: [''], databases: [''], languages: [''], others: [''] },
+  remarks: { remarks: '' },
 };
 
 const exampleFormData = {
@@ -158,6 +160,7 @@ const exampleFormData = {
     databases: ['Oracle', 'MongoDB(Mongoose)'],
     languages: ['JavaScript', 'TypeScript', 'Java', 'Python'],
     others: ['WSL2', 'Git', 'Agile', 'OOP'],
+    remarks: { remarks: 'Available from November 18, 2024 onwards' },
   },
 };
 
@@ -197,6 +200,7 @@ function App() {
       formComponent: AdditionalForm,
     },
     { id: 5, formType: 'skills', text: 'Skills', formComponent: SkillsForm },
+    { id: 6, formType: 'remarks', text: 'Remarks', formComponent: RemarkForm },
   ];
 
   const SelectedFormComponent = formsData[selectedButtonId].formComponent;
@@ -249,6 +253,7 @@ function App() {
           />
         </Buttons>
       </div>
+      {console.log(formData)}
       <div className='form-container'>
         <SelectedFormComponent
           formValue={formData[formType]}

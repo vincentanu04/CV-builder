@@ -458,3 +458,35 @@ export function SkillsForm({ formValue, onChange }) {
     </div>
   );
 }
+
+export function RemarkForm({ formValue, onChange }) {
+  const labels = {
+    remarks: 'Notice period',
+  };
+
+  const placeholders = {
+    remarks: 'Available from ..',
+  };
+  return (
+    <div className='form'>
+      <h2>Remarks</h2>
+      <hr />
+      {Object.keys(formValue).map((label) => (
+        <div key={label} className='input'>
+          <label htmlFor={label} placeholder={placeholders[label]}>
+            {labels[label]}
+          </label>
+          <input
+            type='text'
+            name={label}
+            value={formValue[label]}
+            placeholder={placeholders[label]}
+            onChange={(e) =>
+              onChange({ ...formValue, [label]: e.target.value })
+            }
+          />
+        </div>
+      ))}
+    </div>
+  );
+}

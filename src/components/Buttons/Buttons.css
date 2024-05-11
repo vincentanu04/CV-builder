@@ -51,7 +51,7 @@ button {
 
 .button {
   background: linear-gradient(45deg, var(--primary-clr), var(--accent-clr));
-  padding: 0.9em 2.25em;
+  padding: 0.75em 2.25em;
   border-radius: 2em;
   letter-spacing: 0.05em;
   color: #171717;
