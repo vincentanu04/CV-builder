@@ -67,7 +67,7 @@ const exampleFormData = {
   profile: {
     name: 'Vincent Tanuwidjaja',
     email: 'vincentanu04@gmail.com',
-    phoneNumber: '(60) 11 2832 3824',
+    phoneNumber: '(60)11-2660-3557',
     location: 'Subang Jaya, Malaysia',
     github: 'https://github.com/vincentanu04',
     linkedin: 'http://www.linkedin.com/in/vincent-tanuwidjaja',
@@ -78,7 +78,7 @@ const exampleFormData = {
     fromDate: '2022',
     toDate: '2024',
     titleOfStudy: "Bachelor's in Computer Science",
-    gpa: '3.8/4',
+    gpa: '',
     relevantCoursework: [
       'Collaborative engineering for web applications',
       'Databases using Oracle',
@@ -109,31 +109,50 @@ const exampleFormData = {
   projects: [
     {
       projectId: 1,
-      projectTitle: 'CV (Resume) Builder',
+      projectTitle: "Where's Waldo",
       projectDescription:
-        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs. In fact, this was used to generate this very resume.',
-      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
+        "A full-stack MERN web application offering Where's Waldo-style games, equipped with user accounts (authorization) and leaderboards",
+      projectTechStack: [
+        'React',
+        'TypeScript',
+        'Tailwind CSS',
+        'Express.js',
+        'REST APIs',
+        'MongoDB (Mongoose)',
+        'JWT',
+      ],
     },
     {
       projectId: 2,
       projectTitle: 'CV (Resume) Builder',
       projectDescription:
-        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
+        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs. In fact, it generated this very resume.',
       projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
     },
     {
       projectId: 3,
-      projectTitle: 'CV (Resume) Builder',
+      projectTitle: 'MembersOnly',
       projectDescription:
-        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
-      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
+        'An Express post-making web app with a primary focus on authentication and authorization, as well as database management using MongoDB.',
+      projectTechStack: [
+        'Passport.js',
+        'Node.js/Express.js',
+        'Pug/Jade',
+        'MongoDB',
+        'bcryptjs (password encryption)',
+      ],
     },
     {
       projectId: 4,
-      projectTitle: 'CV (Resume) Builder',
+      projectTitle: 'Collectify',
       projectDescription:
-        'A React web application that lets users input their details for creating and printing personalized resumes as PDFs, including this very resume.',
-      projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
+        'A simple inventory management app focusing on CRUD operations and backend deployment, powered by Express.js, MongoDB and the Pug templating engine.',
+      projectTechStack: [
+        'Node.js/Express.js',
+        'Pug/Jade',
+        'MongoDB',
+        'Deployment on Fly.io',
+      ],
     },
   ],
   additional: [

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Libre',
     fontSize: 9,
     lineHeight: 1.5,
-    letterSpacing: 0.3,
+    letterSpacing: 0.325,
     textAlign: 'justify',
   },
   header: {
@@ -198,9 +198,13 @@ export default function CV({
             <View style={styles.hr} />
             <View style={styles.sectionHeader}>
               <Text>{schoolName}</Text>
-              <Text
-                style={styles.sectionHeaderRight}
-              >{`${fromDate} - ${toDate}`}</Text>
+              <Text style={styles.sectionHeaderRight}>
+                {fromDate && toDate
+                  ? `${fromDate} - ${toDate}`
+                  : fromDate
+                  ? fromDate
+                  : toDate}
+              </Text>
             </View>
             <View style={styles.educationContent}>
               <Item style={{ marginBottom: 40 }}>
@@ -270,7 +274,9 @@ export default function CV({
             >
               {projects.map((proj, i) => (
                 <View key={i}>
-                  <View>
+                  <View
+                    style={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                  >
                     <ItemWithTitle
                       title={proj.projectTitle}
                       data={proj.projectDescription}
