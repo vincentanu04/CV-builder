@@ -395,9 +395,10 @@ export function AdditionalForm({ formValue, onChange }) {
                     name={label}
                     value={formValue[i][label]}
                     placeholder={placeholders[label]}
-                    onChange={(e) =>
-                      onChange({ ...formValue, [label]: e.target.value })
-                    }
+                    onChange={(e) => {
+                      // formValue[i][label]: e.target.value
+                      onChange({ ...formValue, [label]: e.target.value });
+                    }}
                   />
                 </div>
               )
