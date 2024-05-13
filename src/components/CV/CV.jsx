@@ -128,6 +128,7 @@ export default function CV({
     relevantCoursework,
   } = education;
 
+  console.log(education);
   return (
     <Document
       title={name ? `${name}_resume` : 'resume'}

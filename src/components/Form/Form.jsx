@@ -1,6 +1,8 @@
 import './Form.css';
 import { Button } from '../Buttons/Buttons';
 import Buttons from '../Buttons/Buttons';
+import MultipleInputAndParent from './components/MultipleInputAndParent';
+import MultipleInput from './components/MultipleInput';
 
 export function ProfileForm({ formValue, onChange }) {
   const labels = {
@@ -75,18 +77,14 @@ export function EducationForm({ formValue, onChange }) {
             {labels[label]}
           </label>
           {Array.isArray(formValue[label]) ? (
-            formValue[label].map((value, index) => (
-              <input
-                key={index}
-                type='text'
-                name={label}
-                value={value}
-                placeholder={`${placeholders[label]} ${index + 1}`}
-                onChange={(e) =>
-                  onChange({ ...formValue, [label]: e.target.value })
-                }
-              />
-            ))
+            <MultipleInput
+              array={formValue[label]}
+              onChange={onChange}
+              label={labels[label]}
+              formValueKey={label}
+              placeholder={placeholders[label]}
+              formValue={formValue}
+            />
           ) : (
             <input
               type='text'
@@ -157,36 +155,14 @@ export function ExperienceForm({ formValue, onChange }) {
                     <label htmlFor={label} placeholder={placeholders[label]}>
                       {labels[label]}
                     </label>
-                    {job.responsibilities.map((responsibility, i2) => (
-                      <input
-                        key={i2}
-                        type='text'
-                        name={label}
-                        value={responsibility}
-                        placeholder={placeholders[label]}
-                        onChange={(e) => {
-                          const updatedFormValue = formValue.map(
-                            (job, index1) => {
-                              if (index1 === i1) {
-                                return {
-                                  ...job,
-                                  responsibilities: job.responsibilities.map(
-                                    (res, index2) => {
-                                      if (index2 === i2) {
-                                        return e.target.value;
-                                      }
-                                      return res;
-                                    }
-                                  ),
-                                };
-                              }
-                              return job;
-                            }
-                          );
-                          onChange(updatedFormValue);
-                        }}
-                      />
-                    ))}
+                    <MultipleInputAndParent
+                      array={job.responsibilities}
+                      onChange={onChange}
+                      label={label}
+                      placeholder={placeholders[label]}
+                      formValue={formValue}
+                      i1={i1}
+                    />
                   </div>
                 );
               } else {
@@ -304,6 +280,14 @@ export function ProjectsForm({ formValue, onChange }) {
                         }}
                       />
                     ))}
+                    <MultipleInputAndParent
+                      array={proj.projectTechStack}
+                      onChange={onChange}
+                      label={label}
+                      placeholder={placeholders[label]}
+                      formValue={formValue}
+                      i1={i1}
+                    />
                   </div>
                 );
               } else {
