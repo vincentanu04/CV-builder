@@ -1,8 +1,8 @@
 const MultipleInputAndParent = ({
   array,
   onChange,
-  label,
   placeholder,
+  formValueKey,
   formValue,
   i1,
 }) => {
@@ -10,23 +10,23 @@ const MultipleInputAndParent = ({
     <input
       key={i2}
       type='text'
-      name={label}
+      name={formValueKey}
       value={val}
       placeholder={placeholder}
       onChange={(e) => {
-        const updatedFormValue = formValue.map((job, index1) => {
+        const updatedFormValue = formValue.map((instance, index1) => {
           if (index1 === i1) {
             return {
-              ...job,
-              responsibilities: job.responsibilities.map((res, index2) => {
+              ...instance,
+              [formValueKey]: instance[formValueKey].map((val, index2) => {
                 if (index2 === i2) {
                   return e.target.value;
                 }
-                return res;
+                return val;
               }),
             };
           }
-          return job;
+          return instance;
         });
         onChange(updatedFormValue);
       }}

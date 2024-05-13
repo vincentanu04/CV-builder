@@ -80,7 +80,6 @@ export function EducationForm({ formValue, onChange }) {
             <MultipleInput
               array={formValue[label]}
               onChange={onChange}
-              label={labels[label]}
               formValueKey={label}
               placeholder={placeholders[label]}
               formValue={formValue}
@@ -139,6 +138,8 @@ export function ExperienceForm({ formValue, onChange }) {
     onChange(formValue);
   }
 
+  console.log(formValue);
+
   return (
     <div className='form scroll'>
       <h2>Your Work Experience</h2>
@@ -158,8 +159,8 @@ export function ExperienceForm({ formValue, onChange }) {
                     <MultipleInputAndParent
                       array={job.responsibilities}
                       onChange={onChange}
-                      label={label}
                       placeholder={placeholders[label]}
+                      formValueKey={label}
                       formValue={formValue}
                       i1={i1}
                     />
@@ -253,8 +254,8 @@ export function ProjectsForm({ formValue, onChange }) {
                     <MultipleInputAndParent
                       array={proj.projectTechStack}
                       onChange={onChange}
-                      label={label}
                       placeholder={placeholders[label]}
+                      formValueKey={label}
                       formValue={formValue}
                       i1={i1}
                     />
@@ -399,7 +400,7 @@ export function SkillsForm({ formValue, onChange }) {
           <MultipleInput
             array={formValue[label]}
             onChange={onChange}
-            label={labels[label]}
+            inputLabel={labels[label]}
             formValueKey={label}
             placeholder={placeholders[label]}
             formValue={formValue}

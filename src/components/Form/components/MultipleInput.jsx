@@ -1,7 +1,6 @@
 const MultipleInput = ({
   array,
   onChange,
-  label,
   placeholder,
   formValueKey,
   formValue,
@@ -10,7 +9,7 @@ const MultipleInput = ({
     <input
       key={index}
       type='text'
-      name={label}
+      name={formValueKey}
       value={value}
       placeholder={`${placeholder} ${index + 1}`}
       onChange={(e) => {
