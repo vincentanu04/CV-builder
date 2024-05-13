@@ -250,36 +250,6 @@ export function ProjectsForm({ formValue, onChange }) {
                     <label htmlFor={label} placeholder={placeholders[label]}>
                       {labels[label]}
                     </label>
-                    {proj.projectTechStack.map((tech, i2) => (
-                      <input
-                        key={i2}
-                        type='text'
-                        name={label}
-                        value={tech}
-                        placeholder={placeholders[label]}
-                        onChange={(e) => {
-                          const updatedFormValue = formValue.map(
-                            (proj, index1) => {
-                              if (index1 === i1) {
-                                return {
-                                  ...proj,
-                                  projectTechStack: proj.projectTechStack.map(
-                                    (res, index2) => {
-                                      if (index2 === i2) {
-                                        return e.target.value;
-                                      }
-                                      return res;
-                                    }
-                                  ),
-                                };
-                              }
-                              return proj;
-                            }
-                          );
-                          onChange(updatedFormValue);
-                        }}
-                      />
-                    ))}
                     <MultipleInputAndParent
                       array={proj.projectTechStack}
                       onChange={onChange}
@@ -421,23 +391,19 @@ export function SkillsForm({ formValue, onChange }) {
     <div className='form scroll'>
       <h2>Your Skills</h2>
       <hr />
-      {Object.entries(formValue).map(([label, value]) => (
+      {Object.keys(formValue).map((label) => (
         <div key={label} className='input'>
           <label htmlFor={label} placeholder={placeholders[label]}>
             {labels[label]}
           </label>
-          {value.map((skill, i) => (
-            <input
-              key={i}
-              type='text'
-              name={label}
-              value={skill}
-              placeholder={placeholders[label]}
-              onChange={(e) =>
-                onChange({ ...formValue, [label]: e.target.value })
-              }
-            />
-          ))}
+          <MultipleInput
+            array={formValue[label]}
+            onChange={onChange}
+            label={labels[label]}
+            formValueKey={label}
+            placeholder={placeholders[label]}
+            formValue={formValue}
+          />
         </div>
       ))}
     </div>
