@@ -32,14 +32,20 @@ button {
   color: inherit;
 }
 
+a,
+button {
+  cursor: pointer;
+}
+
 main {
   display: flex;
 }
 
 .toolbar {
-  padding: 0.5em;
+  padding: 0.5em 1em;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .downloadButtons {
@@ -50,7 +56,6 @@ main {
 .downloadButton {
   background: inherit;
   color: var(--text-clr);
-  text-decoration: none;
   display: flex;
   align-items: center;
   border-radius: 3px;
@@ -69,4 +74,13 @@ main {
 
 .downloadButton:hover .svg {
   fill: var(--accent-clr);
+}
+
+.importJSON {
+  background: inherit;
+  align-self: center;
+}
+
+.importJSON:hover {
+  color: var(--accent-clr);
 }

@@ -273,21 +273,15 @@ function App() {
           <Button
             text='Example'
             onClick={() => {
-              setFormData((prevData) => {
-                const newData = exampleFormData;
-                setDisplayedData(newData);
-                return newData;
-              });
+              setFormData(exampleFormData);
+              setDisplayedData(exampleFormData);
             }}
           />
           <Button
             text='Reset'
             onClick={() => {
-              setFormData((prevData) => {
-                const newData = initialFormData;
-                setDisplayedData(newData);
-                return newData;
-              });
+              setFormData(initialFormData);
+              setDisplayedData(initialFormData);
             }}
           />
         </Buttons>
@@ -345,6 +339,34 @@ function App() {
               <p>JSON</p>
             </button>
           </div>
+          <button
+            className='importJSON'
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+
+              input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const jsonString = event.target.result;
+                    const json = JSON.parse(jsonString);
+
+                    setFormData(json);
+                    setDisplayedData(json);
+                  };
+
+                  reader.readAsText(file);
+                }
+              });
+
+              input.click();
+            }}
+          >
+            IMPORT FROM JSON
+          </button>
         </div>
         <PDFViewer style={styles.viewer} showToolbar={false}>
           {CVComponent}
