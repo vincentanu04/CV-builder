@@ -9,7 +9,6 @@ export function ProfileForm({ formValue, onChange }) {
     name: 'Full Name',
     email: 'Email',
     phoneNumber: 'Phone Number',
-    location: 'Location',
     github: 'Link to Github',
     linkedin: 'Link to LinkedIn',
   };
@@ -18,7 +17,6 @@ export function ProfileForm({ formValue, onChange }) {
     name: 'Vincent Tanuwidjaja',
     email: 'vincent@gmail.com',
     phoneNumber: '(60) 11 9987 2635',
-    location: 'Subang Jaya, Malaysia',
     github: 'https://github.com',
     linkedin: 'https://linkedin.com',
   };
@@ -49,7 +47,6 @@ export function ProfileForm({ formValue, onChange }) {
 export function EducationForm({ formValue, onChange }) {
   const labels = {
     schoolName: 'School Name',
-    // schoolLocation: 'Location',
     fromDate: 'Date (from)',
     toDate: 'Date (to)',
     titleOfStudy: 'Title of Study',
@@ -59,7 +56,6 @@ export function EducationForm({ formValue, onChange }) {
 
   const placeholders = {
     schoolName: 'Monash University Malaysia',
-    // schoolLocation: 'Subang Jaya, Malaysia',
     fromDate: '12/10/2022',
     toDate: '12/10/2024',
     titleOfStudy: "Bachelor's in Computer Science",
@@ -108,7 +104,6 @@ export function ExperienceForm({ formValue, onChange }) {
     responsibilities: 'Responsibilities',
     dateFrom: 'Date (from)',
     dateUntil: 'Date (until)',
-    location: 'Location',
   };
 
   const placeholders = {
@@ -117,14 +112,12 @@ export function ExperienceForm({ formValue, onChange }) {
     responsibilities: ['Writing new React components'],
     dateFrom: '15/11/2023',
     dateUntil: '23/02/2024',
-    location: 'Puchong, Malaysia',
   };
 
   function addJob() {
     formValue.push({
       jobId: formValue.length + 1,
       companyName: '',
-      location: '',
       positionTitle: '',
       responsibilities: [''],
       dateFrom: '',

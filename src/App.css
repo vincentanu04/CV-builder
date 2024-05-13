@@ -39,6 +39,11 @@ main {
 .toolbar {
   padding: 0.5em;
   display: flex;
+  justify-content: space-between;
+}
+
+.downloadButtons {
+  display: flex;
   gap: 0.75em;
 }
 

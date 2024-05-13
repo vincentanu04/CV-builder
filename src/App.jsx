@@ -19,13 +19,11 @@ const initialFormData = {
     name: '',
     email: '',
     phoneNumber: '',
-    location: '',
     github: '',
     linkedin: '',
   },
   education: {
     schoolName: '',
-    // schoolLocation: '',
     fromDate: '',
     toDate: '',
     titleOfStudy: '',
@@ -36,7 +34,6 @@ const initialFormData = {
     {
       jobId: 1,
       companyName: '',
-      location: '',
       positionTitle: '',
       responsibilities: [''],
       dateFrom: '',
@@ -68,13 +65,11 @@ const exampleFormData = {
     name: 'Vincent Tanuwidjaja',
     email: 'vincentanu04@gmail.com',
     phoneNumber: '(60)11-2660-3557',
-    location: 'Subang Jaya, Malaysia',
     github: 'https://github.com/vincentanu04',
     linkedin: 'http://www.linkedin.com/in/vincent-tanuwidjaja',
   },
   education: {
     schoolName: 'Monash University Malaysia',
-    // schoolLocation: 'Subang Jaya, Malaysia',
     fromDate: '2022',
     toDate: '2024',
     titleOfStudy: "Bachelor's in Computer Science",
@@ -92,7 +87,6 @@ const exampleFormData = {
     {
       jobId: 1,
       companyName: 'MHub Malaysia',
-      location: 'Puchong, Malaysia',
       positionTitle: 'Frontend Developer Intern',
       responsibilities: [
         'Created reusable React components and pages based of Figma designs using TypeScript for type safety and MUI for styling with customized CSS.',
@@ -188,9 +182,23 @@ function App() {
   const [formData, setFormData] = useState(initialFormData);
   const [displayedData, setDisplayedData] = useState(initialFormData);
 
-  function handleNavButtonClick(id) {
+  const handleNavButtonClick = (id) => {
     setSelectedButtonId(id);
-  }
+  };
+
+  const handleDownloadClick = () => {
+    const blob = new Blob([JSON.stringify(displayedData)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = displayedData.profile.name
+      ? `${displayedData.profile.name}_resume`
+      : 'resume';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   const formsData = [
     { id: 0, formType: 'profile', text: 'Profile', formComponent: ProfileForm },
@@ -299,16 +307,31 @@ function App() {
         style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
       >
         <div className='toolbar'>
-          <PDFDownloadLink
-            document={CVComponent}
-            fileName={
-              displayedData.profile.name
-                ? `${displayedData.profile.name}_resume`
-                : 'resume'
-            }
-            style={{ textDecoration: 'none' }}
-          >
-            <button className='downloadButton'>
+          <div className='downloadButtons'>
+            <PDFDownloadLink
+              document={CVComponent}
+              fileName={
+                displayedData.profile.name
+                  ? `${displayedData.profile.name}_resume`
+                  : 'resume'
+              }
+              style={{ textDecoration: 'none' }}
+            >
+              <button className='downloadButton'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='37.5'
+                  height='37.5'
+                  viewBox='0 0 20 20'
+                  className='svg'
+                >
+                  <path d='M17 12v5H3v-5H1v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z' />
+                  <path d='M10 15l5-6h-4V1H9v8H5l5 6z' />
+                </svg>
+                <p>PDF</p>
+              </button>
+            </PDFDownloadLink>
+            <button className='downloadButton' onClick={handleDownloadClick}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='37.5'
@@ -319,22 +342,9 @@ function App() {
                 <path d='M17 12v5H3v-5H1v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z' />
                 <path d='M10 15l5-6h-4V1H9v8H5l5 6z' />
               </svg>
-              <p>PDF</p>
+              <p>JSON</p>
             </button>
-          </PDFDownloadLink>
-          <button className='downloadButton'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='37.5'
-              height='37.5'
-              viewBox='0 0 20 20'
-              className='svg'
-            >
-              <path d='M17 12v5H3v-5H1v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z' />
-              <path d='M10 15l5-6h-4V1H9v8H5l5 6z' />
-            </svg>
-            <p>JSON</p>
-          </button>
+          </div>
         </div>
         <PDFViewer style={styles.viewer} showToolbar={false}>
           {CVComponent}
