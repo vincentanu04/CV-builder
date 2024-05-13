@@ -6,6 +6,11 @@
   gap: 0.25rem;
 }
 
+.multiple-input {
+  display: flex;
+  flex-direction: column;
+}
+
 input {
   background-color: var(--background-clr);
   border: none;
