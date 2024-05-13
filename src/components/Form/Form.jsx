@@ -138,8 +138,6 @@ export function ExperienceForm({ formValue, onChange }) {
     onChange(formValue);
   }
 
-  console.log(formValue);
-
   return (
     <div className='form scroll'>
       <h2>Your Work Experience</h2>
