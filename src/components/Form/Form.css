@@ -35,6 +35,8 @@ input:focus {
   height: 100vh;
   display: grid;
   place-items: center;
+  border-left: 1px solid rgb(54, 54, 54);
+  border-right: 1px solid rgb(54, 54, 54);
 }
 
 .form-container:has(.scroll) {
@@ -46,7 +48,7 @@ input:focus {
   flex-direction: column;
   justify-content: center;
   align-content: center;
-  padding: 4rem 6rem 4rem 2rem;
+  padding: 4em;
   gap: 1rem;
   width: 35vw;
 }

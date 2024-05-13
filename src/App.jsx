@@ -298,29 +298,44 @@ function App() {
       <div
         style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
       >
-        <PDFDownloadLink
-          document={CVComponent}
-          fileName={
-            displayedData.profile.name
-              ? `${displayedData.profile.name}_resume`
-              : 'resume'
-          }
-          style={{ textDecoration: 'none' }}
-        >
+        <div className='toolbar'>
+          <PDFDownloadLink
+            document={CVComponent}
+            fileName={
+              displayedData.profile.name
+                ? `${displayedData.profile.name}_resume`
+                : 'resume'
+            }
+            style={{ textDecoration: 'none' }}
+          >
+            <button className='downloadButton'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='37.5'
+                height='37.5'
+                viewBox='0 0 20 20'
+                className='svg'
+              >
+                <path d='M17 12v5H3v-5H1v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z' />
+                <path d='M10 15l5-6h-4V1H9v8H5l5 6z' />
+              </svg>
+              <p>PDF</p>
+            </button>
+          </PDFDownloadLink>
           <button className='downloadButton'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
-              width='40'
-              height='40'
+              width='37.5'
+              height='37.5'
               viewBox='0 0 20 20'
               className='svg'
             >
               <path d='M17 12v5H3v-5H1v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z' />
               <path d='M10 15l5-6h-4V1H9v8H5l5 6z' />
             </svg>
-            <p style={{ padding: '0.4rem' }}>Download</p>
+            <p>JSON</p>
           </button>
-        </PDFDownloadLink>
+        </div>
         <PDFViewer style={styles.viewer} showToolbar={false}>
           {CVComponent}
         </PDFViewer>
