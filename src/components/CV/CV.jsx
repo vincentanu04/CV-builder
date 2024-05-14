@@ -248,13 +248,19 @@ export default function CV({
                   </Text>
                   <Text>{exp.companyName}</Text>
                   <Text style={styles.sectionHeaderRight}>
-                    {exp.dateFrom} - {exp.dateUntil}
+                    {exp.dateFrom} {(exp.dateFrom || exp.dateUntil) && ' - '}{' '}
+                    {exp.dateUntil}
                   </Text>
                 </View>
-                <View style={styles.jobContent}>
-                  {exp.responsibilities.map((resp, i) => (
-                    <Item key={i}>{resp}</Item>
-                  ))}
+                <View
+                  style={{
+                    ...styles.jobContent,
+                    ...(!exp.companyName ? { marginTop: 20 } : {}),
+                  }}
+                >
+                  {exp.responsibilities.map(
+                    (resp, i) => resp && <Item key={i}>{resp}</Item>
+                  )}
                 </View>
               </View>
             ))}
