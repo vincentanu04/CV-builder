@@ -24,7 +24,7 @@ export const ItemWithTitle = ({ title, data, noBulletpoint = false }) => (
     </Text>
     <Text style={{ display: 'flex', width: '100%' }}>
       <Text style={styles.boldText}>{title}</Text>
-      <Text>:{'  '}</Text>
+      {title && data && <Text>:{'  '}</Text>}
       <Text style={styles.normalText}>{data}</Text>
     </Text>
   </View>

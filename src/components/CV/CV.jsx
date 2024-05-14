@@ -295,11 +295,13 @@ export default function CV({
                       title={proj.projectTitle}
                       data={proj.projectDescription}
                     />
-                    <ItemWithTitle
-                      title={'Tech stack'}
-                      data={`${proj.projectTechStack.join(', ')}.`}
-                      noBulletpoint
-                    />
+                    {proj.projectTechStack.some((v) => v !== '') && (
+                      <ItemWithTitle
+                        title={'Tech stack'}
+                        data={`${proj.projectTechStack.join(', ')}.`}
+                        noBulletpoint
+                      />
+                    )}
                   </View>
                 </View>
               ))}

@@ -115,20 +115,22 @@ export function ExperienceForm({ formValue, onChange }) {
   };
 
   function addJob() {
-    formValue.push({
-      jobId: formValue.length + 1,
+    const newFormValue = [...formValue];
+    newFormValue.push({
+      jobId: newFormValue.length + 1,
       companyName: '',
       positionTitle: '',
       responsibilities: [''],
       dateFrom: '',
       dateUntil: '',
     });
-    onChange(formValue);
+    onChange(newFormValue);
   }
 
   function removeJob() {
-    formValue.pop();
-    onChange(formValue);
+    const newFormValue = [...formValue];
+    newFormValue.pop();
+    onChange(newFormValue);
   }
 
   return (
@@ -212,18 +214,20 @@ export function ProjectsForm({ formValue, onChange }) {
   };
 
   function addProject() {
-    formValue.push({
-      projectId: formValue.length + 1,
+    const newFormValue = [...formValue];
+    newFormValue.push({
+      projectId: newFormValue.length + 1,
       projectTitle: '',
       projectDescription: '',
       projectTechStack: [''],
     });
-    onChange(formValue);
+    onChange(newFormValue);
   }
 
   function removeProject() {
-    formValue.pop();
-    onChange(formValue);
+    const newFormValue = [...formValue];
+    newFormValue.pop();
+    onChange(newFormValue);
   }
 
   return (
@@ -308,19 +312,21 @@ export function AdditionalForm({ formValue, onChange }) {
     additionalDate: '2021',
   };
 
-  function addProject() {
-    formValue.push({
+  function addAdditional() {
+    const newFormValue = [...formValue];
+    newFormValue.push({
       additionalId: formValue.length + 1,
       additionalTitle: '',
       additionalDescription: '',
       additionalDate: '',
     });
-    onChange(formValue);
+    onChange(newFormValue);
   }
 
-  function removeProject() {
-    formValue.pop();
-    onChange(formValue);
+  function removeAdditional() {
+    const newFormValue = [...formValue];
+    newFormValue.pop();
+    onChange(newFormValue);
   }
 
   return (
@@ -353,11 +359,11 @@ export function AdditionalForm({ formValue, onChange }) {
         </div>
       ))}
       <Buttons>
-        <Button text='Add' onClick={() => addProject()} />
+        <Button text='Add' onClick={() => addAdditional()} />
         <Button
           text='Remove'
           disabled={formValue.length > 1 ? false : true}
-          onClick={() => removeProject()}
+          onClick={() => removeAdditional()}
         />
       </Buttons>
     </div>
