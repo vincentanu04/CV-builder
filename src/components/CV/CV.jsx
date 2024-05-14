@@ -139,7 +139,7 @@ export default function CV({
         <View
           style={{
             ...styles.header,
-            marginBottom: `${linkedin === '' && github === '' && 20}`,
+            marginBottom: `${!linkedin && !github && 20}`,
           }}
         >
           <Text style={styles.phoneNumber}>{phoneNumber}</Text>
@@ -156,7 +156,7 @@ export default function CV({
             paddingRight: 5,
           }}
         >
-          {github !== '' && (
+          {github && (
             <Link href={github}>
               <Svg
                 width='30'
@@ -174,7 +174,7 @@ export default function CV({
               </Svg>
             </Link>
           )}
-          {linkedin !== '' && (
+          {linkedin && (
             <Link href={linkedin}>
               <Svg
                 width='27'
@@ -213,10 +213,12 @@ export default function CV({
               </Text>
             </View>
             <View style={styles.educationContent}>
-              <Item style={{ marginBottom: 40 }}>
-                {titleOfStudy}
-                {gpa && `  (${gpa})`}.
-              </Item>
+              {titleOfStudy && (
+                <Item style={{ marginBottom: 40 }}>
+                  {titleOfStudy}
+                  {gpa && `  (${gpa})`}.
+                </Item>
+              )}
               {relevantCoursework.some((v) => v !== '') && (
                 <Item style={styles.justify}>
                   Relevant coursework:{'  '}
