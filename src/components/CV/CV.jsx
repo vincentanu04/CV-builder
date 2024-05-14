@@ -136,7 +136,12 @@ export default function CV({
       pageMode='fullScreen'
     >
       <Page size='A4' orientation='portrait' style={styles.page}>
-        <View style={styles.header}>
+        <View
+          style={{
+            ...styles.header,
+            marginBottom: `${linkedin === '' && github === '' && 20}`,
+          }}
+        >
           <Text style={styles.phoneNumber}>{phoneNumber}</Text>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.email}>{email}</Text>
