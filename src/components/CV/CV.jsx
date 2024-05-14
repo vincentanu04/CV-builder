@@ -344,19 +344,27 @@ export default function CV({
             <Text style={styles.sectionTitle}>Technical Skills</Text>
             <View style={styles.hr} />
             <View style={styles.sectionContent}>
-              <Item>{skills.general.join(', ')}.</Item>
-              <ItemWithTitle
-                title={'Databases'}
-                data={`${skills.databases.join(', ')}.`}
-              />
-              <ItemWithTitle
-                title={'Languages'}
-                data={`${skills.languages.join(', ')}.`}
-              />
-              <ItemWithTitle
-                title={'Others'}
-                data={`${skills.others.join(', ')}.`}
-              />
+              {skills.general.some((skill) => skill !== '') && (
+                <Item>{skills.general.join(', ')}.</Item>
+              )}
+              {skills.databases.some((skill) => skill !== '') && (
+                <ItemWithTitle
+                  title={'Databases'}
+                  data={`${skills.databases.join(', ')}.`}
+                />
+              )}
+              {skills.languages.some((skill) => skill !== '') && (
+                <ItemWithTitle
+                  title={'Languages'}
+                  data={`${skills.languages.join(', ')}.`}
+                />
+              )}
+              {skills.others.some((skill) => skill !== '') && (
+                <ItemWithTitle
+                  title={'Others'}
+                  data={`${skills.others.join(', ')}.`}
+                />
+              )}
             </View>
           </View>
         )}
