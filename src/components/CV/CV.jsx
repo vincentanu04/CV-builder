@@ -139,7 +139,7 @@ export default function CV({
         <View
           style={{
             ...styles.header,
-            marginBottom: `${!linkedin && !github && 20}`,
+            marginBottom: `${!linkedin && !github ? 20 : 0}`,
           }}
         >
           <Text style={styles.phoneNumber}>{phoneNumber}</Text>
@@ -329,7 +329,9 @@ export default function CV({
               {additional.map((exp, i) => (
                 <View key={i}>
                   <ItemWithTitle
-                    title={`${exp.additionalTitle} (${exp.additionalDate})`}
+                    title={`${exp.additionalTitle} ${
+                      exp.additionalDate && `(${exp.additionalDate})`
+                    }`}
                     data={exp.additionalDescription}
                   />
                 </View>

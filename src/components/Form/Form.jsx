@@ -333,8 +333,8 @@ export function AdditionalForm({ formValue, onChange }) {
     <div className='form scroll'>
       <h2>Your Additional Experience</h2>
       <hr />
-      {formValue.map((exp, i) => (
-        <div key={i} className='job-form'>
+      {formValue.map((exp, i1) => (
+        <div key={i1} className='job-form'>
           {Object.keys(exp).map(
             (label) =>
               label !== 'additionalId' && (
@@ -345,17 +345,24 @@ export function AdditionalForm({ formValue, onChange }) {
                   <input
                     type='text'
                     name={label}
-                    value={formValue[i][label]}
+                    value={formValue[i1][label]}
                     placeholder={placeholders[label]}
                     onChange={(e) => {
-                      // formValue[i][label]: e.target.value
-                      onChange({ ...formValue, [label]: e.target.value });
+                      const updatedFormValue = formValue.map(
+                        (additional, i2) => {
+                          if (i2 == i1) {
+                            return { ...additional, [label]: e.target.value };
+                          }
+                          return additional;
+                        }
+                      );
+                      onChange(updatedFormValue);
                     }}
                   />
                 </div>
               )
           )}
-          {i !== formValue.length - 1 && <hr className='job-hr' />}
+          {i1 !== formValue.length - 1 && <hr className='job-hr' />}
         </div>
       ))}
       <Buttons>
