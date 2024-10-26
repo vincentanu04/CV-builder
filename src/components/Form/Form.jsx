@@ -299,6 +299,89 @@ export function ProjectsForm({ formValue, onChange }) {
   );
 }
 
+export function AwardsForm({ formValue, onChange }) {
+  const labels = {
+    awardTitle: 'Award Title',
+    awardIssuer: 'Issuer',
+    awardDescription: 'Description',
+    awardDate: 'Date',
+  };
+
+  const placeholders = {
+    awardTitle: 'Award Title',
+    awardIssuer: 'Monash University Malaysia',
+    awardDescription: 'Some award..',
+    awardDate: '2024',
+  };
+
+  function addAward() {
+    const newFormValue = [...formValue];
+    newFormValue.push({
+      awardId: formValue.length + 1,
+      awardTitle: '',
+      awardIssuer: '',
+      awardDescription: '',
+      awardDate: '',
+    });
+    onChange(newFormValue);
+  }
+
+  function removeAward() {
+    const newFormValue = [...formValue];
+    newFormValue.pop();
+    onChange(newFormValue);
+  }
+
+  return (
+    <div className='form scroll'>
+      <h2>Awards & Honours</h2>
+      <hr />
+      {formValue.map((award, i1) => (
+        <div key={i1} className='job-form'>
+          {Object.keys(award).map((label) => {
+            console.log(award);
+            return (
+              label !== 'awardId' && (
+                <div key={label} className='input'>
+                  <label htmlFor={label} placeholder={placeholders[label]}>
+                    {labels[label]}
+                  </label>
+                  <input
+                    type='text'
+                    name={label}
+                    value={formValue[i1][label]}
+                    placeholder={placeholders[label]}
+                    onChange={(e) => {
+                      const updatedFormValue = formValue.map(
+                        (additional, i2) => {
+                          if (i2 == i1) {
+                            return { ...additional, [label]: e.target.value };
+                          }
+                          return additional;
+                        }
+                      );
+                      onChange(updatedFormValue);
+                    }}
+                  />
+                </div>
+              )
+            );
+          })}
+          {i1 !== formValue.length - 1 && <hr className='job-hr' />}
+        </div>
+      ))}
+      <Buttons>
+        <Button text='Add' onClick={() => addAward()} />
+        <Button
+          text='Remove'
+          disabled={formValue.length > 1 ? false : true}
+          onClick={() => removeAward()}
+        />
+      </Buttons>
+    </div>
+  );
+}
+
 export function AdditionalForm({ formValue, onChange }) {
   const labels = {
     additionalTitle: 'Experience Title',

@@ -114,6 +114,7 @@ export default function CV({
   education,
   experience,
   projects,
+  awards,
   additional,
   skills,
   remarks,
@@ -303,6 +304,35 @@ export default function CV({
                       />
                     )}
                   </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+        {awards.some((award) =>
+          Object.entries(award).some(
+            ([key, value]) => key !== 'awardId' && value !== ''
+          )
+        ) && (
+          <View>
+            <Text style={styles.sectionTitle}>Awards</Text>
+            <View style={styles.hr} />
+            <View
+              style={{
+                ...styles.sectionContent,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 5,
+              }}
+            >
+              {awards.map((award, i) => (
+                <View key={i}>
+                  <ItemWithTitle
+                    title={`${award.awardTitle} ${
+                      award.awardDate && `(${award.awardDate})`
+                    }`}
+                    data={`${award.awardDescription}. Issued by ${award.awardIssuer}`}
+                  />
                 </View>
               ))}
             </View>

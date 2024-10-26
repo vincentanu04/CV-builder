@@ -10,6 +10,7 @@ import {
   AdditionalForm,
   SkillsForm,
   RemarkForm,
+  AwardsForm,
 } from './components/Form/Form';
 import CV from './components/CV/CV';
 import { PDFDownloadLink, PDFViewer, StyleSheet } from '@react-pdf/renderer';
@@ -46,6 +47,15 @@ const initialFormData = {
       projectTitle: '',
       projectDescription: '',
       projectTechStack: [''],
+    },
+  ],
+  awards: [
+    {
+      awardId: 1,
+      awardTitle: '',
+      awardIssuer: '',
+      awardDescription: '',
+      awardDate: '',
     },
   ],
   additional: [
@@ -123,30 +133,14 @@ const exampleFormData = {
         'A React web application that lets users input their details for creating and printing personalized resumes as PDFs. In fact, it generated this very resume.',
       projectTechStack: ['React', 'npm (react-pdf)', 'Vercel for deployment'],
     },
+  ],
+  awards: [
     {
-      projectId: 3,
-      projectTitle: 'MembersOnly',
-      projectDescription:
-        'An Express post-making web app with a primary focus on authentication and authorization, as well as database management using MongoDB.',
-      projectTechStack: [
-        'Passport.js',
-        'Node.js/Express.js',
-        'Pug/Jade',
-        'MongoDB',
-        'bcryptjs (password encryption)',
-      ],
-    },
-    {
-      projectId: 4,
-      projectTitle: 'Collectify',
-      projectDescription:
-        'A simple inventory management app focusing on CRUD operations and backend deployment, powered by Express.js, MongoDB and the Pug templating engine.',
-      projectTechStack: [
-        'Node.js/Express.js',
-        'Pug/Jade',
-        'MongoDB',
-        'Deployment on Fly.io',
-      ],
+      awardId: 1,
+      awardTitle: '3rd Place, Final Year Project Award',
+      awardIssuer: 'Monash University Malaysia',
+      awardDescription: 'Created a mobile app',
+      awardDate: '2024',
     },
   ],
   additional: [
@@ -222,12 +216,18 @@ function App() {
     },
     {
       id: 4,
+      formType: 'awards',
+      text: 'Awards',
+      formComponent: AwardsForm,
+    },
+    {
+      id: 5,
       formType: 'additional',
       text: 'Additional experience',
       formComponent: AdditionalForm,
     },
-    { id: 5, formType: 'skills', text: 'Skills', formComponent: SkillsForm },
-    { id: 6, formType: 'remarks', text: 'Remarks', formComponent: RemarkForm },
+    { id: 6, formType: 'skills', text: 'Skills', formComponent: SkillsForm },
+    { id: 7, formType: 'remarks', text: 'Remarks', formComponent: RemarkForm },
   ];
 
   const SelectedFormComponent = formsData[selectedButtonId].formComponent;
@@ -243,12 +243,14 @@ function App() {
     },
   });
 
+  console.log(displayedData);
   const CVComponent = (
     <CV
       profile={displayedData.profile}
       education={displayedData.education}
       experience={displayedData.experience}
       projects={displayedData.projects}
+      awards={displayedData.awards}
       additional={displayedData.additional}
       skills={displayedData.skills}
       remarks={displayedData.remarks}
