@@ -20,6 +20,7 @@ import { ItemWithTitle } from './components/ItemWithTitle';
 const styles = StyleSheet.create({
   page: {
     padding: '45',
+    paddingBottom: '30',
     fontFamily: 'Libre',
     fontSize: 9,
     lineHeight: 1.5,
@@ -331,7 +332,9 @@ export default function CV({
                     title={`${award.awardTitle} ${
                       award.awardDate && `(${award.awardDate})`
                     }`}
-                    data={`${award.awardDescription}. Issued by ${award.awardIssuer}`}
+                    data={`${award.awardDescription}. ${
+                      award.awardIssuer && `Issued by ${award.awardIssuer}.`
+                    } `}
                   />
                 </View>
               ))}
