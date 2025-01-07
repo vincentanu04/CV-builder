@@ -133,6 +133,7 @@ main {
     gap: 0.5rem;
     max-width: 100%;
   }
+
   .form-buttons {
     display: flex;
     overflow-x: auto; /* Change scroll to auto for better compatibility */
@@ -216,7 +217,6 @@ main {
   .back-button {
     align-self: center;
     margin: 1rem;
-    margin-bottom: calc(1rem + 15px);
   }
 
   .toolbar {
