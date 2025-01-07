@@ -102,8 +102,6 @@ function App() {
     />
   );
 
-  console.log(isFileVisibleMobile);
-
   return (
     <main>
       <div className='buttons-bar'>
@@ -157,7 +155,7 @@ function App() {
           onClick={() => {
             setFormData(exampleFormData);
             setDisplayedData(exampleFormData);
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 500) {
               // For mobile, only show the file div when Create is pressed
               setIsFileVisibleMobile(true);
             }
@@ -167,7 +165,7 @@ function App() {
           text='Create'
           onClick={() => {
             setDisplayedData(formData);
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 500) {
               // For mobile, only show the file div when Create is pressed
               setIsFileVisibleMobile(true);
             }

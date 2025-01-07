@@ -90,7 +90,7 @@ main {
 }
 
 /* Mobile Styles */
-@media (max-width: 768px) {
+@media (max-width: 500px) {
   html,
   body {
     margin: 0;
@@ -132,12 +132,14 @@ main {
     gap: 0.5rem;
     max-width: 100%;
   }
-
   .form-buttons {
-    overflow-x: scroll;
-    text-wrap: nowrap;
+    display: flex;
+    overflow-x: auto; /* Change scroll to auto for better compatibility */
+    white-space: nowrap; /* Ensure no wrapping */
     gap: 0.75rem;
     padding-bottom: 5px;
+    position: relative; /* Ensure relative positioning for the pseudo-element */
+    -webkit-overflow-scrolling: touch; /* Enable momentum scrolling in Safari */
   }
 
   .form-buttons::after {
@@ -184,6 +186,7 @@ main {
     height: calc(
       100% - 75px
     ) !important; /* Subtract the height of the fixed action buttons */
+    border: none;
   }
 
   .form {
@@ -202,8 +205,6 @@ main {
     width: 100vw !important;
     height: 100vh !important;
     z-index: 1000 !important; /* Ensure it appears above other elements */
-    justify-content: center !important;
-    align-items: center !important;
   }
 
   .file.show {
@@ -213,6 +214,7 @@ main {
   .back-button {
     align-self: center;
     margin: 1rem;
+    margin-bottom: calc(1rem + 15px);
   }
 
   .toolbar {
