@@ -88,7 +88,6 @@ function App() {
     },
   });
 
-  console.log(displayedData);
   const CVComponent = (
     <CV
       profile={displayedData.profile}
