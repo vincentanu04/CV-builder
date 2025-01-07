@@ -138,6 +138,35 @@ function App() {
           />
         </Buttons>
       </div>
+      {/* only on mobile */}
+      <button
+        className='importJSON hide-on-desktop'
+        onClick={() => {
+          const input = document.createElement('input');
+          input.type = 'file';
+
+          input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const jsonString = event.target.result;
+                const json = JSON.parse(jsonString);
+
+                setFormData(json);
+                setDisplayedData(json);
+              };
+
+              reader.readAsText(file);
+            }
+          });
+
+          input.click();
+        }}
+      >
+        IMPORT FROM JSON
+      </button>
       <div className='form-container'>
         <SelectedFormComponent
           formValue={formData[formType]}
@@ -223,7 +252,7 @@ function App() {
             </button>
           </div>
           <button
-            className='importJSON'
+            className='importJSON hide-on-mobile'
             onClick={() => {
               const input = document.createElement('input');
               input.type = 'file';
