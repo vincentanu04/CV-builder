@@ -1,12 +1,16 @@
 import './Buttons.css';
 
-export default function Buttons({ children }) {
-  return <div className='buttons'>{children}</div>;
+export default function Buttons({ children, className }) {
+  return <div className={`buttons ${className}`}>{children}</div>;
 }
 
-export function Button({ text, onClick, disabled }) {
+export function Button({ text, onClick, disabled, className }) {
   return (
-    <button className='button' onClick={onClick} disabled={disabled}>
+    <button
+      className={`button ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {text}
     </button>
   );

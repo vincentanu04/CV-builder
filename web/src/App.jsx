@@ -20,6 +20,7 @@ function App() {
   const [selectedButtonId, setSelectedButtonId] = useState(0);
   const [formData, setFormData] = useState(initialFormData);
   const [displayedData, setDisplayedData] = useState(initialFormData);
+  const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
 
   const handleNavButtonClick = (id) => {
     setSelectedButtonId(id);
@@ -101,10 +102,12 @@ function App() {
     />
   );
 
+  console.log(isFileVisibleMobile);
+
   return (
     <main>
       <div className='buttons-bar'>
-        <Buttons>
+        <Buttons className='form-buttons'>
           {formsData.map((button) => (
             <NavButton
               key={button.id}
@@ -114,8 +117,13 @@ function App() {
             />
           ))}
         </Buttons>
-        <Button text='Create' onClick={() => setDisplayedData(formData)} />
-        <Buttons>
+        <Buttons className='action-buttons hide-on-mobile'>
+          <Button
+            text='Create'
+            onClick={() => {
+              setDisplayedData(formData);
+            }}
+          />
           <Button
             text='Example'
             onClick={() => {
@@ -143,8 +151,39 @@ function App() {
           }
         />
       </div>
+      <Buttons className='action-buttons hide-on-desktop'>
+        <Button
+          text='Example'
+          onClick={() => {
+            setFormData(exampleFormData);
+            setDisplayedData(exampleFormData);
+            if (window.innerWidth <= 768) {
+              // For mobile, only show the file div when Create is pressed
+              setIsFileVisibleMobile(true);
+            }
+          }}
+        />
+        <Button
+          text='Create'
+          onClick={() => {
+            setDisplayedData(formData);
+            if (window.innerWidth <= 768) {
+              // For mobile, only show the file div when Create is pressed
+              setIsFileVisibleMobile(true);
+            }
+          }}
+        />
+        <Button
+          text='Reset'
+          onClick={() => {
+            setFormData(initialFormData);
+            setDisplayedData(initialFormData);
+          }}
+        />
+      </Buttons>
       <div
         style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
+        className={`file ${isFileVisibleMobile ? 'show' : ''}`}
       >
         <div className='toolbar'>
           <div className='downloadButtons'>
@@ -217,6 +256,13 @@ function App() {
         <PDFViewer style={styles.viewer} showToolbar={false}>
           {CVComponent}
         </PDFViewer>
+        <Button
+          className='hide-on-desktop back-button'
+          text='Back'
+          onClick={() => {
+            setIsFileVisibleMobile(false);
+          }}
+        />
       </div>
     </main>
   );
