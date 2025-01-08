@@ -6,8 +6,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<LandingPage />} />
-        <Route path='/resume' element={<ResumeForm />} />
+        <Route path='/' element={<ResumeForm />} />
       </Routes>
     </Router>
   );
