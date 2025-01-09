@@ -65,7 +65,7 @@ input:focus {
   height: 100vh;
 }
 
-h2 {
+.form h2 {
   color: var(--accent-clr);
 }
 
