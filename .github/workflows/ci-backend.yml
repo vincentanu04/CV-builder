@@ -24,17 +24,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd server
           go mod tidy
 
       - name: Run tests
         run: |
-          cd server
-          go test -v ./...
+          go test -v ./server/...
 
       - name: Run linter
         run: |
-          cd server
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
           golangci-lint run
 
