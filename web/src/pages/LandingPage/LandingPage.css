@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+
+.page-container {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+}
+
+.landing-card {
+  flex: 1;
+  display: flex; /* Enable Flexbox on this element */
+  flex-direction: column; /* Ensure the content is stacked vertically */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+.login-card {
+  margin: 4em;
+  background: white;
+  color: black !important;
+  font-family: 'Libre Baskerville', Times, serif;
+  padding: 4em;
+  border-radius: 0.1rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 12px 0 rgba(0, 0, 0, 0.2);
+  height: fit-content;
+}
+
+.login-card * {
+  background: white;
+}
+
+.login-card-title {
+  font-size: 1.25em;
+  margin-bottom: 1.75rem;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75em; /* Spacing between lines and "OR" */
+  margin-block: 0.8em;
+  margin-top: 1em;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 0.1px;
+  background: black; /* Adjust line color */
+}
+
+.or-divider span {
+  padding: 0 5px; /* Add some space around "OR" */
+  color: black; /* Text color */
+  font-size: 0.6em;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.input-container label {
+  font-size: 0.6em;
+}
+
+.input-container input {
+  border: none;
+  border: 1px solid rgb(69, 69, 69);
+  padding: 0.25rem 0.5rem;
+  outline: none;
+  transition: border-bottom 0.4s ease;
+  height: 2rem;
+  font-size: 0.6em;
+  color: black;
+}
+
+input:focus {
+  border: 1px solid var(--accent-clr);
+}
+
+.input-container-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.login-button {
+  border: 1.4px solid black;
+  background: white;
+  width: 100%;
+  padding: 0.6em;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-bottom: 1em;
+  color: white;
+  background: black;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px; /* Smooth edges */
+  transition: all 0.3s ease; /* Smooth hover transitions */
+}
+
+.login-button:hover {
+  box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+}
+
+.no-account {
+  font-size: 0.5em;
+  justify-self: center;
+  color: darkslategray;
+}
+
+.no-account a {
+  color: rgb(77, 5, 115);
+}
+
+.forgot-password {
+  text-align: right;
+  display: block;
+  font-size: 0.5em;
+  margin-top: 0.5em;
+  color: rgb(77, 5, 115);
+  margin-top: 1em;
+}
+
+.error-message {
+  font-size: 0.5em;
+  color: red;
+  margin-bottom: 1.5em;
+  margin-top: 0.5em;
+  height: 0.5em;
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    margin: 2em;
+    padding: 2.5em;
+  }
+}

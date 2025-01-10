@@ -11,6 +11,7 @@
     "preinstall": "npx npm-force-resolutions"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "@react-pdf/renderer": "3.4.2",
     "npm-force-resolutions": "^0.0.10",
     "path": "^0.12.7",
