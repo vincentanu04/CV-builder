@@ -6,12 +6,12 @@ import (
 	"strings"
 )
 
-type LoginRequest struct {
+type AuthRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 } 
 
-func sanitizeLoginRequest (req *LoginRequest) error {
+func sanitizeAuthRequest (req *AuthRequest) error {
 	req.Email = strings.TrimSpace(req.Email)
 	req.Password = strings.TrimSpace(req.Password)
 
@@ -26,7 +26,7 @@ func sanitizeLoginRequest (req *LoginRequest) error {
 }
 
 func LoginHandler (w http.ResponseWriter, r *http.Request) {
-	loginRequest := LoginRequest{}
+	loginRequest := AuthRequest{}
 
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
@@ -34,9 +34,9 @@ func LoginHandler (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = sanitizeLoginRequest(&loginRequest)
+	err = sanitizeAuthRequest(&loginRequest)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -46,4 +46,25 @@ func LoginHandler (w http.ResponseWriter, r *http.Request) {
 	// check if hashed pwd associated with that user matches request password
 
 	// if match, give token to db and return successful
+}
+
+func RegisterHandler (w http.ResponseWriter, r *http.Request) {
+	registerRequest := AuthRequest{}
+
+	err := json.NewDecoder(r.Body).Decode(&registerRequest)
+	if err != nil {
+		http.Error(w, "Unexpected JSON", http.StatusBadRequest)
+		return
+	}
+
+	err = sanitizeAuthRequest(&registerRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	
+}
+
+func VerifyTokenHandler (w http.ResponseWriter, r *http.Request) {
+	
 }
