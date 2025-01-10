@@ -90,25 +90,25 @@ main {
 }
 
 /* Mobile Styles */
-@media (max-width: 500px) {
+@media (max-width: 786px) {
   html,
   body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important; /* Prevent horizontal scrolling */
   }
 
   main,
   .toolbar,
   .buttons {
-    max-width: 100%;
+    max-width: 100% !important;
   }
 
   main {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    height: 100dvh;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    height: 100dvh !important;
   }
 
   .hide-on-mobile {
@@ -120,78 +120,78 @@ main {
   }
 
   .buttons-bar {
-    min-height: auto;
-    justify-content: center;
-    padding: 1rem;
-    display: flex;
-    gap: 0.5rem;
-    padding-bottom: 0;
+    min-height: auto !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+    display: flex !important;
+    gap: 0.5rem !important;
+    padding-bottom: 0 !important;
   }
 
   .buttons {
-    flex-direction: row;
-    gap: 0.5rem;
-    max-width: 100%;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    max-width: 100% !important;
   }
 
   .form-buttons {
-    display: flex;
-    overflow-x: auto; /* Change scroll to auto for better compatibility */
-    white-space: nowrap; /* Ensure no wrapping */
-    gap: 0.75rem;
-    padding-bottom: 5px;
-    position: relative; /* Ensure relative positioning for the pseudo-element */
-    -webkit-overflow-scrolling: touch; /* Enable momentum scrolling in Safari */
+    display: flex !important;
+    overflow-x: auto !important; /* Change scroll to auto for better compatibility */
+    white-space: nowrap !important; /* Ensure no wrapping */
+    gap: 0.75rem !important;
+    padding-bottom: 5px !important;
+    position: relative !important; /* Ensure relative positioning for the pseudo-element */
+    -webkit-overflow-scrolling: touch !important; /* Enable momentum scrolling in Safari */
   }
 
   .form-buttons::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 10px; /* Adjust size for better visibility */
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    height: 100% !important;
+    width: 10px !important; /* Adjust size for better visibility */
   }
 
   .form-buttons::-webkit-scrollbar {
-    height: 8px; /* Customize the height of the scrollbar */
+    height: 8px !important; /* Customize the height of the scrollbar */
   }
 
   .form-buttons::-webkit-scrollbar-thumb {
-    background-color: var(--primary-clr); /* Darker thumb */
-    border-radius: 10px;
+    background-color: var(--primary-clr) !important; /* Darker thumb */
+    border-radius: 10px !important;
   }
 
   .form-buttons::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.1); /* Lighter track */
+    background-color: rgba(0, 0, 0, 0.1) !important; /* Lighter track */
   }
 
-  .action-buttons {
-    width: 100%;
-    display: flex;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
+  .action-buttons:not(.hide-on-mobile) {
+    width: 100% !important;
+    display: flex !important;
+    gap: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
   }
 
   .form-buttons button {
-    font-size: 1rem;
+    font-size: 1rem !important;
   }
 
   .action-buttons button {
-    padding-block: 0.75em;
-    padding-inline: 1em;
-    flex: 1;
+    padding-block: 0.75em !important;
+    padding-inline: 1em !important;
+    flex: 1 !important;
   }
 
   .importJSON {
-    background: var(--accent-clr);
-    align-self: center;
-    margin-block: 1rem;
+    background: var(--accent-clr) !important;
+    align-self: center !important;
+    margin-block: 1rem !important;
     color: var(--background-clr) !important;
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
-    font-size: 0.75rem;
-    text-align: center; /* Ensure text alignment */
+    padding: 0.5rem 1rem !important;
+    border-radius: 2rem !important;
+    font-size: 0.75rem !important;
+    text-align: center !important; /* Ensure text alignment */
   }
 
   .form-container {
@@ -226,11 +226,11 @@ main {
   }
 
   .back-button {
-    align-self: center;
-    margin: 1rem;
+    align-self: center !important;
+    margin: 1rem !important;
   }
 
   .toolbar {
-    gap: 1rem;
+    gap: 1rem !important;
   }
 }

@@ -184,7 +184,7 @@ const ResumeForm = () => {
           onClick={() => {
             setFormData(exampleFormData);
             setDisplayedData(exampleFormData);
-            if (window.innerWidth <= 500) {
+            if (window.innerWidth <= 786) {
               // For mobile, only show the file div when Create is pressed
               setIsFileVisibleMobile(true);
             }
@@ -194,7 +194,7 @@ const ResumeForm = () => {
           text='Create'
           onClick={() => {
             setDisplayedData(formData);
-            if (window.innerWidth <= 500) {
+            if (window.innerWidth <= 786) {
               // For mobile, only show the file div when Create is pressed
               setIsFileVisibleMobile(true);
             }
