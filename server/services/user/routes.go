@@ -10,11 +10,11 @@ import (
 )
 
 type UserHandler struct {
-
+	store UserStore
 }
 
-func NewHandler() *UserHandler {
-	return &UserHandler{}
+func NewHandler(store UserStore) *UserHandler {
+	return &UserHandler{store: store}
 }
 
 func (h *UserHandler) RegisterRoutes(router *mux.Router) {
@@ -49,8 +49,12 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// main logic
-	
+	// user, err := h.store.GetUserByEmail(loginRequest.Email)
+	// if err != nil {
+	// 	utils.WriteError(w, fmt.Errorf("invalid email or password"), http.StatusBadRequest)
+	// }
 }
+
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	registerRequest := UserRequest{}
 
