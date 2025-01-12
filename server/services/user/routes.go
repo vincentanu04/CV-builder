@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"server/services/auth"
 	"server/utils"
 	"strings"
 
@@ -49,10 +50,18 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// main logic
-	// user, err := h.store.GetUserByEmail(loginRequest.Email)
-	// if err != nil {
-	// 	utils.WriteError(w, fmt.Errorf("invalid email or password"), http.StatusBadRequest)
-	// }
+	user, err := h.store.GetUserByEmail(loginRequest.Email)
+	if err != nil {
+		utils.WriteError(w, fmt.Errorf("invalid email or password"), http.StatusBadRequest)
+		return
+	}
+
+	if !auth.ComparePasswords(user.Password, []byte(loginRequest.Password)) {
+		utils.WriteError(w, fmt.Errorf("invalid email or password"), http.StatusBadRequest)
+		return
+	}
+
+		
 }
 
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {

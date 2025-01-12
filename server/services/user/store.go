@@ -10,7 +10,11 @@ type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 }
 
-type User struct {}
+type User struct {
+	ID int `json:"id"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
 
 func NewStore(db *sql.DB) *Store {
 	return &Store{
