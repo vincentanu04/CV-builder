@@ -27,15 +27,18 @@ func initConfig() Config {
 		log.Fatal(err)
 	}
 
-	return Config{
+	config := Config{
 		Port: getEnv("PORT", "8080"),
 		DBUser: getEnv("DB_USER", "root"),
 		DBPasswd: getEnv("DB_PASSWD", ""),
-		DBAddr: fmt.Sprintf("%s:%s", getEnv("DB_Host", "127.0.0.1"), getEnv("DB_Port", "3306")),
-		DBName: getEnv("DB_NAME", "cvbuilder"),
+		DBAddr: fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
+		DBName: getEnv("DB_NAME", "cv_builder"),
 		JWTSecret: getEnv("JWT_SECRET", "no-fallback"),
 		JWTExpirationInSec: getEnvInt("JWT_EXPIRATION_IN_SEC", 3600 * 24),
 	}
+	log.Printf("with config %+v", config)
+
+	return config
 }
 
 func getEnv(key string, fallback string) string {

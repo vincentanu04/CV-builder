@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"server/cmd/api"
@@ -26,9 +27,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	initDB(db)
+
 	log.Printf("Running server on port %s ...", configs.Envs.Port)
 	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.Port), db)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func initDB(db *sql.DB) {
+	err := db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("DB successfully connected!")
 }
