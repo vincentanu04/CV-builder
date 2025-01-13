@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"server/configs"
 	"server/services/auth"
 	"server/utils"
 	"strings"
@@ -61,7 +62,14 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-		
+	secret := []byte(configs.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, user.ID, configs.Envs.JWTExpirationInSec) 
+	if err != nil {
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 }
 
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {

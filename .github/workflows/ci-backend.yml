@@ -38,18 +38,18 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
           golangci-lint run
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: test-and-lint
-    runs-on: ubuntu-latest
+  # deploy:
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: test-and-lint
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
 
-      - name: Deploy to production
-        env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        run: |
-          echo "Deploying backend to production..."
-          # Add your backend deployment script here
+  #     - name: Deploy to production
+  #       env:
+  #         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+  #       run: |
+  #         echo "Deploying backend to production..."
+  #         # Add your backend deployment script here

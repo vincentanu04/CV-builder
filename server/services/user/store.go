@@ -1,6 +1,9 @@
 package user
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 type Store struct {
 	db *sql.DB
@@ -23,5 +26,37 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetUserByEmail(email string) (*User, error) {
-	return &User{}, nil
+	rows, err := s.db.Query("SELECT * FROM users WHERE email = ?", email)
+	if err != nil {
+		return nil, err
+	}
+
+	u := &User{}
+	for rows.Next() {
+		u, err = scanRowsIntoUser(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if u.ID == 0 {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	return u, nil
+}
+
+func scanRowsIntoUser(rows *sql.Rows) (*User, error) {
+	u := &User{}
+
+	err := rows.Scan(
+		&u.ID,
+		&u.Email,
+		&u.Password,
+	)	
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
 }
