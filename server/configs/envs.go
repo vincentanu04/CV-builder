@@ -24,7 +24,7 @@ var Envs = initConfig()
 func initConfig() Config {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	config := Config{

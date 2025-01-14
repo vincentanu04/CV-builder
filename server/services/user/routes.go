@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"server/configs"
 	"server/services/auth"
@@ -76,10 +77,12 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
+	log.Println("handing register ..")
 	registerRequest := UserRequest{}
 
 	err := utils.ParseJSON(r, &registerRequest)
 	if err != nil {
+		log.Printf("error parsing request json, %v", err)
 		utils.WriteError(w, err, http.StatusBadRequest)
 		return
 	}
@@ -89,18 +92,23 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	err = utils.Validate.Struct(registerRequest)
 	if err != nil {	
 		errors := err.(validator.ValidationErrors)
+		log.Printf("error validating request payload, %+v", errors)
 		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
 		return
 	}
 
-	user, _ := h.store.GetUserByEmail(registerRequest.Email)
-	if user != nil { // user already exists
-		utils.WriteError(w, fmt.Errorf("user with email %s already exists", registerRequest.Email), http.StatusBadRequest)
+	log.Printf("registering with request payload %+v", registerRequest)
+
+	_, err = h.store.GetUserByEmail(registerRequest.Email)
+	if err == nil { // user already exists
+		log.Println("user already exists")
+		utils.WriteError(w, fmt.Errorf("user with email %s already exists or error %v", registerRequest.Email, err), http.StatusBadRequest)
 		return
 	}
 
 	hashedPassword, err := auth.HashPassword(registerRequest.Password)
 	if err != nil {
+		log.Printf("error hashing password, %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)
 	}
 
@@ -113,6 +121,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, err, http.StatusInternalServerError)
 		return
 	}
+	log.Printf("created new user %+v", newUser)
 
 	// generate token to automatically log in
 	secret := []byte(configs.Envs.JWTSecret)
@@ -122,5 +131,6 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("successfully registered user %s", newUser.Email)
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 }
