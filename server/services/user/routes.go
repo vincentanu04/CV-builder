@@ -8,6 +8,7 @@ import (
 	"server/utils"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
 
@@ -47,7 +48,9 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	err = utils.Validate.Struct(loginRequest)
 	if err != nil {
-		utils.WriteError(w, fmt.Errorf("invalid payload"), http.StatusBadRequest)
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		return
 	}
 
 	// main logic
@@ -84,10 +87,40 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	h.sanitizeUserRequest(&registerRequest)
 
 	err = utils.Validate.Struct(registerRequest)
-	if err != nil {
-		utils.WriteError(w, fmt.Errorf("invalid payload"), http.StatusBadRequest)
+	if err != nil {	
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		return
 	}
 
-	// main logic
+	user, _ := h.store.GetUserByEmail(registerRequest.Email)
+	if user != nil { // user already exists
+		utils.WriteError(w, fmt.Errorf("user with email %s already exists", registerRequest.Email), http.StatusBadRequest)
+		return
+	}
 
+	hashedPassword, err := auth.HashPassword(registerRequest.Password)
+	if err != nil {
+		utils.WriteError(w, err, http.StatusInternalServerError)
+	}
+
+	newUser := User{
+		Email: registerRequest.Email,
+		Password: hashedPassword,
+	}
+	err = h.store.CreateUser(&newUser)
+	if err != nil {
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// generate token to automatically log in
+	secret := []byte(configs.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, newUser.ID, configs.Envs.JWTExpirationInSec) 
+	if err != nil {
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 }
