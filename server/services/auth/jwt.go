@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -17,9 +16,7 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func CreateJWT(secret []byte, userID int, expirationInSec int64) (string, error) {
-	log.Printf("Creating JWT for user %d with expiry %v", userID, expirationInSec)
-	
+func CreateJWT(secret []byte, userID int, expirationInSec int64) (string, error) {	
 	expiresAt := time.Now().Add(time.Second * time.Duration(expirationInSec)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
