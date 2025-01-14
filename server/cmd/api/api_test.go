@@ -4,22 +4,15 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"server/services/health"
 	"testing"
+	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAPIServer(t *testing.T) {
-	db, _, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("error creating mock db, %v", err)
-	}
-
-	server := NewAPIServer(":8080", db)
+	server := NewAPIServer(":8088", nil) 
 
 	go func() {
 		if err := server.Run(); err != nil {
@@ -27,30 +20,24 @@ func TestAPIServer(t *testing.T) {
 		}
 	}()
 
-	req, err := http.NewRequest("GET", "/api/health", nil)
+	time.Sleep(100 * time.Millisecond)
+
+	resp, err := http.Get("http://localhost:8088/api/health")
 	if err != nil {
-		log.Fatalf("error creating new http request, %v", err)
+		t.Fatalf("failed to make request to server, %v", err)
 	}
-	rr := httptest.NewRecorder()
+	defer resp.Body.Close()
 
-	router := mux.NewRouter()
-	subrouter := router.PathPrefix("/api").Subrouter()
-	healthChecker := health.NewHandler()
-	healthChecker.RegisterRoutes(subrouter)
-
-	router.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	response := map[string]string{}
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		t.Fatalf("error unmarshalling response, %v", err)
 	}
-	healthStatus, ok := response["health"]
 
-	assert.Equal(t, ok, true, "health found in response")
-	
-	t.Logf("Status: %s", healthStatus)
+	healthStatus, ok := response["health"]
+	assert.True(t, ok, "health found in response")
+	log.Printf("Status: %v", healthStatus)
 	assert.Equal(t, healthStatus, health.HEALTHY_STATUS)
 }
