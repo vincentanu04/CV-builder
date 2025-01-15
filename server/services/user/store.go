@@ -49,6 +49,10 @@ func (s *Store) GetUserByEmail(email string) (*User, error) {
 }
 
 func (s *Store) CreateUser(user *User) (error) {
+	if user == nil {
+		return fmt.Errorf("expecting user pointer")
+	}
+	
 	log.Printf("db: creating user %+v ..", *user)
 
 	defer func() {
