@@ -11,14 +11,14 @@ const (
 	HEALTHY_STATUS = "Server up and running!"
 )
 
-type HealthHandler struct {}
+type HealthHandler struct{}
 
 func NewHandler() *HealthHandler {
 	return &HealthHandler{}
 }
 
 func (h *HealthHandler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/health", h.handleHealth).Methods("GET")
+	router.HandleFunc("/health", h.handleHealth).Methods(http.MethodGet)
 }
 
 func (h *HealthHandler) handleHealth(w http.ResponseWriter, r *http.Request) {

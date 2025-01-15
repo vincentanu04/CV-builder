@@ -30,7 +30,7 @@ jobs:
       - name: Run tests
         run: |
           cd server
-          go test -v ./...
+          make test
 
       - name: Run linter
         run: |

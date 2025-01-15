@@ -12,14 +12,14 @@ import (
 )
 
 func main() {
-	dbCfg := mysql.Config{	
-		User: configs.Envs.DBUser,
-		Passwd: configs.Envs.DBPasswd,
-		Addr: configs.Envs.DBAddr,
-		DBName: configs.Envs.DBName,
-		Net: "tcp",
+	dbCfg := mysql.Config{
+		User:                 configs.Envs.DBUser,
+		Passwd:               configs.Envs.DBPasswd,
+		Addr:                 configs.Envs.DBAddr,
+		DBName:               configs.Envs.DBName,
+		Net:                  "tcp",
 		AllowNativePasswords: true,
-		ParseTime: true,
+		ParseTime:            true,
 	}
 
 	db, err := db.NewMySQLStorage(dbCfg)

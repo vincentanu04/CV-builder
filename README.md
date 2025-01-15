@@ -6,28 +6,91 @@ Live site: https://cv-builder-04.vercel.app/
 
 Enter your personal details in order to get a personalized CV printed as a PDF! Supports export and import as JSON.
 
+# Design Document
+
 ## Core Features
 
-1. User Accounts and Resume Storage
+### 1. User Accounts and Resume Storage
 
-- Enable users to register, log in, and manage their resumes securely.
+- **User Registration**: Enable new users to create an account with email and password.
+- **User Login**: Authenticate users using email and password.
+- **Resume Management**:
+  - **Save**: Allow users to upload or create resumes and store them securely.
+  - **Retrieve**: Provide access to previously saved resumes.
+  - **Update**: Allow edits to existing resumes.
+  - **Delete**: Enable users to remove resumes they no longer need.
 
-- Allow users to save, retrieve, update, and delete resumes.
+---
 
-2. Resume Templates
+### 2. Resume Templates
 
-- Allow users to choose between templates when creating a new resume.
+- **Template Selection**: Offer a variety of pre-designed templates.
+  - **Resume Creation**: Allow template selection when creating a resume.
+  - **Resume Editing**: Allow template selection when editing a resume.
 
-3. Resume Review Service
+---
 
-- AI-Powered Resume Suggestions:
+### 3. Resume Review Service
 
-  - Provide actionable feedback on resumes, including grammar checks, ATS compliance, and formatting suggestions.
-  - High light missing or incomplete sections of the resume.
-  - Suggest better phrasing, metrics, and structure for resume entries.
-  - High light areas for improvement, such as weak action verbs or missing metrics.
+#### **AI-Powered Resume Suggestions**
 
-- Peer Review System:
+- **Grammar and ATS Compliance Checks**: Integrate language processing tools to check grammar and suggest ATS-friendly formats.
+- **Enhanced Suggestions**: Provide actionable feedback on resumes such as suggesting better phrasing, metrics, weak action verbs and structure for resume entries.
+- **Highlight Missing Sections**: High light missing or incomplete sections of the resume (e.g., experience, education).
+
+#### **Peer Review System**
+
+- **Resume Sharing**:
   - Allow users to share their resumes with others for feedback.
-  - Enable reviewers to leave comments and ratings on specific sections of the resume.
-  - Provide structured feedback options and track review history.
+- **Reviewer Feedback**:
+  - Allow reviewers to add comments and give structured feedback on specific sections.
+  - Include options for ratings (e.g., 1-5 stars for each section).
+- **History Tracking**:
+  - Maintain a record of feedback history for users to revisit.
+
+---
+
+## Architecture
+
+### 1. Backend
+
+- **Language**: Go
+- **Database**: MySQL
+  - **Users Table**: `id`, `email`, `password_hash`
+  - **Resumes Table**: `id`, `user_id`, `template_name`, `data (JSON)`, `created_at`, `updated_at`
+  - **Feedback Table** (for Peer Review): `id`, `resume_id`, `reviewer_id`, `comments (JSON)`, `ratings (JSON)`, `created_at`
+- **AI Service**: Python-based microservice integrated using REST/gRPC for grammar checks and ATS analysis.
+
+### 2. Frontend
+
+- **Framework**: React
+- **Key Components**:
+  - **Form Component**: For creating/updating resumes.
+  - **Template Selector**: Displays available templates.
+  - **User Resumes**: Displays a user's resumes.
+  - **Review Feedback**: Interface for peer review and AI suggestions.
+
+---
+
+## API Endpoints
+
+### User Management
+
+- **POST** `/register`: Register a new user.
+- **POST** `/login`: Authenticate user and issue a token.
+
+### Resume Management
+
+- **POST** `/resumes`: Save a new resume.
+- **GET** `/resumes`: Retrieve all resumes for the authenticated user.
+- **GET** `/resumes/{id}`: Retrieve a specific resume.
+- **PUT** `/resumes/{id}`: Update a specific resume.
+- **DELETE** `/resumes/{id}`: Delete a specific resume.
+
+### Resume Review
+
+- **POST** `/reviews/{resume_id}`: Submit peer feedback for a resume.
+- **GET** `/reviews/{resume_id}`: Retrieve all reviews for a specific resume.
+- **POST** `/ai/review`: Submit a resume for AI-powered analysis.
+
+---
