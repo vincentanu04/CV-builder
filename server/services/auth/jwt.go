@@ -8,7 +8,6 @@ import (
 	"server/configs"
 	"server/types"
 	"server/utils"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -22,8 +21,8 @@ func CreateJWT(secret []byte, userID int, expirationInSec int64) (string, error)
 	expiresAt := time.Now().Add(time.Second * time.Duration(expirationInSec)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userID":    userID,
-		"expiresAt": expiresAt,
+		"userID": userID,
+		"exp":    expiresAt,
 	})
 
 	tokenString, err := token.SignedString(secret)
@@ -40,7 +39,7 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.H
 
 		token, err := validateJWT(tokenString)
 		if err != nil {
-			log.Printf("failed to validate token, %v", err)
+			log.Printf("failed to validate token %s, %v", token.Raw, err)
 			permissionDenied(w)
 			return
 		}
@@ -57,12 +56,16 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.H
 			permissionDenied(w)
 		}
 
-		userID, err := strconv.Atoi(claims["userID"].(string))
-		if err != nil {
-			log.Printf("failed to convert userID to int, %v", err)
+		log.Printf("claims %+v", claims)
+
+		userIDClaim, ok := claims["userID"].(float64)
+		if !ok {
+			log.Printf("failed to assert userID to float64, is %v, %T", userIDClaim, userIDClaim)
 			permissionDenied(w)
 			return
 		}
+
+		userID := int(userIDClaim)
 
 		u, err := userStore.GetUserByID(userID)
 		if err != nil {
@@ -80,7 +83,7 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.H
 }
 
 func validateJWT(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) { // also checks for expiry through the exp claim
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
