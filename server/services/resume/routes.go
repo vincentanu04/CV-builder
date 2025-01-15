@@ -1,6 +1,8 @@
 package resume
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"server/services/auth"
 	"server/types"
@@ -23,13 +25,19 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handler) handleGetResumes(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*types.User) 
+	log.Println("handing get resumes ..")
+	defer func() {
+		log.Println("finished getting resumes ..")
+	}()
 
-	resumes, err := h.resumeStore.GetResumesByUserID(user.ID)
+	userID := auth.GetUserIDFromContext(r.Context())
+
+	resumes, err := h.resumeStore.GetResumesByUserID(userID)
 	if err != nil {
-		http.Error(w, "Error retrieving resumes", http.StatusInternalServerError)
+		log.Printf("error getting resumes for user %d, %v", userID, err)
+		utils.WriteError(w, fmt.Errorf("error getting resumes for user %d", userID), http.StatusInternalServerError)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, resumes)
+	utils.WriteJSON(w, http.StatusOK, map[string][]types.Resume{"resumes": resumes})
 }
