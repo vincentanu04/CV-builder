@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"server/configs"
 	"server/services/auth"
+	"server/types"
 	"server/utils"
 	"strings"
 
@@ -14,16 +15,16 @@ import (
 )
 
 type UserHandler struct {
-	store UserStore
+	store types.UserStore
 }
 
-func NewHandler(store UserStore) *UserHandler {
+func NewHandler(store types.UserStore) *UserHandler {
 	return &UserHandler{store: store}
 }
 
 func (h *UserHandler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/login", h.handleLogin).Methods("POST")
-	router.HandleFunc("/register", h.handleRegister).Methods("POST")
+	router.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
+	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
 }
 
 type UserRequest struct {
@@ -129,7 +130,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, err, http.StatusInternalServerError)
 	}
 
-	newUser := User{
+	newUser := types.User{
 		Email: registerRequest.Email,
 		Password: hashedPassword,
 	}

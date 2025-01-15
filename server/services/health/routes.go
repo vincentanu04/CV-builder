@@ -18,7 +18,7 @@ func NewHandler() *HealthHandler {
 }
 
 func (h *HealthHandler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/health", h.handleHealth).Methods("GET")
+	router.HandleFunc("/health", h.handleHealth).Methods(http.MethodGet)
 }
 
 func (h *HealthHandler) handleHealth(w http.ResponseWriter, r *http.Request) {

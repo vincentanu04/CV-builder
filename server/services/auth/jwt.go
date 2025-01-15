@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"net/http"
+	"server/types"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -20,4 +22,13 @@ func CreateJWT(secret []byte, userID int, expirationInSec int64) (string, error)
 	}
 
 	return tokenString, nil
+}
+
+func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		// user, err := userStore.GetUserByID()
+		
+		handlerFunc(w, r)
+	}
 }

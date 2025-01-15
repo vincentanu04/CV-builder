@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"server/types"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -18,7 +19,7 @@ func TestGetUserByEmail(t *testing.T) {
 
 		store := NewStore(db)
 
-		mockUser := User{
+		mockUser := types.User{
 			ID: 1,
 			Email: "exists@example.com",
 			Password: "hashed_password",
@@ -66,7 +67,7 @@ func TestCreateUser(t *testing.T) {
 
 		newUserID := 1
 
-		newUser := User{
+		newUser := types.User{
 			Email: "newuser@example.com",
 			Password: "hashedPassword",
 		}

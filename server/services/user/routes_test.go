@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"server/services/auth"
+	"server/types"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -29,8 +30,8 @@ func TestHandleRegister(t *testing.T) {
 				Password: "password123",
 			},
 			mockSetup: func(store *MockUserStore) {
-				store.On("GetUserByEmail", "doesntexist@example.com").Return((*User)(nil), fmt.Errorf("user not found"))
-				store.On("CreateUser", mock.MatchedBy(func(user *User) bool {
+				store.On("GetUserByEmail", "doesntexist@example.com").Return((*types.User)(nil), fmt.Errorf("user not found"))
+				store.On("CreateUser", mock.MatchedBy(func(user *types.User) bool {
 					return user.Email == "doesntexist@example.com" && user.Password != ""
 				})).Return(nil)
 			},
@@ -64,7 +65,7 @@ func TestHandleRegister(t *testing.T) {
 				Password: "password123",
 			},
 			mockSetup: func(store *MockUserStore) {
-				store.On("GetUserByEmail", "existing@example.com").Return(&User{Email: "existing@example.com"}, nil)
+				store.On("GetUserByEmail", "existing@example.com").Return(&types.User{Email: "existing@example.com"}, nil)
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
@@ -128,7 +129,7 @@ func TestHandleLogin(t *testing.T) {
 			password: "password123",
 			mockSetup: func(store *MockUserStore) {
 				hashedPassword, _ := auth.HashPassword("password123")
-				mockUser := User{ID: 1, Email: "example@example.com", Password: hashedPassword}
+				mockUser := types.User{ID: 1, Email: "example@example.com", Password: hashedPassword}
 				store.On("GetUserByEmail", "example@example.com").Return(&mockUser, nil)
 			},
 			expectedStatus: http.StatusOK,
@@ -155,7 +156,7 @@ func TestHandleLogin(t *testing.T) {
 			email: "doesntexist@example.com",
 			password: "password123",
 			mockSetup: func(store *MockUserStore) {
-				store.On("GetUserByEmail", "doesntexist@example.com").Return((*User)(nil) , fmt.Errorf("user not found"))
+				store.On("GetUserByEmail", "doesntexist@example.com").Return((*types.User)(nil) , fmt.Errorf("user not found"))
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
@@ -166,7 +167,7 @@ func TestHandleLogin(t *testing.T) {
 			password: "wrongPassword",
 			mockSetup: func(store *MockUserStore) {
 				hashedPassword, _ := auth.HashPassword("rightPassword")
-				mockUser := User{ID: 1, Email: "example@example.com", Password: hashedPassword}
+				mockUser := types.User{ID: 1, Email: "example@example.com", Password: hashedPassword}
 				store.On("GetUserByEmail", "example@example.com").Return(&mockUser , nil)
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -219,12 +220,17 @@ type MockUserStore struct {
 	mock.Mock
 }
 
-func (m *MockUserStore) GetUserByEmail(email string) (*User, error) {
+func (m *MockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	args := m.Called(email)
-	return args.Get(0).(*User), args.Error(1)
+	return args.Get(0).(*types.User), args.Error(1)
 }
 
-func (m *MockUserStore) CreateUser(user *User) error {
+func (m *MockUserStore) GetUserByID(id int) (*types.User, error) {
+	args := m.Called(id)
+	return args.Get(0).(*types.User), args.Error(1)
+}
+
+func (m *MockUserStore) CreateUser(user *types.User) error {
 	args := m.Called(user)
 	return args.Error(0)
 }
