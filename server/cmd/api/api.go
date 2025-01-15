@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"net/http"
+	"server/services/health"
 	"server/services/user"
 
 	"github.com/gorilla/mux"
@@ -20,6 +21,9 @@ func (s *APIServer) Run() error {
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api").Subrouter()
 
+	healthChecker := health.NewHandler()
+	healthChecker.RegisterRoutes(subrouter)
+	
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
