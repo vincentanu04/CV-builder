@@ -32,7 +32,7 @@ type UserRequest struct {
 	Password string `json:"password" validate:"required,min=8"`
 }
 
-func (h *UserHandler) sanitizeUserRequest (req *UserRequest) {
+func (h *UserHandler) sanitizeUserRequest(req *UserRequest) {
 	req.Email = strings.TrimSpace(req.Email)
 	req.Password = strings.TrimSpace(req.Password)
 }
@@ -79,7 +79,7 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	secret := []byte(configs.Envs.JWTSecret)
-	token, err := auth.CreateJWT(secret, user.ID, configs.Envs.JWTExpirationInSec) 
+	token, err := auth.CreateJWT(secret, user.ID, configs.Envs.JWTExpirationInSec)
 	if err != nil {
 		log.Printf("error creating jwt, %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)
@@ -108,7 +108,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	h.sanitizeUserRequest(&registerRequest)
 
 	err = utils.Validate.Struct(registerRequest)
-	if err != nil {	
+	if err != nil {
 		errors := err.(validator.ValidationErrors)
 		log.Printf("error validating request payload, %+v", errors)
 		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
@@ -131,7 +131,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newUser := types.User{
-		Email: registerRequest.Email,
+		Email:    registerRequest.Email,
 		Password: hashedPassword,
 	}
 	err = h.store.CreateUser(&newUser)
@@ -143,7 +143,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	// generate token to automatically log in
 	secret := []byte(configs.Envs.JWTSecret)
-	token, err := auth.CreateJWT(secret, newUser.ID, configs.Envs.JWTExpirationInSec) 
+	token, err := auth.CreateJWT(secret, newUser.ID, configs.Envs.JWTExpirationInSec)
 	if err != nil {
 		log.Printf("error creating JWT, %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)

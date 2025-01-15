@@ -16,17 +16,17 @@ import (
 )
 
 func TestHandleRegister(t *testing.T) {
-	tests := []struct{
+	tests := []struct {
 		name           string
 		requestPayload UserRequest
 		mockSetup      func(store *MockUserStore)
 		expectedStatus int
-		expectingToken  bool
+		expectingToken bool
 	}{
 		{
 			name: "successfully register",
 			requestPayload: UserRequest{
-				Email: "doesntexist@example.com",
+				Email:    "doesntexist@example.com",
 				Password: "password123",
 			},
 			mockSetup: func(store *MockUserStore) {
@@ -41,27 +41,27 @@ func TestHandleRegister(t *testing.T) {
 		{
 			name: "invalid email format",
 			requestPayload: UserRequest{
-				Email: "not-an-email",
+				Email:    "not-an-email",
 				Password: "password123",
 			},
-			mockSetup: func(store *MockUserStore) {},
+			mockSetup:      func(store *MockUserStore) {},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
 		},
 		{
 			name: "invalid password format",
 			requestPayload: UserRequest{
-				Email: "anemail@example.com",
+				Email:    "anemail@example.com",
 				Password: "under8",
 			},
-			mockSetup: func(store *MockUserStore) {},
+			mockSetup:      func(store *MockUserStore) {},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
 		},
 		{
 			name: "email already exists",
 			requestPayload: UserRequest{
-				Email: "existing@example.com",
+				Email:    "existing@example.com",
 				Password: "password123",
 			},
 			mockSetup: func(store *MockUserStore) {
@@ -115,17 +115,17 @@ func TestHandleRegister(t *testing.T) {
 }
 
 func TestHandleLogin(t *testing.T) {
-	tests := []struct{
-		name string
-		email string
-		password string
-		mockSetup func(store *MockUserStore)
+	tests := []struct {
+		name           string
+		email          string
+		password       string
+		mockSetup      func(store *MockUserStore)
 		expectedStatus int
 		expectingToken bool
 	}{
 		{
-			name: "successfully login",
-			email: "example@example.com",
+			name:     "successfully login",
+			email:    "example@example.com",
 			password: "password123",
 			mockSetup: func(store *MockUserStore) {
 				hashedPassword, _ := auth.HashPassword("password123")
@@ -136,39 +136,39 @@ func TestHandleLogin(t *testing.T) {
 			expectingToken: true,
 		},
 		{
-			name: "invalid email format",
-			email: "not-an-email",
-			password: "password123",
-			mockSetup: func(store *MockUserStore) {},
+			name:           "invalid email format",
+			email:          "not-an-email",
+			password:       "password123",
+			mockSetup:      func(store *MockUserStore) {},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
 		},
 		{
-			name: "invalid password format",
-			email: "anemail@example.com",
-			password: "under8",
-			mockSetup: func(store *MockUserStore) {},
+			name:           "invalid password format",
+			email:          "anemail@example.com",
+			password:       "under8",
+			mockSetup:      func(store *MockUserStore) {},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
 		},
 		{
-			name: "user doesn't exist",
-			email: "doesntexist@example.com",
+			name:     "user doesn't exist",
+			email:    "doesntexist@example.com",
 			password: "password123",
 			mockSetup: func(store *MockUserStore) {
-				store.On("GetUserByEmail", "doesntexist@example.com").Return((*types.User)(nil) , fmt.Errorf("user not found"))
+				store.On("GetUserByEmail", "doesntexist@example.com").Return((*types.User)(nil), fmt.Errorf("user not found"))
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
 		},
 		{
-			name: "password doesn't match",
-			email: "example@example.com",
+			name:     "password doesn't match",
+			email:    "example@example.com",
 			password: "wrongPassword",
 			mockSetup: func(store *MockUserStore) {
 				hashedPassword, _ := auth.HashPassword("rightPassword")
 				mockUser := types.User{ID: 1, Email: "example@example.com", Password: hashedPassword}
-				store.On("GetUserByEmail", "example@example.com").Return(&mockUser , nil)
+				store.On("GetUserByEmail", "example@example.com").Return(&mockUser, nil)
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectingToken: false,
@@ -178,36 +178,36 @@ func TestHandleLogin(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			userStore := MockUserStore{}
-	
+
 			test.mockSetup(&userStore)
-				
+
 			userHandler := NewHandler(&userStore)
-	
+
 			router := mux.NewRouter().PathPrefix("/api").Subrouter()
 			userHandler.RegisterRoutes(router)
-	
+
 			body, err := json.Marshal(UserRequest{Email: test.email, Password: test.password})
 			if err != nil {
 				t.Fatalf("failed marshalling request, %v", err)
 			}
-	
+
 			req, err := http.NewRequest("POST", "/api/login", bytes.NewReader(body))
 			if err != nil {
 				t.Fatalf("failed creating request, %v", err)
 			}
 			rr := httptest.NewRecorder()
-	
+
 			router.ServeHTTP(rr, req)
-	
+
 			assert.Equal(t, test.expectedStatus, rr.Code)
-	
+
 			if test.expectingToken {
-				response := map[string]string{} 
+				response := map[string]string{}
 				err := json.Unmarshal(rr.Body.Bytes(), &response)
 				if err != nil {
 					t.Fatalf("failed unmarshalling response, %v", err)
 				}
-	
+
 				token, exists := response["token"]
 				assert.True(t, exists, "should contain token")
 				assert.NotEmpty(t, token, "token should not be empty")

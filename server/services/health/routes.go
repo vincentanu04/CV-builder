@@ -11,7 +11,7 @@ const (
 	HEALTHY_STATUS = "Server up and running!"
 )
 
-type HealthHandler struct {}
+type HealthHandler struct{}
 
 func NewHandler() *HealthHandler {
 	return &HealthHandler{}

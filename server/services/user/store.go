@@ -59,11 +59,11 @@ func (s *Store) GetUserByID(id int) (*types.User, error) {
 	return u, nil
 }
 
-func (s *Store) CreateUser(user *types.User) (error) {
+func (s *Store) CreateUser(user *types.User) error {
 	if user == nil {
 		return fmt.Errorf("expecting user pointer")
 	}
-	
+
 	log.Printf("db: creating user %+v ..", *user)
 
 	defer func() {
@@ -80,7 +80,7 @@ func (s *Store) CreateUser(user *types.User) (error) {
 		return err
 	}
 
-	user.ID = int(id) 
+	user.ID = int(id)
 	return nil
 }
 
@@ -91,7 +91,7 @@ func scanRowsIntoUser(rows *sql.Rows) (*types.User, error) {
 		&u.ID,
 		&u.Email,
 		&u.Password,
-	)	
+	)
 	if err != nil {
 		return nil, err
 	}

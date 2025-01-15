@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetUserByEmail(t *testing.T) {
-	t.Run("should return appropriate user if found", func (t *testing.T)  {
+	t.Run("should return appropriate user if found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		if err != nil {
 			t.Fatalf("error creating mock db, %v", err)
@@ -20,14 +20,14 @@ func TestGetUserByEmail(t *testing.T) {
 		store := NewStore(db)
 
 		mockUser := types.User{
-			ID: 1,
-			Email: "exists@example.com",
+			ID:       1,
+			Email:    "exists@example.com",
 			Password: "hashed_password",
 		}
 
 		mock.ExpectQuery("SELECT \\* FROM users WHERE email = ?").
-    	WithArgs("exists@example.com").
-    	WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).
+			WithArgs("exists@example.com").
+			WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).
 				AddRow(mockUser.ID, mockUser.Email, mockUser.Password))
 
 		user, err := store.GetUserByEmail("exists@example.com")
@@ -68,7 +68,7 @@ func TestCreateUser(t *testing.T) {
 		newUserID := 1
 
 		newUser := types.User{
-			Email: "newuser@example.com",
+			Email:    "newuser@example.com",
 			Password: "hashedPassword",
 		}
 
@@ -85,16 +85,16 @@ func TestCreateUser(t *testing.T) {
 	})
 
 	t.Run("empty user input", func(t *testing.T) {
-    db, _, err := sqlmock.New()
-    if err != nil {
-        t.Fatalf("error creating mock db: %v", err)
-    }
-    defer db.Close()
+		db, _, err := sqlmock.New()
+		if err != nil {
+			t.Fatalf("error creating mock db: %v", err)
+		}
+		defer db.Close()
 
-    store := NewStore(db)
+		store := NewStore(db)
 
-    err = store.CreateUser(nil)
+		err = store.CreateUser(nil)
 
-    assert.Error(t, err, "expecting user pointer")
+		assert.Error(t, err, "expecting user pointer")
 	})
 }
