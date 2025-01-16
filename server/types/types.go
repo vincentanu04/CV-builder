@@ -34,5 +34,5 @@ type Resume struct {
 }
 
 type ResumeStore interface {
-	GetResumesByUserID(id int) ([]Resume, error)
+	GetResumeMetadatasByUserID(id int) ([]ResumeMetadata, error)
 }

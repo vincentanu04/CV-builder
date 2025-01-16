@@ -15,6 +15,6 @@ func NewStore(db *sql.DB) *Store {
 	}
 }
 
-func (s *Store) GetResumesByUserID(id int) ([]types.Resume, error) {
-	return []types.Resume{}, nil
+func (s *Store) GetResumeMetadatasByUserID(id int) ([]types.ResumeMetadata, error) {
+	return []types.ResumeMetadata{}, nil
 }
