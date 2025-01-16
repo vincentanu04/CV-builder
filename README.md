@@ -104,10 +104,19 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
 
 - **Framework**: React
 - **Key Components**:
+
   - **Form Component**: For creating/updating resumes.
   - **Template Selector**: Displays available templates.
   - **User Resumes**: Displays a user's resumes.
   - **Review Feedback**: Interface for peer review and AI suggestions.
+
+- **Template Storage**:
+
+  - Resume templates are stored in the frontend as stylesheets and CV components.
+
+- **Thumbnail Generation**:
+  - When a user saves a resume, the frontend generates a PDF using the selected template.
+  - The PDF is sent to the backend, which converts it into an image and uploads it to S3 for use as a thumbnail.
 
 ---
 
