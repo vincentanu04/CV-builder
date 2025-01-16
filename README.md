@@ -70,7 +70,7 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
   - **Resume Metadata Table**:
 
   ```sql
-  CREATE TABLE resume_metadata (
+  CREATE TABLE resume_metadatas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     resume_id INT NOT NULL,
@@ -78,8 +78,8 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
     thumbnail_url VARCHAR(1024), -- S3 URL for the thumbnail image
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (resume_id) REFERENCES resumes (id) ON DELETE CASCADE
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (resume_id) REFERENCES resumes (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
   );
   ```
 
