@@ -56,9 +56,48 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
 
 - **Language**: Go
 - **Database**: MySQL
-  - **Users Table**: `id`, `email`, `password_hash`
-  - **Resumes Table**: `id`, `user_id`, `template_name`, `data (JSON)`, `created_at`, `updated_at`
+
+  - **Users Table**:
+
+  ```sql
+  CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+  );
+  ```
+
+  - **Resume Metadata Table**:
+
+  ```sql
+  CREATE TABLE resume_metadata (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    resume_id INT NOT NULL,
+    user_id INT NOT NULL,
+    thumbnail_url VARCHAR(1024), -- S3 URL for the thumbnail image
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (resume_id) REFERENCES resumes (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
+  ```
+
+  - **Resumes Table**:
+
+  ```sql
+  CREATE TABLE resumes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    template_name VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    data JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  );
+  ```
+
   - **Feedback Table** (for Peer Review): `id`, `resume_id`, `reviewer_id`, `comments (JSON)`, `ratings (JSON)`, `created_at`
+
 - **AI Service**: Python-based microservice integrated using REST/gRPC for grammar checks and ATS analysis.
 
 ### 2. Frontend
