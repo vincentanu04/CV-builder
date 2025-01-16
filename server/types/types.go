@@ -14,15 +14,26 @@ type UserStore interface {
 	CreateUser(user *User) error
 }
 
+type ResumeMetadata struct {
+	ID           int       `json:"id"`
+	Title        string    `json:"title"`
+	ResumeID     int       `json:"resume_id"`
+	UserID       int       `json:"user_id"`
+	ThumbnailURL string    `json:"thumbnail_url"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 type Resume struct {
-	Int          int                    `json:"id"`
-	UserID       int                    `json:"user_id"`
-	TemplateName string                 `json:"template_name"`
-	Data         map[string]interface{} `json:"data"`
-	CreatedAt    time.Time              `json:"created_at"`
-	UpdatedAt    time.Time              `json:"updated_at"`
+	ID           int       `json:"id"`
+	TemplateName string    `json:"template_name"`
+	Title        string    `json:"title"`
+	Data         string    `json:"data"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type ResumeStore interface {
-	GetResumesByUserID(id int) ([]Resume, error)
+	GetResumeMetadatasByUserID(id int) ([]*ResumeMetadata, error)
+	GetResumeByID(id int) (*Resume, error)
 }
