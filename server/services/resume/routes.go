@@ -22,17 +22,18 @@ func NewHandler(resumeStore types.ResumeStore, userStore types.UserStore) *Handl
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
+	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
-	log.Println("handing get resumes ..")
+	log.Println("handing get resume metadatas ..")
 	defer func() {
-		log.Println("finished getting resumes ..")
+		log.Println("finished getting resume metadatas ..")
 	}()
 
 	userID := auth.GetUserIDFromContext(r.Context())
+	log.Printf("getting resume metadatas for user %d", userID)
 
 	resumes, err := h.resumeStore.GetResumeMetadatasByUserID(userID)
 	if err != nil {
