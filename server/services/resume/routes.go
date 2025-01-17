@@ -24,6 +24,8 @@ func NewHandler(resumeStore types.ResumeStore, userStore types.UserStore) *Handl
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
+	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
+	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleCreateResumeMetadata, h.userStore)).Methods(http.MethodPost)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -67,4 +69,20 @@ func (h *Handler) handleGetResume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, map[string]*types.Resume{"resume": resume})
+}
+
+func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
+	log.Println("handing create resume ..")
+	defer func() {
+		log.Println("finished creating resume ..")
+	}()
+
+}
+
+func (h *Handler) handleCreateResumeMetadata(w http.ResponseWriter, r *http.Request) {
+	log.Println("handing create resume metadata ..")
+	defer func() {
+		log.Println("finished creating resume metadata ..")
+	}()
+
 }
