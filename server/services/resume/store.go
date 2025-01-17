@@ -54,6 +54,38 @@ func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
 	return resume, nil
 }
 
+func (s *Store) CreateResume(resume *types.Resume) error {
+	query := `INSERT INTO resumes (template_name, title, data) VALUES (?, ?, ?)`
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, resume.Data)
+	if err != nil {
+		return err
+	}
+
+	resumeID, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	resume.ID = int(resumeID)
+	return nil
+}
+
+func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
+	query := `INSERT INTO resume_metadatas (title, resume_id, user_id, thumbnail_url) VALUES (?, ?, ?, ?)`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ResumeID, resumeMetadata.UserID, resumeMetadata.ThumbnailURL)
+	if err != nil {
+		return err
+	}
+
+	resumeMetadataID, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	resumeMetadata.ID = int(resumeMetadataID)
+	return nil
+}
+
 func scanRowsIntoResumeMetadata(rows *sql.Rows) (*types.ResumeMetadata, error) {
 	metadata := &types.ResumeMetadata{}
 	err := rows.Scan(

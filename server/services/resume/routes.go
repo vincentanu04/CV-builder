@@ -9,8 +9,16 @@ import (
 	"server/utils"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
+
+type CreateResumePayload struct {
+	TemplateName string `json:"template_name" validate:"required"`
+	Title        string `json:"title" validate:"required"`
+	Data         string `json:"data" validate:"required"`
+	File         string `json:"file" validate:"required"` // Base64-encoded file
+}
 
 type Handler struct {
 	resumeStore types.ResumeStore
@@ -25,7 +33,6 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
-	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleCreateResumeMetadata, h.userStore)).Methods(http.MethodPost)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -77,12 +84,52 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished creating resume ..")
 	}()
 
-}
+	resumePayload := CreateResumePayload{}
+	err := utils.ParseJSON(r, &resumePayload)
+	if err != nil {
+		log.Printf("error parsing request json, %v", err)
+		utils.WriteError(w, err, http.StatusBadRequest)
+		return
+	}
 
-func (h *Handler) handleCreateResumeMetadata(w http.ResponseWriter, r *http.Request) {
-	log.Println("handing create resume metadata ..")
-	defer func() {
-		log.Println("finished creating resume metadata ..")
-	}()
+	err = utils.Validate.Struct(resumePayload)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		log.Printf("error validating reqest payload, %+v", errors)
+		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		return
+	}
 
+	log.Printf("creating resume with request payload %+v", resumePayload)
+
+	newResume := types.Resume{
+		TemplateName: resumePayload.TemplateName,
+		Title:        resumePayload.Title,
+		Data:         resumePayload.Data,
+	}
+	err = h.resumeStore.CreateResume(&newResume)
+	if err != nil {
+		log.Printf("error creating new resume %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// create image from base64 encoded pdf file from request payload, put it in s3
+
+	// create resume metadata with newResume.ID and s3 image link
+	userID := auth.GetUserIDFromContext(r.Context())
+	newResumeMetadata := types.ResumeMetadata{
+		Title:        resumePayload.Title,
+		ResumeID:     newResume.ID,
+		UserID:       userID,
+		ThumbnailURL: "PLACEHOLDER",
+	}
+	err = h.resumeStore.CreateResumeMetadata(&newResumeMetadata)
+	if err != nil {
+		log.Printf("error creating new resume metadata %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 }

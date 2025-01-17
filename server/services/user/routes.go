@@ -27,12 +27,12 @@ func (h *UserHandler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
 }
 
-type UserRequest struct {
+type UserRequestPayload struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8"`
 }
 
-func (h *UserHandler) sanitizeUserRequest(req *UserRequest) {
+func (h *UserHandler) sanitizeUserRequestPayload(req *UserRequestPayload) {
 	req.Email = strings.TrimSpace(req.Email)
 	req.Password = strings.TrimSpace(req.Password)
 }
@@ -43,7 +43,7 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished logging in ..")
 	}()
 
-	loginRequest := UserRequest{}
+	loginRequest := UserRequestPayload{}
 
 	err := utils.ParseJSON(r, &loginRequest)
 	if err != nil {
@@ -52,7 +52,7 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.sanitizeUserRequest(&loginRequest)
+	h.sanitizeUserRequestPayload(&loginRequest)
 
 	err = utils.Validate.Struct(loginRequest)
 	if err != nil {
@@ -96,7 +96,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished registering ..")
 	}()
 
-	registerRequest := UserRequest{}
+	registerRequest := UserRequestPayload{}
 
 	err := utils.ParseJSON(r, &registerRequest)
 	if err != nil {
@@ -105,7 +105,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.sanitizeUserRequest(&registerRequest)
+	h.sanitizeUserRequestPayload(&registerRequest)
 
 	err = utils.Validate.Struct(registerRequest)
 	if err != nil {

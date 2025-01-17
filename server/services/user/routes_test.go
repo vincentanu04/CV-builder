@@ -18,14 +18,14 @@ import (
 func TestHandleRegister(t *testing.T) {
 	tests := []struct {
 		name           string
-		requestPayload UserRequest
+		requestPayload UserRequestPayload
 		mockSetup      func(store *MockUserStore)
 		expectedStatus int
 		expectingToken bool
 	}{
 		{
 			name: "successfully register",
-			requestPayload: UserRequest{
+			requestPayload: UserRequestPayload{
 				Email:    "doesntexist@example.com",
 				Password: "password123",
 			},
@@ -40,7 +40,7 @@ func TestHandleRegister(t *testing.T) {
 		},
 		{
 			name: "invalid email format",
-			requestPayload: UserRequest{
+			requestPayload: UserRequestPayload{
 				Email:    "not-an-email",
 				Password: "password123",
 			},
@@ -50,7 +50,7 @@ func TestHandleRegister(t *testing.T) {
 		},
 		{
 			name: "invalid password format",
-			requestPayload: UserRequest{
+			requestPayload: UserRequestPayload{
 				Email:    "anemail@example.com",
 				Password: "under8",
 			},
@@ -60,7 +60,7 @@ func TestHandleRegister(t *testing.T) {
 		},
 		{
 			name: "email already exists",
-			requestPayload: UserRequest{
+			requestPayload: UserRequestPayload{
 				Email:    "existing@example.com",
 				Password: "password123",
 			},
@@ -186,7 +186,7 @@ func TestHandleLogin(t *testing.T) {
 			router := mux.NewRouter().PathPrefix("/api").Subrouter()
 			userHandler.RegisterRoutes(router)
 
-			body, err := json.Marshal(UserRequest{Email: test.email, Password: test.password})
+			body, err := json.Marshal(UserRequestPayload{Email: test.email, Password: test.password})
 			if err != nil {
 				t.Fatalf("failed marshalling request, %v", err)
 			}
