@@ -35,11 +35,17 @@ func CreateJWT(secret []byte, userID int, expirationInSec int64) (string, error)
 
 func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("authenticating user ..")
+		defer func() {
+			log.Println("finished authenticating user ..")
+		}()
+
 		tokenString := utils.GetTokenFromRequest(r)
+		log.Printf("token obtained: %s", tokenString)
 
 		token, err := validateJWT(tokenString)
 		if err != nil {
-			log.Printf("failed to validate token %s, %v", token.Raw, err)
+			log.Printf("failed to validate token %v", err)
 			permissionDenied(w)
 			return
 		}

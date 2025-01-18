@@ -44,3 +44,11 @@ func GetTokenFromRequest(r *http.Request) string {
 
 	return ""
 }
+
+func DecodeBase64(fileString string) ([]byte, error) {
+	return nil, nil
+}
+
+func UploadImageToS3(imagePath string) (string, error) {
+	return "", nil
+}

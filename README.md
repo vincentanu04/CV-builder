@@ -129,8 +129,9 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
 
 ### Resume Management
 
-- **POST** `/resumes`: Save a new resume.
-- **GET** `/resumes`: Retrieve all resumes metadatas for the authenticated user.
+- **POST** `/resumes`: Create a new resume.
+- **POST** `/resume_metadatas`: Create a new resume metadata.
+- **GET** `/resume_metadatas`: Retrieve all resumes metadatas for the authenticated user.
 - **GET** `/resumes/{id}`: Retrieve a specific resume.
 - **PUT** `/resumes/{id}`: Update a specific resume.
 - **DELETE** `/resumes/{id}`: Delete a specific resume.
