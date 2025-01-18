@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"server/services/auth"
 	"server/types"
 	"server/utils"
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -115,6 +118,47 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create image from base64 encoded pdf file from request payload, put it in s3
+	fileBytes, err := utils.DecodeBase64(resumePayload.File)
+	if err != nil {
+		log.Printf("error decoding base64 file, %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	uniqueID := uuid.New().String()
+	tempPDFPath := fmt.Sprintf("/tmp/temp_resume_%s.pdf", uniqueID)
+	tempImagePath := fmt.Sprintf("/tmp/temp_resume_thumbnail_%s", uniqueID)
+
+	defer func() {
+		os.Remove(tempPDFPath)            // Clean up temporary PDF
+		os.Remove(tempImagePath + ".png") // Clean up temporary image
+	}()
+
+	err = os.WriteFile(tempPDFPath, fileBytes, 0644)
+	if err != nil {
+		log.Printf("error saving PDF to file, %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	cmd := exec.Command("pdftoppm", "-png", "-singlefile", tempPDFPath, tempImagePath)
+	err = cmd.Run()
+	if err != nil {
+		log.Printf("error converting PDF to image, %v", err)
+		utils.WriteError(w, fmt.Errorf("error generating thumbnail from PDF: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// The generated image will be saved as "/tmp/temp_resume_thumbnail_<UUID>.png"
+	finalImagePath := tempImagePath + ".png"
+
+	// Step 4: Upload the image to S3 and get its URL
+	s3ImageURL, err := utils.UploadImageToS3(finalImagePath)
+	if err != nil {
+		log.Printf("error uploading image to S3, %v", err)
+		utils.WriteError(w, fmt.Errorf("error uploading thumbnail to storage: %v", err), http.StatusInternalServerError)
+		return
+	}
 
 	// create resume metadata with newResume.ID and s3 image link
 	userID := auth.GetUserIDFromContext(r.Context())
@@ -122,7 +166,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		Title:        resumePayload.Title,
 		ResumeID:     newResume.ID,
 		UserID:       userID,
-		ThumbnailURL: "PLACEHOLDER",
+		ThumbnailURL: s3ImageURL,
 	}
 	err = h.resumeStore.CreateResumeMetadata(&newResumeMetadata)
 	if err != nil {
