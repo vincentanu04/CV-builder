@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/exec"
 	"server/services/auth"
 	"server/types"
 	"server/utils"
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -125,32 +122,12 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uniqueID := uuid.New().String()
-	tempPDFPath := fmt.Sprintf("/tmp/temp_resume_%s.pdf", uniqueID)
-	tempImagePath := fmt.Sprintf("/tmp/temp_resume_thumbnail_%s", uniqueID)
-
-	defer func() {
-		os.Remove(tempPDFPath)            // Clean up temporary PDF
-		os.Remove(tempImagePath + ".png") // Clean up temporary image
-	}()
-
-	err = os.WriteFile(tempPDFPath, fileBytes, 0644)
+	finalImagePath, err := utils.FileBinaryToImagePath(fileBytes)
 	if err != nil {
-		log.Printf("error saving PDF to file, %v", err)
+		log.Printf("error converting binary file to image, %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)
 		return
 	}
-
-	cmd := exec.Command("pdftoppm", "-png", "-singlefile", tempPDFPath, tempImagePath)
-	err = cmd.Run()
-	if err != nil {
-		log.Printf("error converting PDF to image, %v", err)
-		utils.WriteError(w, fmt.Errorf("error generating thumbnail from PDF: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	// The generated image will be saved as "/tmp/temp_resume_thumbnail_<UUID>.png"
-	finalImagePath := tempImagePath + ".png"
 
 	// Step 4: Upload the image to S3 and get its URL
 	s3ImageURL, err := utils.UploadImageToS3(finalImagePath)

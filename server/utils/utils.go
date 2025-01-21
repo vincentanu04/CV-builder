@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 var Validate = validator.New()
@@ -46,9 +49,37 @@ func GetTokenFromRequest(r *http.Request) string {
 }
 
 func DecodeBase64(fileString string) ([]byte, error) {
+
 	return nil, nil
 }
 
 func UploadImageToS3(imagePath string) (string, error) {
 	return "", nil
+}
+
+func FileBinaryToImagePath(fileBytes []byte) (string, error) {
+	uniqueID := uuid.New().String()
+	tempPDFPath := fmt.Sprintf("/tmp/temp_resume_%s.pdf", uniqueID)
+	tempImagePath := fmt.Sprintf("/tmp/temp_resume_thumbnail_%s", uniqueID)
+
+	defer func() {
+		os.Remove(tempPDFPath)            // Clean up temporary PDF
+		os.Remove(tempImagePath + ".png") // Clean up temporary image
+	}()
+
+	err := os.WriteFile(tempPDFPath, fileBytes, 0644)
+	if err != nil {
+		return "", err
+	}
+
+	cmd := exec.Command("pdftoppm", "-png", "-singlefile", tempPDFPath, tempImagePath)
+	err = cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	// The generated image will be saved as "/tmp/temp_resume_thumbnail_<UUID>.png"
+	finalImagePath := tempImagePath + ".png"
+
+	return finalImagePath, nil
 }
