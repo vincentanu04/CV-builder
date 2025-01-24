@@ -21,8 +21,11 @@ input {
   height: 2rem;
 }
 
-input:focus {
+.form input:focus {
   border-bottom: 1px solid var(--accent-clr);
+  border-top: none;
+  border-left: none;
+  border-right: none;
 }
 
 ::placeholder {

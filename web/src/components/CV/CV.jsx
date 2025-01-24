@@ -332,9 +332,9 @@ export default function CV({
                     title={`${award.awardTitle} ${
                       award.awardDate && `(${award.awardDate})`
                     }`}
-                    data={`${award.awardDescription}. ${
-                      award.awardIssuer && `Issued by ${award.awardIssuer}.`
-                    } `}
+                    data={`${
+                      award.awardDescription && `${award.awardDescription}. `
+                    }${award.awardIssuer && `Issued by ${award.awardIssuer}.`}`}
                   />
                 </View>
               ))}
