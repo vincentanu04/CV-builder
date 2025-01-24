@@ -154,7 +154,3 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 
 	utils.WriteJSON(w, http.StatusOK, nil)
 }
-
-func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
-	utils.WriteJSON(w, http.StatusOK, nil)
-}

@@ -1,20 +1,14 @@
 package utils
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"mime"
 	"net/http"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
@@ -91,36 +85,37 @@ func FileBinaryToImagePath(fileBytes []byte) (string, error) {
 }
 
 func UploadImageToS3(imagePath string) (string, error) {
-	fileBytes, err := os.ReadFile(imagePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to read file for upload: %w", err)
-	}
+	// TODO
 
-	// Get file name and MIME type
-	fileName := filepath.Base(imagePath)
-	mimeType := mime.TypeByExtension(filepath.Ext(imagePath))
+	// fileBytes, err := os.ReadFile(imagePath)
+	// if err != nil {
+	// 	return "", fmt.Errorf("failed to read file for upload: %w", err)
+	// }
 
-	// Create S3 session
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("your-region"), // Replace with your AWS region
-	})
-	if err != nil {
-		return "", fmt.Errorf("failed to create AWS session: %w", err)
-	}
+	// fileName := filepath.Base(imagePath)
+	// mimeType := mime.TypeByExtension(filepath.Ext(imagePath))
 
-	// Upload file to S3
-	s3Svc := s3.New(sess)
-	_, err = s3Svc.PutObject(&s3.PutObjectInput{
-		Bucket:      aws.String("your-bucket-name"), // Replace with your bucket name
-		Key:         aws.String(fileName),
-		Body:        bytes.NewReader(fileBytes),
-		ContentType: aws.String(mimeType),
-	})
-	if err != nil {
-		return "", fmt.Errorf("failed to upload image to S3: %w", err)
-	}
+	// sess, err := session.NewSession(&aws.Config{
+	// 	Region: aws.String("your-region"), // Replace with your AWS region
+	// })
+	// if err != nil {
+	// 	return "", fmt.Errorf("failed to create AWS session: %w", err)
+	// }
 
-	// Return S3 URL
-	s3URL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", "your-bucket-name", "your-region", fileName)
-	return s3URL, nil
+	// // Upload file to S3
+	// s3Svc := s3.New(sess)
+	// _, err = s3Svc.PutObject(&s3.PutObjectInput{
+	// 	Bucket:      aws.String("your-bucket-name"), // Replace with your bucket name
+	// 	Key:         aws.String(fileName),
+	// 	Body:        bytes.NewReader(fileBytes),
+	// 	ContentType: aws.String(mimeType),
+	// })
+	// if err != nil {
+	// 	return "", fmt.Errorf("failed to upload image to S3: %w", err)
+	// }
+
+	// s3URL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", "your-bucket-name", "your-region", fileName)
+	// return s3URL, nil
+
+	return "", nil
 }
