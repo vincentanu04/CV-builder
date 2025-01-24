@@ -33,6 +33,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
+	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPatch)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +130,6 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Step 4: Upload the image to S3 and get its URL
 	s3ImageURL, err := utils.UploadImageToS3(finalImagePath)
 	if err != nil {
 		log.Printf("error uploading image to S3, %v", err)
@@ -152,5 +152,9 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	utils.WriteJSON(w, http.StatusOK, nil)
+}
+
+func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, nil)
 }
