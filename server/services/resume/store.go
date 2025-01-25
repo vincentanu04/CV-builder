@@ -93,7 +93,7 @@ func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 	return nil
 }
 
-func (s *Store) UpdateResume(resume *types.Resume) error {
+func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 	jsonData, err := json.Marshal(resume.Data)
 	if err != nil {
 		return err
@@ -131,6 +131,25 @@ func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 
 	if rowsAffected == 0 {
 		return fmt.Errorf("no rows updated for resume ID %d and user ID %d", resumeMetadata.ResumeID, resumeMetadata.UserID)
+	}
+
+	return nil
+}
+
+func (s *Store) DeleteResumeByID(id int) error {
+	query := `DELETE FROM resumes WHERE id = ?`
+	result, err := s.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows deleted for resume ID %d", id)
 	}
 
 	return nil
