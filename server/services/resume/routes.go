@@ -116,26 +116,26 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create image from base64 encoded pdf file from request payload, put it in s3
-	fileBytes, err := utils.DecodeBase64(resumePayload.File)
-	if err != nil {
-		log.Printf("error decoding base64 file, %v", err)
-		utils.WriteError(w, err, http.StatusInternalServerError)
-		return
-	}
+	// fileBytes, err := utils.DecodeBase64(resumePayload.File)
+	// if err != nil {
+	// 	log.Printf("error decoding base64 file, %v", err)
+	// 	utils.WriteError(w, err, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	finalImagePath, err := utils.FileBinaryToImagePath(fileBytes)
-	if err != nil {
-		log.Printf("error converting binary file to image, %v", err)
-		utils.WriteError(w, err, http.StatusInternalServerError)
-		return
-	}
+	// finalImagePath, err := utils.FileBinaryToImagePath(fileBytes)
+	// if err != nil {
+	// 	log.Printf("error converting binary file to image, %v", err)
+	// 	utils.WriteError(w, err, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	s3ImageURL, err := utils.UploadImageToS3(finalImagePath)
-	if err != nil {
-		log.Printf("error uploading image to S3, %v", err)
-		utils.WriteError(w, fmt.Errorf("error uploading thumbnail to storage: %v", err), http.StatusInternalServerError)
-		return
-	}
+	// s3ImageURL, err := utils.UploadImageToS3(finalImagePath)
+	// if err != nil {
+	// 	log.Printf("error uploading image to S3, %v", err)
+	// 	utils.WriteError(w, fmt.Errorf("error uploading thumbnail to storage: %v", err), http.StatusInternalServerError)
+	// 	return
+	// }
 
 	// create resume metadata with newResume.ID and s3 image link
 	userID := auth.GetUserIDFromContext(r.Context())
@@ -143,7 +143,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		Title:        resumePayload.Title,
 		ResumeID:     newResume.ID,
 		UserID:       userID,
-		ThumbnailURL: s3ImageURL,
+		ThumbnailURL: "",
 	}
 	err = h.resumeStore.CreateResumeMetadata(&newResumeMetadata)
 	if err != nil {
