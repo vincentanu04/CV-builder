@@ -2,6 +2,7 @@ package resume
 
 import (
 	"database/sql"
+	"encoding/json"
 	"server/types"
 )
 
@@ -55,8 +56,13 @@ func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
 }
 
 func (s *Store) CreateResume(resume *types.Resume) error {
+	jsonData, err := json.Marshal(resume.Data)
+	if err != nil {
+		return err
+	}
+
 	query := `INSERT INTO resumes (template_name, title, data) VALUES (?, ?, ?)`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, resume.Data)
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData)
 	if err != nil {
 		return err
 	}
@@ -106,15 +112,21 @@ func scanRowsIntoResumeMetadata(rows *sql.Rows) (*types.ResumeMetadata, error) {
 
 func scanRowIntoResume(row *sql.Row) (*types.Resume, error) {
 	resume := &types.Resume{}
+	var rawData []byte // Temporary variable to hold the JSON data as []byte
+
 	err := row.Scan(
 		&resume.ID,
 		&resume.TemplateName,
 		&resume.Title,
-		&resume.Data,
+		&rawData,
 		&resume.CreatedAt,
 		&resume.UpdatedAt,
 	)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(rawData, &resume.Data); err != nil {
 		return nil, err
 	}
 

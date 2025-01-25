@@ -14,10 +14,10 @@ import (
 )
 
 type CreateResumePayload struct {
-	TemplateName string `json:"template_name" validate:"required"`
-	Title        string `json:"title" validate:"required"`
-	Data         string `json:"data" validate:"required"`
-	File         string `json:"file" validate:"required"` // Base64-encoded file
+	TemplateName string                 `json:"template_name" validate:"required"`
+	Title        string                 `json:"title" validate:"required"`
+	Data         map[string]interface{} `json:"data" validate:"required"`
+	File         string                 `json:"file" validate:"required"` // Base64-encoded file
 }
 
 type Handler struct {
@@ -33,7 +33,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
-	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPatch)
+	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleUpdateResume, h.userStore)).Methods(http.MethodPatch)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -153,4 +153,8 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, nil)
+}
+
+func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
+
 }
