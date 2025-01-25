@@ -38,4 +38,6 @@ type ResumeStore interface {
 	GetResumeByID(id int) (*Resume, error)
 	CreateResume(resume *Resume) error
 	CreateResumeMetadata(resumeMetadata *ResumeMetadata) error
+	UpdateResume(resume *Resume) error
+	UpdateResumeMetadata(resumeMetadata *ResumeMetadata) error
 }

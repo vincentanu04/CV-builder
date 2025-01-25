@@ -3,6 +3,7 @@ package resume
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"server/types"
 )
 
@@ -89,6 +90,49 @@ func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 	}
 
 	resumeMetadata.ID = int(resumeMetadataID)
+	return nil
+}
+
+func (s *Store) UpdateResume(resume *types.Resume) error {
+	jsonData, err := json.Marshal(resume.Data)
+	if err != nil {
+		return err
+	}
+
+	query := `UPDATE resumes SET template_name = ?, title = ?, data = ? WHERE id = ?`
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData, resume.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows updated for resume %d", resume.ID)
+	}
+
+	return nil
+}
+
+func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
+	query := `UPDATE resume_metadatas SET title = ?, thumbnail_url = ? WHERE resume_id = ? AND user_id = ?`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ThumbnailURL, resumeMetadata.ResumeID, resumeMetadata.UserID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows updated for resume ID %d and user ID %d", resumeMetadata.ResumeID, resumeMetadata.UserID)
+	}
+
 	return nil
 }
 

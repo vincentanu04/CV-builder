@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type CreateResumePayload struct {
+type ResumePayload struct {
 	TemplateName string                 `json:"template_name" validate:"required"`
 	Title        string                 `json:"title" validate:"required"`
 	Data         map[string]interface{} `json:"data" validate:"required"`
@@ -33,7 +33,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
-	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleUpdateResume, h.userStore)).Methods(http.MethodPatch)
+	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleUpdateResume, h.userStore)).Methods(http.MethodPatch)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +85,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished creating resume ..")
 	}()
 
-	resumePayload := CreateResumePayload{}
+	resumePayload := ResumePayload{}
 	err := utils.ParseJSON(r, &resumePayload)
 	if err != nil {
 		log.Printf("error parsing request json, %v", err)
@@ -143,7 +143,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		Title:        resumePayload.Title,
 		ResumeID:     newResume.ID,
 		UserID:       userID,
-		ThumbnailURL: "",
+		ThumbnailURL: "", // TODO
 	}
 	err = h.resumeStore.CreateResumeMetadata(&newResumeMetadata)
 	if err != nil {
@@ -156,5 +156,62 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
+	log.Println("handling update resume ..")
+	defer func() {
+		log.Println("finished updating resume ..")
+	}()
 
+	resumePayload := ResumePayload{}
+	err := utils.ParseJSON(r, &resumePayload)
+	if err != nil {
+		log.Printf("error parsing request json, %v", err)
+		utils.WriteError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	err = utils.Validate.Struct(resumePayload)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		log.Printf("error validating reqest payload, %+v", errors)
+		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("updating resume with request payload %+v", resumePayload)
+
+	vars := mux.Vars(r)
+	resumeID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Printf("error converting resumeID param to int: %v", err)
+		utils.WriteError(w, fmt.Errorf("error converting resumeID param to int: %v", err), http.StatusInternalServerError)
+		return
+	}
+	newResume := types.Resume{
+		ID:           resumeID,
+		TemplateName: resumePayload.TemplateName,
+		Title:        resumePayload.Title,
+		Data:         resumePayload.Data,
+	}
+	err = h.resumeStore.UpdateResume(&newResume)
+	if err != nil {
+		log.Printf("error updating resume %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	userID := auth.GetUserIDFromContext(r.Context())
+	newResumeMetadata := types.ResumeMetadata{
+		Title:        resumePayload.Title,
+		ResumeID:     newResume.ID,
+		UserID:       userID,
+		ThumbnailURL: "",
+	}
+	err = h.resumeStore.UpdateResumeMetadata(&newResumeMetadata)
+	if err != nil {
+		log.Printf("error updating resume metadata %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 }
