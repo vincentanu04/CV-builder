@@ -34,6 +34,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleUpdateResume, h.userStore)).Methods(http.MethodPatch)
+	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleDeleteResume, h.userStore)).Methods(http.MethodDelete)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +153,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, nil)
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "resume created successfully"})
 }
 
 func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
@@ -192,7 +193,7 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 		Title:        resumePayload.Title,
 		Data:         resumePayload.Data,
 	}
-	err = h.resumeStore.UpdateResume(&newResume)
+	err = h.resumeStore.UpdateResumeByID(&newResume)
 	if err != nil {
 		log.Printf("error updating resume %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)
@@ -213,5 +214,31 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, nil)
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "resume updated successfully"})
+}
+
+func (h *Handler) handleDeleteResume(w http.ResponseWriter, r *http.Request) {
+	log.Println("handing delete resume ..")
+	defer func() {
+		log.Println("finished delete resume ..")
+	}()
+
+	vars := mux.Vars(r)
+	resumeID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Printf("error converting resumeID param to int: %v", err)
+		utils.WriteError(w, fmt.Errorf("error converting resumeID param to int: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// also deletes resume metadata as it cascades by table definition
+	err = h.resumeStore.DeleteResumeByID(resumeID)
+	if err != nil {
+		log.Printf("error delete resume %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("resume with ID %d deleted successfully", resumeID)
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "resume deleted successfully"})
 }
