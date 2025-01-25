@@ -2,6 +2,8 @@ package resume
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"server/types"
 )
 
@@ -55,8 +57,13 @@ func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
 }
 
 func (s *Store) CreateResume(resume *types.Resume) error {
+	jsonData, err := json.Marshal(resume.Data)
+	if err != nil {
+		return err
+	}
+
 	query := `INSERT INTO resumes (template_name, title, data) VALUES (?, ?, ?)`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, resume.Data)
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData)
 	if err != nil {
 		return err
 	}
@@ -86,6 +93,49 @@ func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 	return nil
 }
 
+func (s *Store) UpdateResume(resume *types.Resume) error {
+	jsonData, err := json.Marshal(resume.Data)
+	if err != nil {
+		return err
+	}
+
+	query := `UPDATE resumes SET template_name = ?, title = ?, data = ? WHERE id = ?`
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData, resume.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows updated for resume %d", resume.ID)
+	}
+
+	return nil
+}
+
+func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
+	query := `UPDATE resume_metadatas SET title = ?, thumbnail_url = ? WHERE resume_id = ? AND user_id = ?`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ThumbnailURL, resumeMetadata.ResumeID, resumeMetadata.UserID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows updated for resume ID %d and user ID %d", resumeMetadata.ResumeID, resumeMetadata.UserID)
+	}
+
+	return nil
+}
+
 func scanRowsIntoResumeMetadata(rows *sql.Rows) (*types.ResumeMetadata, error) {
 	metadata := &types.ResumeMetadata{}
 	err := rows.Scan(
@@ -106,15 +156,21 @@ func scanRowsIntoResumeMetadata(rows *sql.Rows) (*types.ResumeMetadata, error) {
 
 func scanRowIntoResume(row *sql.Row) (*types.Resume, error) {
 	resume := &types.Resume{}
+	var rawData []byte // Temporary variable to hold the JSON data as []byte
+
 	err := row.Scan(
 		&resume.ID,
 		&resume.TemplateName,
 		&resume.Title,
-		&resume.Data,
+		&rawData,
 		&resume.CreatedAt,
 		&resume.UpdatedAt,
 	)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(rawData, &resume.Data); err != nil {
 		return nil, err
 	}
 

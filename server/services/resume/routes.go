@@ -13,11 +13,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type CreateResumePayload struct {
-	TemplateName string `json:"template_name" validate:"required"`
-	Title        string `json:"title" validate:"required"`
-	Data         string `json:"data" validate:"required"`
-	File         string `json:"file" validate:"required"` // Base64-encoded file
+type ResumePayload struct {
+	TemplateName string                 `json:"template_name" validate:"required"`
+	Title        string                 `json:"title" validate:"required"`
+	Data         map[string]interface{} `json:"data" validate:"required"`
+	File         string                 `json:"file" validate:"required"` // Base64-encoded file
 }
 
 type Handler struct {
@@ -33,7 +33,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
-	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPatch)
+	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleUpdateResume, h.userStore)).Methods(http.MethodPatch)
 }
 
 func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +85,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished creating resume ..")
 	}()
 
-	resumePayload := CreateResumePayload{}
+	resumePayload := ResumePayload{}
 	err := utils.ParseJSON(r, &resumePayload)
 	if err != nil {
 		log.Printf("error parsing request json, %v", err)
@@ -116,26 +116,26 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create image from base64 encoded pdf file from request payload, put it in s3
-	fileBytes, err := utils.DecodeBase64(resumePayload.File)
-	if err != nil {
-		log.Printf("error decoding base64 file, %v", err)
-		utils.WriteError(w, err, http.StatusInternalServerError)
-		return
-	}
+	// fileBytes, err := utils.DecodeBase64(resumePayload.File)
+	// if err != nil {
+	// 	log.Printf("error decoding base64 file, %v", err)
+	// 	utils.WriteError(w, err, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	finalImagePath, err := utils.FileBinaryToImagePath(fileBytes)
-	if err != nil {
-		log.Printf("error converting binary file to image, %v", err)
-		utils.WriteError(w, err, http.StatusInternalServerError)
-		return
-	}
+	// finalImagePath, err := utils.FileBinaryToImagePath(fileBytes)
+	// if err != nil {
+	// 	log.Printf("error converting binary file to image, %v", err)
+	// 	utils.WriteError(w, err, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	s3ImageURL, err := utils.UploadImageToS3(finalImagePath)
-	if err != nil {
-		log.Printf("error uploading image to S3, %v", err)
-		utils.WriteError(w, fmt.Errorf("error uploading thumbnail to storage: %v", err), http.StatusInternalServerError)
-		return
-	}
+	// s3ImageURL, err := utils.UploadImageToS3(finalImagePath)
+	// if err != nil {
+	// 	log.Printf("error uploading image to S3, %v", err)
+	// 	utils.WriteError(w, fmt.Errorf("error uploading thumbnail to storage: %v", err), http.StatusInternalServerError)
+	// 	return
+	// }
 
 	// create resume metadata with newResume.ID and s3 image link
 	userID := auth.GetUserIDFromContext(r.Context())
@@ -143,11 +143,72 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		Title:        resumePayload.Title,
 		ResumeID:     newResume.ID,
 		UserID:       userID,
-		ThumbnailURL: s3ImageURL,
+		ThumbnailURL: "", // TODO
 	}
 	err = h.resumeStore.CreateResumeMetadata(&newResumeMetadata)
 	if err != nil {
 		log.Printf("error creating new resume metadata %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
+}
+
+func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
+	log.Println("handling update resume ..")
+	defer func() {
+		log.Println("finished updating resume ..")
+	}()
+
+	resumePayload := ResumePayload{}
+	err := utils.ParseJSON(r, &resumePayload)
+	if err != nil {
+		log.Printf("error parsing request json, %v", err)
+		utils.WriteError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	err = utils.Validate.Struct(resumePayload)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		log.Printf("error validating reqest payload, %+v", errors)
+		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("updating resume with request payload %+v", resumePayload)
+
+	vars := mux.Vars(r)
+	resumeID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Printf("error converting resumeID param to int: %v", err)
+		utils.WriteError(w, fmt.Errorf("error converting resumeID param to int: %v", err), http.StatusInternalServerError)
+		return
+	}
+	newResume := types.Resume{
+		ID:           resumeID,
+		TemplateName: resumePayload.TemplateName,
+		Title:        resumePayload.Title,
+		Data:         resumePayload.Data,
+	}
+	err = h.resumeStore.UpdateResume(&newResume)
+	if err != nil {
+		log.Printf("error updating resume %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	userID := auth.GetUserIDFromContext(r.Context())
+	newResumeMetadata := types.ResumeMetadata{
+		Title:        resumePayload.Title,
+		ResumeID:     newResume.ID,
+		UserID:       userID,
+		ThumbnailURL: "",
+	}
+	err = h.resumeStore.UpdateResumeMetadata(&newResumeMetadata)
+	if err != nil {
+		log.Printf("error updating resume metadata %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)
 		return
 	}
