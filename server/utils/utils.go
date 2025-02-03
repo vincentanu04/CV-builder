@@ -4,10 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -36,17 +36,14 @@ func WriteError(w http.ResponseWriter, err error, status int) {
 	WriteJSON(w, status, map[string]string{"error": err.Error()})
 }
 
-func GetTokenFromRequest(r *http.Request) string {
-	tokenAuth := r.Header.Get("Authorization")
-
-	if tokenAuth != "" {
-		parts := strings.Split(tokenAuth, " ")
-		if len(parts) == 2 && parts[0] == "Bearer" {
-			return parts[1]
-		}
+func GetTokenFromCookie(r *http.Request) string {
+	log.Println(r.Cookies())
+	cookie, err := r.Cookie("authToken")
+	if err != nil {
+		log.Println(err)
+		return ""
 	}
-
-	return ""
+	return cookie.Value
 }
 
 func DecodeBase64(fileString string) ([]byte, error) {

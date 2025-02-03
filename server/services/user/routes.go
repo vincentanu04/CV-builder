@@ -25,6 +25,7 @@ func NewHandler(store types.UserStore) *UserHandler {
 func (h *UserHandler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
+	router.HandleFunc("/verify-token", auth.WithJWTAuth(h.handleVerifyToken, h.store)).Methods(http.MethodGet)
 }
 
 type UserRequestPayload struct {
@@ -86,8 +87,10 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("successfully login user %s", user.Email)
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+	auth.SetAuthCookie(w, token)
+
+	log.Printf("successfully logged in user %s", user.Email)
+	utils.WriteJSON(w, http.StatusOK, nil)
 }
 
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -150,6 +153,17 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	auth.SetAuthCookie(w, token)
+
 	log.Printf("successfully registered user %s", newUser.Email)
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+	utils.WriteJSON(w, http.StatusOK, nil)
+}
+
+func (h *UserHandler) handleVerifyToken(w http.ResponseWriter, r *http.Request) {
+	log.Println("handling verify token ..")
+	defer func() {
+		log.Println("finished verifying token ..")
+	}()
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 }
