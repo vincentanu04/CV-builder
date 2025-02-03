@@ -6,6 +6,7 @@ import (
 	"server/services/health"
 	"server/services/resume"
 	"server/services/user"
+	"server/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -34,5 +35,7 @@ func (s *APIServer) Run() error {
 	resumeHandler := resume.NewHandler(resumeStore, userStore)
 	resumeHandler.RegisterRoutes(subrouter)
 
-	return http.ListenAndServe(s.addr, router)
+	corsRouter := utils.CORS(router)
+
+	return http.ListenAndServe(s.addr, corsRouter)
 }

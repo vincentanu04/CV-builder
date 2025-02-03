@@ -40,7 +40,7 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.H
 			log.Println("finished authenticating user ..")
 		}()
 
-		tokenString := utils.GetTokenFromRequest(r)
+		tokenString := utils.GetTokenFromCookie(r)
 		log.Printf("token obtained: %s", tokenString)
 
 		token, err := validateJWT(tokenString)
@@ -109,4 +109,16 @@ func GetUserIDFromContext(ctx context.Context) int {
 	}
 
 	return userID
+}
+
+func SetAuthCookie(w http.ResponseWriter, tokenString string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "authToken",
+		Value:    tokenString,
+		HttpOnly: true,
+		Secure:   true,                  // Set to true in production (HTTPS)
+		SameSite: http.SameSiteNoneMode, // Allows cross-origin requests
+		Path:     "/",
+		Expires:  time.Now().Add(time.Duration(configs.Envs.JWTExpirationInSec) * time.Second),
+	})
 }

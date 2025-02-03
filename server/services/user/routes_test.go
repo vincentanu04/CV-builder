@@ -99,15 +99,8 @@ func TestHandleRegister(t *testing.T) {
 			assert.Equal(t, test.expectedStatus, rr.Code)
 
 			if test.expectingToken {
-				response := map[string]string{}
-				err := json.Unmarshal(rr.Body.Bytes(), &response)
-				if err != nil {
-					t.Fatalf("failed to unmarshal http response %v", err)
-				}
-
-				token, exists := response["token"]
-				assert.True(t, exists, "should contain token")
-				assert.NotEmpty(t, token, "token should not be empty")
+				cookie := rr.Result().Header.Get("Set-Cookie")
+				assert.NotEmpty(t, cookie, "should set a JWT cookie")
 			}
 		})
 	}
@@ -202,15 +195,8 @@ func TestHandleLogin(t *testing.T) {
 			assert.Equal(t, test.expectedStatus, rr.Code)
 
 			if test.expectingToken {
-				response := map[string]string{}
-				err := json.Unmarshal(rr.Body.Bytes(), &response)
-				if err != nil {
-					t.Fatalf("failed unmarshalling response, %v", err)
-				}
-
-				token, exists := response["token"]
-				assert.True(t, exists, "should contain token")
-				assert.NotEmpty(t, token, "token should not be empty")
+				cookie := rr.Result().Header.Get("Set-Cookie")
+				assert.NotEmpty(t, cookie, "should set a JWT cookie")
 			}
 		})
 	}
