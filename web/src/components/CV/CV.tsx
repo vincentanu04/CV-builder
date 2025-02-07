@@ -16,16 +16,7 @@ import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold
 import LibreBaskervilleItalic from '/fonts/Libre_Baskerville/LibreBaskerville-Italic.ttf';
 import { Item } from './components/List';
 import { ItemWithTitle } from './components/ItemWithTitle';
-import {
-  AdditionalExperience,
-  Award,
-  Education,
-  Experience,
-  Profile,
-  Project,
-  Remarks,
-  Skills,
-} from './types';
+import { FormData } from './types';
 
 const styles = StyleSheet.create({
   page: {
@@ -120,17 +111,6 @@ Font.register({
   src: LibreBaskervilleItalic,
 });
 
-interface CVProps {
-  profile: Profile;
-  education: Education;
-  experience: Experience[];
-  projects: Project[];
-  awards: Award[];
-  additional: AdditionalExperience[];
-  skills: Skills;
-  remarks: Remarks;
-}
-
 export default function CV({
   profile,
   education,
@@ -140,7 +120,7 @@ export default function CV({
   additional,
   skills,
   remarks,
-}: CVProps) {
+}: FormData) {
   const { name, email, phoneNumber, github, linkedin } = profile;
   const {
     schoolName,

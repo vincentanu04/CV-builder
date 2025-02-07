@@ -34,7 +34,8 @@ const LandingPage = () => {
     } catch (err) {
       console.error(err);
       setError(
-        err.response?.data?.message || 'Login failed. Please try again.'
+        (err as any).response?.data?.message ||
+          'Login failed. Please try again.'
       );
     }
   };

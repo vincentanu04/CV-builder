@@ -2,7 +2,7 @@ import Buttons, { MultipleInputButton } from '../../Buttons/Buttons';
 
 interface MultipleInputProps {
   array: string[];
-  onChange: (updatedFormValue: { [key: string]: string[] | string }) => void;
+  onChange: (updatedFormValue: any) => void;
   placeholder: string;
   formValueKey: string;
   formValue: { [key: string]: string[] | string };

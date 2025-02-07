@@ -57,7 +57,35 @@ type Remarks = {
   remarks: string;
 };
 
+type FormData = {
+  profile: Profile;
+  education: Education;
+  experience: Experience[];
+  projects: Project[];
+  awards: Award[];
+  additional: AdditionalExperience[];
+  skills: Skills;
+  remarks: Remarks;
+};
+
+type FormComponentProps<T> = {
+  formValue: T;
+  onChange: (newValue: T) => void;
+};
+
+type ProfileFormComponent = React.FC<FormComponentProps<Profile>>;
+type EducationFormComponent = React.FC<FormComponentProps<Education>>;
+type ExperienceFormComponent = React.FC<FormComponentProps<Experience[]>>;
+type ProjectsFormComponent = React.FC<FormComponentProps<Project[]>>;
+type AwardsFormComponent = React.FC<FormComponentProps<Award[]>>;
+type AdditionalFormComponent = React.FC<
+  FormComponentProps<AdditionalExperience[]>
+>;
+type SkillsFormComponent = React.FC<FormComponentProps<Skills>>;
+type RemarksFormComponent = React.FC<FormComponentProps<Remarks>>;
+
 export type {
+  FormData,
   Profile,
   Education,
   Experience,
@@ -66,4 +94,12 @@ export type {
   AdditionalExperience,
   Skills,
   Remarks,
+  ProfileFormComponent,
+  EducationFormComponent,
+  ExperienceFormComponent,
+  ProjectsFormComponent,
+  AwardsFormComponent,
+  AdditionalFormComponent,
+  SkillsFormComponent,
+  RemarksFormComponent,
 };
