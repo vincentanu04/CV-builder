@@ -1,12 +1,20 @@
 import Buttons, { MultipleInputButton } from '../../Buttons/Buttons';
 
+interface MultipleInputProps {
+  array: string[];
+  onChange: (updatedFormValue: { [key: string]: string[] | string }) => void;
+  placeholder: string;
+  formValueKey: string;
+  formValue: { [key: string]: string[] | string };
+}
+
 const MultipleInput = ({
   array,
   onChange,
   placeholder,
   formValueKey,
   formValue,
-}) => {
+}: MultipleInputProps) => {
   return array.map((value, index) => (
     <div key={index} className='multiple-input'>
       <input
@@ -14,7 +22,7 @@ const MultipleInput = ({
         name={formValueKey}
         value={value}
         placeholder={placeholder}
-        onChange={(e) => {
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           const updatedFormValue = { ...formValue };
           const updatedArray = [...updatedFormValue[formValueKey]];
           updatedArray[index] = e.target.value;

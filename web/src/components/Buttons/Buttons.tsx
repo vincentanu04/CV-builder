@@ -1,10 +1,22 @@
 import './Buttons.css';
 
-export default function Buttons({ children, className }) {
+interface ButtonsProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export default function Buttons({ children, className = '' }: ButtonsProps) {
   return <div className={`buttons ${className}`}>{children}</div>;
 }
 
-export function Button({ text, onClick, disabled, className }) {
+interface ButtonProps {
+  text: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export function Button({ text, onClick, disabled, className }: ButtonProps) {
   return (
     <button
       className={`button ${className}`}
@@ -16,7 +28,17 @@ export function Button({ text, onClick, disabled, className }) {
   );
 }
 
-export function MultipleInputButton({ text, onClick, disabled }) {
+interface MultipleInputButtonProps {
+  text: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+export function MultipleInputButton({
+  text,
+  onClick,
+  disabled,
+}: MultipleInputButtonProps) {
   return (
     <button
       className='multiple-input-button'
@@ -28,7 +50,17 @@ export function MultipleInputButton({ text, onClick, disabled }) {
   );
 }
 
-export function NavButton({ text, isSelected, onClick }) {
+interface NavButtonProps {
+  text: string;
+  isSelected?: boolean;
+  onClick?: () => void;
+}
+
+export function NavButton({
+  text,
+  isSelected = false,
+  onClick,
+}: NavButtonProps) {
   return (
     <button
       className={'nav-button ' + (isSelected ? 'selected' : null)}
