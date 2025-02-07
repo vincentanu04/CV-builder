@@ -1,9 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 import { GoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const api = 'https://your-backend-api.com';
+const api = 'http://localhost:8080/api';
 
 const LandingPage = () => {
   const [email, setEmail] = useState('');
@@ -18,54 +19,37 @@ const LandingPage = () => {
     }
 
     try {
-      console.log(email, password);
-      const response = await fetch(`${api}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(
+        `${api}/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
-      if (response.ok) {
+      console.log(response.data);
+
+      if (response.status === 200) {
+        console.log('navigating home');
         navigate('/home');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login failed. Please try again.');
       }
     } catch (err) {
-      console.log(err);
-      setError('Something went wrong. Please try again later.', err);
+      console.error(err);
+      setError(
+        (err as any).response?.data?.message ||
+          'Login failed. Please try again.'
+      );
     }
   };
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if the token exists in cookies or localStorage
-        const token = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('authToken='))
-          ?.split('=')[1];
-
-        if (!token) {
-          return;
-        }
-
-        const response = await fetch(`${api}/verify-token`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await axios.get(`${api}/verify-token`, {
+          withCredentials: true,
         });
 
-        if (response.ok) {
-          console.log('Token verified. Redirecting to home page.');
+        if (response.status === 200) {
+          console.log('navigating home');
           navigate('/home');
-        } else {
-          console.log('Token invalid. Staying on login page.');
         }
       } catch (error) {
         console.error('Authentication check failed:', error);
@@ -73,21 +57,12 @@ const LandingPage = () => {
     };
 
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   return (
     <div className='page-container'>
       <div className='landing-card'>
         <h1>Welcome to CVBuilder</h1>
-        {/* <p>Create and customize your resume easily.</p>
-        <div>
-          <Link to='/resume'>
-            <button>Create Resume as Guest</button>
-          </Link>
-          <Link to='/login'>
-            <button>Login</button>
-          </Link>
-        </div> */}
       </div>
       <div className='login-card'>
         <div className='login-content'>

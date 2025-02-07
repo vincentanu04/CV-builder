@@ -15,14 +15,25 @@ import {
 import CV from '@/components/CV/CV';
 import { PDFDownloadLink, PDFViewer, StyleSheet } from '@react-pdf/renderer';
 import { exampleFormData, initialFormData } from '@/formData';
+import {
+  AdditionalFormComponent,
+  AwardsFormComponent,
+  EducationFormComponent,
+  ExperienceFormComponent,
+  FormData,
+  ProfileFormComponent,
+  ProjectsFormComponent,
+  RemarksFormComponent,
+  SkillsFormComponent,
+} from '@/components/CV/types';
 
 const ResumeForm = () => {
   const [selectedButtonId, setSelectedButtonId] = useState(0);
-  const [formData, setFormData] = useState(initialFormData);
-  const [displayedData, setDisplayedData] = useState(initialFormData);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [displayedData, setDisplayedData] = useState<FormData>(initialFormData);
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
 
-  const handleNavButtonClick = (id) => {
+  const handleNavButtonClick = (id: number) => {
     setSelectedButtonId(id);
   };
 
@@ -40,8 +51,28 @@ const ResumeForm = () => {
     URL.revokeObjectURL(url);
   };
 
-  const formsData = [
-    { id: 0, formType: 'profile', text: 'Profile', formComponent: ProfileForm },
+  type FormDataItem = {
+    id: number;
+    formType: keyof FormData;
+    text: string;
+    formComponent:
+      | ProfileFormComponent
+      | EducationFormComponent
+      | ExperienceFormComponent
+      | ProjectsFormComponent
+      | AwardsFormComponent
+      | AdditionalFormComponent
+      | SkillsFormComponent
+      | RemarksFormComponent;
+  };
+
+  const formsData: FormDataItem[] = [
+    {
+      id: 0,
+      formType: 'profile',
+      text: 'Profile',
+      formComponent: ProfileForm,
+    },
     {
       id: 1,
       formType: 'education',
@@ -146,16 +177,17 @@ const ResumeForm = () => {
           input.type = 'file';
 
           input.addEventListener('change', (e) => {
-            const file = e.target.files[0];
+            const file = (e.target as HTMLInputElement).files?.[0];
 
             if (file) {
               const reader = new FileReader();
               reader.onload = (event) => {
-                const jsonString = event.target.result;
-                const json = JSON.parse(jsonString);
-
-                setFormData(json);
-                setDisplayedData(json);
+                if (event.target) {
+                  const jsonString = event.target.result as string;
+                  const json = JSON.parse(jsonString);
+                  setFormData(json);
+                  setDisplayedData(json);
+                }
               };
 
               reader.readAsText(file);
@@ -169,7 +201,7 @@ const ResumeForm = () => {
       </button>
       <div className='form-container'>
         <SelectedFormComponent
-          formValue={formData[formType]}
+          formValue={formData[formType] as any}
           onChange={(newFormValue) =>
             setFormData((prevFormValue) => ({
               ...prevFormValue,
@@ -258,16 +290,17 @@ const ResumeForm = () => {
               input.type = 'file';
 
               input.addEventListener('change', (e) => {
-                const file = e.target.files[0];
+                const file = (e.target as HTMLInputElement).files?.[0];
 
                 if (file) {
                   const reader = new FileReader();
                   reader.onload = (event) => {
-                    const jsonString = event.target.result;
-                    const json = JSON.parse(jsonString);
-
-                    setFormData(json);
-                    setDisplayedData(json);
+                    if (event.target) {
+                      const jsonString = event.target.result as string;
+                      const json = JSON.parse(jsonString);
+                      setFormData(json);
+                      setDisplayedData(json);
+                    }
                   };
 
                   reader.readAsText(file);

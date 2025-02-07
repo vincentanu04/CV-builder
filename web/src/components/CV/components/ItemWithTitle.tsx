@@ -17,9 +17,19 @@ const styles = StyleSheet.create({
   },
 });
 
-export const ItemWithTitle = ({ title, data, noBulletpoint = false }) => (
+interface ItemWithTitleProps {
+  title: string;
+  data: string;
+  noBulletpoint?: boolean;
+}
+
+export const ItemWithTitle = ({
+  title,
+  data,
+  noBulletpoint = false,
+}: ItemWithTitleProps) => (
   <View style={styles.item}>
-    <Text style={[noBulletpoint && styles.invisible, styles.bulletPoint]}>
+    <Text style={[noBulletpoint ? styles.invisible : {}, styles.bulletPoint]}>
       •
     </Text>
     <Text style={{ display: 'flex', width: '100%' }}>

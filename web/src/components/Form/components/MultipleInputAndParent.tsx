@@ -1,5 +1,14 @@
 import Buttons, { MultipleInputButton } from '../../Buttons/Buttons';
 
+interface MultipleInputAndParentProps {
+  array: string[];
+  onChange: (updatedFormValue: any) => void;
+  placeholder: string;
+  formValueKey: string;
+  formValue: any[];
+  i1: number;
+}
+
 const MultipleInputAndParent = ({
   array,
   onChange,
@@ -7,7 +16,7 @@ const MultipleInputAndParent = ({
   formValueKey,
   formValue,
   i1,
-}) => {
+}: MultipleInputAndParentProps) => {
   return array.map((val, i2) => (
     <div key={i2} className='multiple-input'>
       <input
@@ -20,12 +29,14 @@ const MultipleInputAndParent = ({
             if (index1 === i1) {
               return {
                 ...instance,
-                [formValueKey]: instance[formValueKey].map((val, index2) => {
-                  if (index2 === i2) {
-                    return e.target.value;
+                [formValueKey]: instance[formValueKey].map(
+                  (val: string, index2: number) => {
+                    if (index2 === i2) {
+                      return e.target.value;
+                    }
+                    return val;
                   }
-                  return val;
-                }),
+                ),
               };
             }
             return instance;

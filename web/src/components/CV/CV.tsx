@@ -16,6 +16,7 @@ import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold
 import LibreBaskervilleItalic from '/fonts/Libre_Baskerville/LibreBaskerville-Italic.ttf';
 import { Item } from './components/List';
 import { ItemWithTitle } from './components/ItemWithTitle';
+import { FormData } from './types';
 
 const styles = StyleSheet.create({
   page: {
@@ -119,7 +120,7 @@ export default function CV({
   additional,
   skills,
   remarks,
-}) {
+}: FormData) {
   const { name, email, phoneNumber, github, linkedin } = profile;
   const {
     schoolName,
@@ -160,13 +161,7 @@ export default function CV({
         >
           {github && (
             <Link href={github}>
-              <Svg
-                width='30'
-                height='30'
-                viewBox='0 0 98 96'
-                xmlns='http://www.w3.org/2000/svg'
-                style={{}}
-              >
+              <Svg width='30' height='30' viewBox='0 0 98 96' style={{}}>
                 <Path
                   fill-rule='evenodd'
                   clip-rule='evenodd'
@@ -178,12 +173,7 @@ export default function CV({
           )}
           {linkedin && (
             <Link href={linkedin}>
-              <Svg
-                width='27'
-                height='27'
-                viewBox='0 0 72 72'
-                xmlns='http://www.w3.org/2000/svg'
-              >
+              <Svg width='27' height='27' viewBox='0 0 72 72'>
                 <G fill='none' fill-rule='evenodd'>
                   <Path
                     d='M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,-8.11624501e-16 64,0 L8,0 C3.581722,8.11624501e-16 -5.41083001e-16,3.581722 0,8 L0,64 C5.41083001e-16,68.418278 3.581722,72 8,72 Z'
@@ -216,7 +206,7 @@ export default function CV({
             </View>
             <View style={styles.educationContent}>
               {titleOfStudy && (
-                <Item style={{ marginBottom: 40 }}>
+                <Item>
                   {titleOfStudy}
                   {gpa && `  (${gpa})`}.
                 </Item>

@@ -3,9 +3,27 @@ import { Button } from '../Buttons/Buttons';
 import Buttons from '../Buttons/Buttons';
 import MultipleInputAndParent from './components/MultipleInputAndParent';
 import MultipleInput from './components/MultipleInput';
+import {
+  AdditionalExperience,
+  AdditionalFormComponent,
+  Award,
+  AwardsFormComponent,
+  Education,
+  EducationFormComponent,
+  Experience,
+  ExperienceFormComponent,
+  Profile,
+  ProfileFormComponent,
+  Project,
+  ProjectsFormComponent,
+  Remarks,
+  RemarksFormComponent,
+  Skills,
+  SkillsFormComponent,
+} from '../CV/types';
 
-export function ProfileForm({ formValue, onChange }) {
-  const labels = {
+export const ProfileForm: ProfileFormComponent = ({ formValue, onChange }) => {
+  const labels: Record<keyof Profile, string> = {
     name: 'Full Name',
     email: 'Email',
     phoneNumber: 'Phone Number',
@@ -13,7 +31,7 @@ export function ProfileForm({ formValue, onChange }) {
     linkedin: 'Link to LinkedIn',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Profile, string> = {
     name: 'Vincent Tanuwidjaja',
     email: 'vincent@gmail.com',
     phoneNumber: '(60) 11 9987 2635',
@@ -24,11 +42,9 @@ export function ProfileForm({ formValue, onChange }) {
     <div className='form'>
       <h2>Your Personal Info</h2>
       <hr />
-      {Object.keys(formValue).map((label) => (
+      {(Object.keys(formValue) as Array<keyof Profile>).map((label) => (
         <div key={label} className='input'>
-          <label htmlFor={label} placeholder={placeholders[label]}>
-            {labels[label]}
-          </label>
+          <label htmlFor={label}>{labels[label]}</label>
           <input
             type='text'
             name={label}
@@ -42,10 +58,13 @@ export function ProfileForm({ formValue, onChange }) {
       ))}
     </div>
   );
-}
+};
 
-export function EducationForm({ formValue, onChange }) {
-  const labels = {
+export const EducationForm: EducationFormComponent = ({
+  formValue,
+  onChange,
+}) => {
+  const labels: Record<keyof Education, string> = {
     schoolName: 'School Name',
     fromDate: 'Date (from)',
     toDate: 'Date (to)',
@@ -54,7 +73,7 @@ export function EducationForm({ formValue, onChange }) {
     relevantCoursework: 'Relevant Coursework',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Education, string> = {
     schoolName: 'Monash University Malaysia',
     fromDate: '12/10/2022',
     toDate: '12/10/2024',
@@ -67,11 +86,9 @@ export function EducationForm({ formValue, onChange }) {
     <div className='form scroll'>
       <h2>Your Education Background</h2>
       <hr />
-      {Object.keys(formValue).map((label) => (
+      {(Object.keys(formValue) as Array<keyof Education>).map((label) => (
         <div key={label} className='input'>
-          <label htmlFor={label} placeholder={placeholders[label]}>
-            {labels[label]}
-          </label>
+          <label htmlFor={label}>{labels[label]}</label>
           {Array.isArray(formValue[label]) ? (
             <MultipleInput
               array={formValue[label]}
@@ -95,10 +112,14 @@ export function EducationForm({ formValue, onChange }) {
       ))}
     </div>
   );
-}
+};
 
-export function ExperienceForm({ formValue, onChange }) {
-  const labels = {
+export const ExperienceForm: ExperienceFormComponent = ({
+  formValue,
+  onChange,
+}) => {
+  const labels: Record<keyof Experience, string | number> = {
+    jobId: 1,
     companyName: 'Company Name',
     positionTitle: 'Position Title',
     responsibilities: 'Responsibilities',
@@ -106,10 +127,11 @@ export function ExperienceForm({ formValue, onChange }) {
     dateUntil: 'Date (until)',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Experience, string | number> = {
+    jobId: 1,
     companyName: 'MHUB Malaysia',
     positionTitle: 'Web Dev Intern',
-    responsibilities: ['Writing new React components'],
+    responsibilities: 'Writing new React components',
     dateFrom: '15/11/2023',
     dateUntil: '23/02/2024',
   };
@@ -140,19 +162,17 @@ export function ExperienceForm({ formValue, onChange }) {
       {formValue.map((job, i1) => {
         return (
           <div key={i1} className='job-form'>
-            {Object.keys(job).map((label) => {
+            {(Object.keys(job) as Array<keyof Experience>).map((label) => {
               if (label === 'jobId') {
                 return null;
               } else if (label === 'responsibilities') {
                 return (
                   <div key={label} className='input'>
-                    <label htmlFor={label} placeholder={placeholders[label]}>
-                      {labels[label]}
-                    </label>
+                    <label htmlFor={label}>{labels[label]}</label>
                     <MultipleInputAndParent
                       array={job.responsibilities}
                       onChange={onChange}
-                      placeholder={placeholders[label]}
+                      placeholder={placeholders[label] as string}
                       formValueKey={label}
                       formValue={formValue}
                       i1={i1}
@@ -162,14 +182,12 @@ export function ExperienceForm({ formValue, onChange }) {
               } else {
                 return (
                   <div key={label} className='input'>
-                    <label htmlFor={label} placeholder={placeholders[label]}>
-                      {labels[label]}
-                    </label>
+                    <label htmlFor={label}>{labels[label]}</label>
                     <input
                       type='text'
                       name={label}
                       value={job[label]}
-                      placeholder={placeholders[label]}
+                      placeholder={placeholders[label] as string}
                       onChange={(e) => {
                         const updatedFormValue = formValue.map((job, index) => {
                           if (index === i1) {
@@ -198,16 +216,21 @@ export function ExperienceForm({ formValue, onChange }) {
       </Buttons>
     </div>
   );
-}
+};
 
-export function ProjectsForm({ formValue, onChange }) {
-  const labels = {
+export const ProjectsForm: ProjectsFormComponent = ({
+  formValue,
+  onChange,
+}) => {
+  const labels: Record<keyof Project, string | number> = {
+    projectId: 1,
     projectTitle: 'Project Title',
     projectDescription: 'Project Description',
     projectTechStack: 'Tech stack',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Project, string | number> = {
+    projectId: 1,
     projectTitle: 'CV Builder',
     projectDescription: 'CV Builder description..',
     projectTechStack: 'React',
@@ -237,19 +260,17 @@ export function ProjectsForm({ formValue, onChange }) {
       {formValue.map((proj, i1) => {
         return (
           <div key={i1} className='job-form'>
-            {Object.keys(proj).map((label) => {
+            {(Object.keys(proj) as Array<keyof Project>).map((label) => {
               if (label === 'projectId') {
                 return null;
               } else if (label === 'projectTechStack') {
                 return (
                   <div key={label} className='input'>
-                    <label htmlFor={label} placeholder={placeholders[label]}>
-                      {labels[label]}
-                    </label>
+                    <label htmlFor={label}>{labels[label]}</label>
                     <MultipleInputAndParent
                       array={proj.projectTechStack}
                       onChange={onChange}
-                      placeholder={placeholders[label]}
+                      placeholder={placeholders[label] as string}
                       formValueKey={label}
                       formValue={formValue}
                       i1={i1}
@@ -259,14 +280,12 @@ export function ProjectsForm({ formValue, onChange }) {
               } else {
                 return (
                   <div key={label} className='input'>
-                    <label htmlFor={label} placeholder={placeholders[label]}>
-                      {labels[label]}
-                    </label>
+                    <label htmlFor={label}>{labels[label]}</label>
                     <input
                       type='text'
                       name={label}
                       value={proj[label]}
-                      placeholder={placeholders[label]}
+                      placeholder={placeholders[label] as string}
                       onChange={(e) => {
                         const updatedFormValue = formValue.map(
                           (proj, index) => {
@@ -297,17 +316,19 @@ export function ProjectsForm({ formValue, onChange }) {
       </Buttons>
     </div>
   );
-}
+};
 
-export function AwardsForm({ formValue, onChange }) {
-  const labels = {
+export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
+  const labels: Record<keyof Award, string | number> = {
+    awardId: 1,
     awardTitle: 'Award Title',
     awardIssuer: 'Issuer',
     awardDescription: 'Description',
     awardDate: 'Date',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Award, string | number> = {
+    awardId: 1,
     awardTitle: 'Award Title',
     awardIssuer: 'Monash University Malaysia',
     awardDescription: 'Some award..',
@@ -338,19 +359,17 @@ export function AwardsForm({ formValue, onChange }) {
       <hr />
       {formValue.map((award, i1) => (
         <div key={i1} className='job-form'>
-          {Object.keys(award).map((label) => {
+          {(Object.keys(award) as Array<keyof Award>).map((label) => {
             console.log(award);
             return (
               label !== 'awardId' && (
                 <div key={label} className='input'>
-                  <label htmlFor={label} placeholder={placeholders[label]}>
-                    {labels[label]}
-                  </label>
+                  <label htmlFor={label}>{labels[label]}</label>
                   <input
                     type='text'
                     name={label}
                     value={formValue[i1][label]}
-                    placeholder={placeholders[label]}
+                    placeholder={placeholders[label] as string}
                     onChange={(e) => {
                       const updatedFormValue = formValue.map(
                         (additional, i2) => {
@@ -380,16 +399,21 @@ export function AwardsForm({ formValue, onChange }) {
       </Buttons>
     </div>
   );
-}
+};
 
-export function AdditionalForm({ formValue, onChange }) {
-  const labels = {
+export const AdditionalForm: AdditionalFormComponent = ({
+  formValue,
+  onChange,
+}) => {
+  const labels: Record<keyof AdditionalExperience, string | number> = {
+    additionalId: 1,
     additionalTitle: 'Experience Title',
     additionalDescription: 'Experience Description',
     additionalDate: 'Date',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof AdditionalExperience, string | number> = {
+    additionalId: 1,
     additionalTitle: 'Java Mentor',
     additionalDescription: 'Taught fundamentals of Java',
     additionalDate: '2021',
@@ -418,18 +442,16 @@ export function AdditionalForm({ formValue, onChange }) {
       <hr />
       {formValue.map((exp, i1) => (
         <div key={i1} className='job-form'>
-          {Object.keys(exp).map(
+          {(Object.keys(exp) as Array<keyof AdditionalExperience>).map(
             (label) =>
               label !== 'additionalId' && (
                 <div key={label} className='input'>
-                  <label htmlFor={label} placeholder={placeholders[label]}>
-                    {labels[label]}
-                  </label>
+                  <label htmlFor={label}>{labels[label]}</label>
                   <input
                     type='text'
                     name={label}
                     value={formValue[i1][label]}
-                    placeholder={placeholders[label]}
+                    placeholder={placeholders[label] as string}
                     onChange={(e) => {
                       const updatedFormValue = formValue.map(
                         (additional, i2) => {
@@ -458,17 +480,17 @@ export function AdditionalForm({ formValue, onChange }) {
       </Buttons>
     </div>
   );
-}
+};
 
-export function SkillsForm({ formValue, onChange }) {
-  const labels = {
+export const SkillsForm: SkillsFormComponent = ({ formValue, onChange }) => {
+  const labels: Record<keyof Skills, string> = {
     general: 'General Skills',
     databases: 'Databases',
     languages: 'Programming Languages',
     others: 'Others',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Skills, string> = {
     general: 'GraphQL',
     databases: 'MongoDB',
     languages: 'Go',
@@ -479,15 +501,12 @@ export function SkillsForm({ formValue, onChange }) {
     <div className='form scroll'>
       <h2>Your Skills</h2>
       <hr />
-      {Object.keys(formValue).map((label) => (
+      {(Object.keys(formValue) as Array<keyof Skills>).map((label) => (
         <div key={label} className='input'>
-          <label htmlFor={label} placeholder={placeholders[label]}>
-            {labels[label]}
-          </label>
+          <label htmlFor={label}>{labels[label]}</label>
           <MultipleInput
             array={formValue[label]}
             onChange={onChange}
-            inputLabel={labels[label]}
             formValueKey={label}
             placeholder={placeholders[label]}
             formValue={formValue}
@@ -496,14 +515,14 @@ export function SkillsForm({ formValue, onChange }) {
       ))}
     </div>
   );
-}
+};
 
-export function RemarkForm({ formValue, onChange }) {
-  const labels = {
+export const RemarkForm: RemarksFormComponent = ({ formValue, onChange }) => {
+  const labels: Record<keyof Remarks, string> = {
     remarks: 'Notice period',
   };
 
-  const placeholders = {
+  const placeholders: Record<keyof Remarks, string> = {
     remarks: 'Available from ..',
   };
 
@@ -511,11 +530,9 @@ export function RemarkForm({ formValue, onChange }) {
     <div className='form'>
       <h2>Remarks</h2>
       <hr />
-      {Object.keys(formValue).map((label) => (
+      {(Object.keys(formValue) as Array<keyof Remarks>).map((label) => (
         <div key={label} className='input'>
-          <label htmlFor={label} placeholder={placeholders[label]}>
-            {labels[label]}
-          </label>
+          <label htmlFor={label}>{labels[label]}</label>
           <input
             type='text'
             name={label}
@@ -529,4 +546,4 @@ export function RemarkForm({ formValue, onChange }) {
       ))}
     </div>
   );
-}
+};

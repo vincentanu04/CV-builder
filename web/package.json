@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "preinstall": "npx npm-force-resolutions"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
     "@react-pdf/renderer": "3.4.2",
+    "axios": "^1.7.9",
     "npm-force-resolutions": "^0.0.10",
     "path": "^0.12.7",
     "react": "^18.2.0",
@@ -20,13 +21,16 @@
     "react-router-dom": "^7.1.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@typescript-eslint/eslint-plugin": "^8.23.0",
+    "@typescript-eslint/parser": "^8.23.0",
     "@vitejs/plugin-react": "^4.2.0",
     "eslint": "^8.53.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
+    "typescript": "^5.7.3",
     "vite": "^5.0.0"
   },
   "resolutions": {
