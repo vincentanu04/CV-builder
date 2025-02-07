@@ -34,15 +34,9 @@ input {
 
 .form-container {
   height: 100vh;
-  display: grid;
-  place-items: center;
   border-left: 1px solid rgb(54, 54, 54);
   border-right: 1px solid rgb(54, 54, 54);
   overflow-x: hidden;
-}
-
-.form-container:has(.scroll) {
-  overflow-y: scroll;
 }
 
 .form {
