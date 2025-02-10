@@ -131,3 +131,14 @@ func SetAuthCookie(w http.ResponseWriter, tokenString string) {
 		Expires:  time.Now().Add(time.Duration(configs.Envs.JWTExpirationInSec) * time.Second),
 	})
 }
+
+func ClearAuthCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "authToken",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
+		Path:     "/",
+		MaxAge:   -1, // delete cookie, invalidate
+	})
+}

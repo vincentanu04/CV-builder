@@ -28,3 +28,11 @@ export const verifyToken = async (): Promise<User> => {
     throw new Error('Error verifying token');
   }
 };
+
+export const logout = async () => {
+  try {
+    await axios.post(`${api}/logout`, null, { withCredentials: true });
+  } catch (error) {
+    throw new Error('Error logging out');
+  }
+};

@@ -26,6 +26,7 @@ func (h *UserHandler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
 	router.HandleFunc("/verify-token", auth.WithJWTAuth(h.handleVerifyToken, h.store)).Methods(http.MethodGet)
+	router.HandleFunc("/logout", auth.WithJWTAuth(h.handleLogout, h.store)).Methods(http.MethodPost)
 }
 
 type UserRequestPayload struct {
@@ -170,4 +171,16 @@ func (h *UserHandler) handleVerifyToken(w http.ResponseWriter, r *http.Request) 
 	user := auth.GetUserFromContext(r.Context())
 
 	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": user})
+}
+
+func (h *UserHandler) handleLogout(w http.ResponseWriter, r *http.Request) {
+	log.Println("handling logout ..")
+	defer func() {
+		log.Println("finished logging out ..")
+	}()
+
+	auth.ClearAuthCookie(w)
+
+	log.Println("successfully logged out user")
+	utils.WriteJSON(w, http.StatusOK, nil)
 }

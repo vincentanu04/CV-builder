@@ -23,7 +23,7 @@ const HomePage = () => {
           <h1 className='text-2xl font-bold'>CV Builder</h1>
           <div className='flex items-center space-x-4'>
             <MainNav />
-            <UserNav user={user} />
+            <UserNav />
           </div>
         </div>
       </header>

@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@/api/auth';
+import { logout } from '@/api/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,18 +12,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-interface UserNavProps {
-  user: User | null;
-}
-
-const UserNav = ({ user }: UserNavProps) => {
-  let navigate = useNavigate();
+const UserNav = () => {
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
-    // Implement sign out logic here
-    navigate('/login');
+    try {
+      logout();
+      setUser(null);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
