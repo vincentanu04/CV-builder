@@ -13,6 +13,15 @@ export interface ResumeMetadata {
   updated_at: string;
 }
 
+export interface Resume {
+  id: number;
+  template_name: string;
+  title: string;
+  data: { [key: string]: any };
+  created_at: string;
+  updated_at: string;
+}
+
 export const getResumeMetadatas = async (): Promise<ResumeMetadata[]> => {
   try {
     const resp = await axios.get<{ resumeMetadatas: ResumeMetadata[] }>(
@@ -33,5 +42,25 @@ export const getResumeMetadatas = async (): Promise<ResumeMetadata[]> => {
     }
 
     throw new Error('Failed to fetch resume metadatas');
+  }
+};
+
+export const getResume = async (resumeMetadataId: number): Promise<Resume> => {
+  try {
+    const response = await axios.get<{ resume: Resume }>(
+      `${api}/resumes/${resumeMetadataId}`,
+      { withCredentials: true }
+    );
+    return response.data.resume;
+  } catch (error) {
+    console.error(error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.status === FORBIDDEN) {
+        throw new Error(FORBIDDEN_MESSAGE);
+      }
+    }
+
+    throw new Error('Failed to fetch resume');
   }
 };

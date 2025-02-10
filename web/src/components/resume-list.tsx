@@ -7,7 +7,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getResumeMetadatas, ResumeMetadata } from '@/api/resume';
 import { FORBIDDEN_MESSAGE } from '@/api/errors';
 
-const ResumeList = () => {
+interface ResumeListProps {
+  setPreviewingResumeID: (resumeMetadataId: number) => void;
+}
+const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   const navigate = useNavigate();
 
   const {
@@ -35,32 +38,33 @@ const ResumeList = () => {
     return <div>Error, please try again!</div>;
   }
 
-  console.log(resume_metadatas);
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-      {resume_metadatas.map((resume) => (
-        <Card key={resume.id}>
+      {resume_metadatas.map((metadata) => (
+        <Card key={metadata.id}>
           <CardContent className='pt-6'>
-            <h3 className='font-semibold text-lg mb-2'>{resume.title}</h3>
+            <h3 className='font-semibold text-lg mb-2'>{metadata.title}</h3>
             <p className='text-sm text-gray-400'>
               Last updated:{' '}
-              {new Date(resume.updated_at)
+              {new Date(metadata.updated_at)
                 .toLocaleDateString('en-GB')
                 .replace(/\//g, '-')}
             </p>
           </CardContent>
           <CardFooter className='justify-between'>
             <Button variant='outline' size='sm' asChild>
-              <Link to={`/resume/${resume.id}/edit`}>
+              <Link to={`/resume/${metadata.resume_id}/edit`}>
                 <Pencil className='w-4 h-4 mr-2' />
                 Edit
               </Link>
             </Button>
-            <Button variant='outline' size='sm' asChild>
-              <Link to={`/resume/${resume.id}/preview`}>
-                <Eye className='w-4 h-4 mr-2' />
-                Preview
-              </Link>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => setPreviewingResumeID(metadata.resume_id)}
+            >
+              <Eye className='w-4 h-4 mr-2' />
+              Preview
             </Button>
           </CardFooter>
         </Card>
