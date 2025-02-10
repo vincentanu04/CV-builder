@@ -90,7 +90,9 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	auth.SetAuthCookie(w, token)
 
 	log.Printf("successfully logged in user %s", user.Email)
-	utils.WriteJSON(w, http.StatusOK, nil)
+
+	clientUser := types.User{ID: user.ID, Email: user.Email}
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": clientUser})
 }
 
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -165,5 +167,7 @@ func (h *UserHandler) handleVerifyToken(w http.ResponseWriter, r *http.Request) 
 		log.Println("finished verifying token ..")
 	}()
 
-	utils.WriteJSON(w, http.StatusOK, nil)
+	user := auth.GetUserFromContext(r.Context())
+
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": user})
 }

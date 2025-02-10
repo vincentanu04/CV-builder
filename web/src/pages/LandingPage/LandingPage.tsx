@@ -3,14 +3,22 @@ import './LandingPage.css';
 import { GoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '@/contexts/AuthContext';
 
 const api = 'http://localhost:8080/api';
 
 const LandingPage = () => {
+  const { user, setUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/home');
+    }
+  }, [user, navigate]);
 
   const handleLogin = async () => {
     if (email == '' || password == '') {
@@ -25,9 +33,10 @@ const LandingPage = () => {
         { withCredentials: true }
       );
 
-      console.log(response.data);
+      console.log(response.data.user);
 
       if (response.status === 200) {
+        setUser(response.data.user);
         console.log('navigating home');
         navigate('/home');
       }
@@ -39,25 +48,6 @@ const LandingPage = () => {
       );
     }
   };
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get(`${api}/verify-token`, {
-          withCredentials: true,
-        });
-
-        if (response.status === 200) {
-          console.log('navigating home');
-          navigate('/home');
-        }
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
 
   return (
     <div className='page-container'>

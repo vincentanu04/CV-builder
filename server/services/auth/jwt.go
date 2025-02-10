@@ -15,7 +15,7 @@ import (
 
 type contextKey string
 
-const userIDKey contextKey = "userID"
+const userKey contextKey = "user"
 
 func CreateJWT(secret []byte, userID int, expirationInSec int64) (string, error) {
 	expiresAt := time.Now().Add(time.Second * time.Duration(expirationInSec)).Unix()
@@ -81,7 +81,7 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.H
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, userIDKey, u.ID)
+		ctx = context.WithValue(ctx, userKey, &types.User{ID: u.ID, Email: u.Email})
 		r = r.WithContext(ctx)
 
 		handlerFunc(w, r)
@@ -103,12 +103,21 @@ func permissionDenied(w http.ResponseWriter) {
 }
 
 func GetUserIDFromContext(ctx context.Context) int {
-	userID, ok := ctx.Value(userIDKey).(int)
+	user, ok := ctx.Value(userKey).(*types.User)
 	if !ok {
 		return -1
 	}
 
-	return userID
+	return user.ID
+}
+
+func GetUserFromContext(ctx context.Context) *types.User {
+	user, ok := ctx.Value(userKey).(*types.User)
+	if !ok {
+		return &types.User{}
+	}
+
+	return user
 }
 
 func SetAuthCookie(w http.ResponseWriter, tokenString string) {

@@ -1,10 +1,21 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import ResumeList from '@/components/resume-list';
 import QuickActions from '@/components/quick-actions';
 import MainNav from '@/components/main-nav';
 import UserNav from '@/components/user-nav';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const { user, loading: userLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userLoading && !user) {
+      navigate('/');
+    }
+  }, [userLoading, user, navigate]);
+
   return (
     <div className='flex flex-col min-h-screen'>
       <header className='border-b  px-20'>
@@ -12,7 +23,7 @@ const HomePage = () => {
           <h1 className='text-2xl font-bold'>CV Builder</h1>
           <div className='flex items-center space-x-4'>
             <MainNav />
-            <UserNav />
+            <UserNav user={user} />
           </div>
         </div>
       </header>
