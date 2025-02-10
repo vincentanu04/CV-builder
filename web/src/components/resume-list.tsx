@@ -1,40 +1,52 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Eye, Pencil } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getResumeMetadatas, ResumeMetadata } from '@/api/resume';
+import { FORBIDDEN_MESSAGE } from '@/api/errors';
 
 const ResumeList = () => {
-  const [resumes, setResumes] = useState<
-    {
-      id: number;
-      name: string;
-      lastUpdated: string;
-    }[]
-  >([]);
+  const navigate = useNavigate();
+
+  const {
+    data: resume_metadatas = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<ResumeMetadata[], Error>({
+    queryKey: ['resume_metadatas'],
+    queryFn: getResumeMetadatas,
+    retry: (_, error) => error.message !== FORBIDDEN_MESSAGE,
+  });
 
   useEffect(() => {
-    async function getResumes() {
-      // Simulate API call to fetch resumes
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setResumes([
-        { id: 1, name: 'Software Engineer Resume', lastUpdated: '2023-05-15' },
-        { id: 2, name: 'Product Manager Resume', lastUpdated: '2023-05-10' },
-        { id: 3, name: 'Data Analyst Resume', lastUpdated: '2023-05-05' },
-      ]);
+    if (isError && error?.message === FORBIDDEN_MESSAGE) {
+      navigate('/');
     }
+  }, [isError, error, navigate]);
 
-    getResumes();
-  }, []);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
+  if (isError) {
+    return <div>Error, please try again!</div>;
+  }
+
+  console.log(resume_metadatas);
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-      {resumes.map((resume) => (
+      {resume_metadatas.map((resume) => (
         <Card key={resume.id}>
           <CardContent className='pt-6'>
-            <h3 className='font-semibold text-lg mb-2'>{resume.name}</h3>
+            <h3 className='font-semibold text-lg mb-2'>{resume.title}</h3>
             <p className='text-sm text-gray-400'>
-              Last updated: {resume.lastUpdated}
+              Last updated:{' '}
+              {new Date(resume.updated_at)
+                .toLocaleDateString('en-GB')
+                .replace(/\//g, '-')}
             </p>
           </CardContent>
           <CardFooter className='justify-between'>

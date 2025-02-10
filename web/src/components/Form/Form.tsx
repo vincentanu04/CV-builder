@@ -360,7 +360,6 @@ export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
       {formValue.map((award, i1) => (
         <div key={i1} className='job-form'>
           {(Object.keys(award) as Array<keyof Award>).map((label) => {
-            console.log(award);
             return (
               label !== 'awardId' && (
                 <div key={label} className='input'>
