@@ -44,18 +44,17 @@ const UserNav = () => {
       <DropdownMenuContent className='w-56' align='end' forceMount>
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
-            <p className='text-sm font-medium leading-none'>
-              {user ? user.id : '-'}
-            </p>
-            <p className='text-xs leading-none text-muted-foreground'>
+            <p className='text-sm font-medium leading-none text-[#373737]'>
               {user ? user.email : '-'}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem className='text-gray-500'>Profile</DropdownMenuItem>
+          <DropdownMenuItem className='text-gray-500'>
+            Settings
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>

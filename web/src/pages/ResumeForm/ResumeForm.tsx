@@ -1,5 +1,5 @@
 import './ResumeForm.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Buttons from '@/components/Buttons/Buttons';
 import { NavButton, Button } from '@/components/Buttons/Buttons';
 import {
@@ -26,12 +26,48 @@ import {
   RemarksFormComponent,
   SkillsFormComponent,
 } from '@/components/CV/types';
+import { getResume } from '@/api/resume';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { FORBIDDEN_MESSAGE } from '@/api/errors';
 
-const ResumeForm = () => {
+interface ResumeFormProps {
+  isEdit: boolean;
+}
+
+const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const [selectedButtonId, setSelectedButtonId] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [displayedData, setDisplayedData] = useState<FormData>(initialFormData);
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { data: resume, error } = useQuery({
+    queryKey: ['resume', id],
+    queryFn: () => getResume(Number(id)),
+    enabled: isEdit,
+    retry: (_, error) => error.message !== FORBIDDEN_MESSAGE,
+  });
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+      switch (error.message) {
+        case FORBIDDEN_MESSAGE:
+          console.log('FORBIDDEN');
+          navigate('/');
+          break;
+        default:
+          navigate('/home');
+      }
+    }
+
+    if (resume) {
+      setFormData(resume.data as FormData);
+      setDisplayedData(resume.data as FormData);
+    }
+  }, [resume, error]);
 
   const handleNavButtonClick = (id: number) => {
     setSelectedButtonId(id);

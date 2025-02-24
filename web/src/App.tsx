@@ -8,7 +8,8 @@ function App() {
         {/* <Route path='/' element={<ResumeForm />} /> */}
         <Route path='/' element={<LandingPage />} />
         <Route path='/home' element={<HomePage />} />
-        <Route path='/resume/:id' element={<ResumeForm />} />
+        <Route path='/resume/new' element={<ResumeForm isEdit={false} />} />
+        <Route path='/resume/:id' element={<ResumeForm isEdit={true} />} />
       </Routes>
     </Router>
   );

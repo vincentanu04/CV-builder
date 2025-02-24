@@ -1,7 +1,6 @@
 .input {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
 .multiple-input {
@@ -9,16 +8,17 @@
   flex-direction: column;
 }
 
-input {
+.form input {
   background-color: var(--background-clr);
   border: none;
   border-bottom: 1px solid rgb(69, 69, 69);
   padding: 0.5rem 0rem;
   outline: none;
   font-size: 0.75em;
-  color: var(--accent-clr);
+  color: var(--accent-clr) !important;
   transition: border-bottom 0.4s ease;
   height: 2rem;
+  font-size: 0.75em !important;
 }
 
 .form input:focus {
@@ -29,7 +29,7 @@ input {
 }
 
 ::placeholder {
-  color: rgb(94, 94, 94);
+  color: rgb(94, 94, 94) !important;
 }
 
 .form-container {
@@ -62,18 +62,18 @@ input {
 
 .form h2 {
   color: var(--accent-clr);
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
 .form hr {
   background-color: var(--primary-clr);
   border: none;
   min-height: 0.05rem;
-  margin-block: 0.125rem;
 }
 
 .form .job-hr {
-  min-height: 0.75rem;
-  margin-block: 1rem;
+  /* min-height: 0.75rem; */
 }
 
 .form .buttons {

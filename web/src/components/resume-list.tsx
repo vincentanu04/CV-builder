@@ -53,7 +53,7 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
           </CardContent>
           <CardFooter className='justify-between'>
             <Button variant='outline' size='sm' asChild>
-              <Link to={`/resume/${metadata.resume_id}/edit`}>
+              <Link to={`/resume/${metadata.resume_id}`}>
                 <Pencil className='w-4 h-4 mr-2' />
                 Edit
               </Link>

@@ -23,6 +23,7 @@ body {
   background-color: var(--background-clr);
   font-family: 'Roboto', sans-serif;
   color: var(--text-clr);
+  max-height: 100vh !important;
 }
 
 input,
@@ -39,6 +40,7 @@ button {
 
 main {
   display: flex;
+  max-height: 100vh !important;
 }
 
 .toolbar {
