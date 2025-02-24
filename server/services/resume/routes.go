@@ -8,6 +8,7 @@ import (
 	"server/types"
 	"server/utils"
 	"strconv"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -192,6 +193,7 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 		TemplateName: resumePayload.TemplateName,
 		Title:        resumePayload.Title,
 		Data:         resumePayload.Data,
+		UpdatedAt:    time.Now(),
 	}
 	err = h.resumeStore.UpdateResumeByID(&newResume)
 	if err != nil {
@@ -206,6 +208,7 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 		ResumeID:     newResume.ID,
 		UserID:       userID,
 		ThumbnailURL: "",
+		UpdatedAt:    time.Now(),
 	}
 	err = h.resumeStore.UpdateResumeMetadata(&newResumeMetadata)
 	if err != nil {

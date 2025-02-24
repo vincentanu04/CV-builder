@@ -100,8 +100,8 @@ func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 		return err
 	}
 
-	query := `UPDATE resumes SET template_name = ?, title = ?, data = ? WHERE id = ?`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData, resume.ID)
+	query := `UPDATE resumes SET template_name = ?, title = ?, data = ?, updated_at = ? WHERE id = ?`
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData, resume.UpdatedAt, resume.ID)
 	if err != nil {
 		return err
 	}
@@ -120,8 +120,8 @@ func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 }
 
 func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
-	query := `UPDATE resume_metadatas SET title = ?, thumbnail_url = ? WHERE resume_id = ? AND user_id = ?`
-	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ThumbnailURL, resumeMetadata.ResumeID, resumeMetadata.UserID)
+	query := `UPDATE resume_metadatas SET title = ?, thumbnail_url = ?, updated_at = ? WHERE resume_id = ? AND user_id = ?`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ThumbnailURL, resumeMetadata.UpdatedAt, resumeMetadata.ResumeID, resumeMetadata.UserID)
 	if err != nil {
 		return err
 	}

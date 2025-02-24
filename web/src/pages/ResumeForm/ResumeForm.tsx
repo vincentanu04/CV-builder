@@ -51,7 +51,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     return null;
   }
 
-  const { data: resume, error } = useQuery({
+  const { data: originalResume, error } = useQuery({
     queryKey: ['resume', id],
     queryFn: () => getResume(Number(id)),
     enabled: isEdit,
@@ -71,11 +71,11 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
       }
     }
 
-    if (resume) {
-      setFormData(resume.data as FormData);
-      setDisplayedData(resume.data as FormData);
+    if (originalResume) {
+      setFormData(originalResume.data as FormData);
+      setDisplayedData(originalResume.data as FormData);
     }
-  }, [resume, error]);
+  }, [originalResume, error]);
 
   const handleNavButtonClick = (id: number) => {
     setSelectedButtonId(id);
@@ -100,11 +100,11 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   };
 
   const handleBackAndSave = () => {
-    if (isEdit && resume) {
+    if (isEdit && originalResume) {
       try {
         updateResume(Number(id), {
-          template_name: resume.template_name,
-          title: resume.title,
+          template_name: originalResume.template_name,
+          title: originalResume.title,
           data: formData,
           file: 'TEST',
         });
@@ -240,7 +240,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
             size={'lg'}
             className='mb-5 w-full'
           >
-            Create
+            Display
           </Button>
           <Button
             onClick={() => {
