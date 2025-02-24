@@ -1,7 +1,8 @@
 import './ResumeForm.css';
 import { useEffect, useState } from 'react';
 import Buttons from '@/components/Buttons/Buttons';
-import { NavButton, Button } from '@/components/Buttons/Buttons';
+import { Button } from '@/components/ui/button';
+import { NavButton } from '@/components/Buttons/Buttons';
 import {
   ProfileForm,
   EducationForm,
@@ -26,10 +27,11 @@ import {
   RemarksFormComponent,
   SkillsFormComponent,
 } from '@/components/CV/types';
-import { getResume } from '@/api/resume';
+import { createResume, getResume, updateResume } from '@/api/resume';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { FORBIDDEN_MESSAGE } from '@/api/errors';
+import { ChevronLeft } from 'lucide-react';
 
 interface ResumeFormProps {
   isEdit: boolean;
@@ -40,8 +42,14 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [displayedData, setDisplayedData] = useState<FormData>(initialFormData);
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
-  const { id } = useParams();
+  const [isExample, setIsExample] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  if (isEdit && (!id || isNaN(Number(id)))) {
+    navigate('/home');
+    return null;
+  }
 
   const { data: resume, error } = useQuery({
     queryKey: ['resume', id],
@@ -85,6 +93,39 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
       : 'resume';
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleShowExample = () => {
+    setDisplayedData(exampleFormData);
+  };
+
+  const handleBackAndSave = () => {
+    if (isEdit && resume) {
+      try {
+        updateResume(Number(id), {
+          template_name: resume.template_name,
+          title: resume.title,
+          data: formData,
+          file: 'TEST',
+        });
+        navigate('/home');
+      } catch (error) {
+        console.log(error);
+        alert('Failed to save resume, please wait and try again.');
+      }
+    } else {
+      try {
+        createResume({
+          template_name: 'TEST',
+          title: 'TEST',
+          data: formData,
+          file: 'TEST',
+        });
+        navigate('/home');
+      } catch (error) {
+        alert('Failed to save resume, please wait and try again.');
+      }
+    }
   };
 
   type FormDataItem = {
@@ -172,6 +213,14 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   return (
     <main>
       <div className='buttons-bar'>
+        <Button
+          size={'sm'}
+          className='pr-4'
+          variant={'outline'}
+          onClick={handleBackAndSave}
+        >
+          <ChevronLeft /> Back & Save
+        </Button>
         <Buttons className='form-buttons'>
           {formsData.map((button) => (
             <NavButton
@@ -182,28 +231,33 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
             />
           ))}
         </Buttons>
-        <Buttons className='action-buttons hide-on-mobile'>
+        <div className='hide-on-mobile flex flex-col gap-2 items-center'>
           <Button
-            text='Create'
             onClick={() => {
               setDisplayedData(formData);
+              setIsExample(false);
             }}
-          />
+            size={'lg'}
+            className='mb-5 w-full'
+          >
+            Create
+          </Button>
           <Button
-            text='Example'
             onClick={() => {
-              setFormData(exampleFormData);
-              setDisplayedData(exampleFormData);
+              const shouldShowExample = !isExample;
+              if (shouldShowExample) {
+                handleShowExample();
+              } else {
+                setDisplayedData(formData);
+              }
+
+              setIsExample(shouldShowExample);
             }}
-          />
-          <Button
-            text='Reset'
-            onClick={() => {
-              setFormData(initialFormData);
-              setDisplayedData(initialFormData);
-            }}
-          />
-        </Buttons>
+            variant={'outline'}
+          >
+            {isExample ? 'Hide Example' : 'Show Example'}
+          </Button>
+        </div>
       </div>
       {/* only on mobile */}
       <button
@@ -246,20 +300,19 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
           }
         />
       </div>
-      <Buttons className='action-buttons hide-on-desktop'>
+      <div className='action-buttons hide-on-desktop'>
         <Button
-          text='Example'
           onClick={() => {
-            setFormData(exampleFormData);
-            setDisplayedData(exampleFormData);
+            handleShowExample();
             if (window.innerWidth <= 786) {
               // For mobile, only show the file div when Create is pressed
               setIsFileVisibleMobile(true);
             }
           }}
-        />
+        >
+          Show Example
+        </Button>
         <Button
-          text='Create'
           onClick={() => {
             setDisplayedData(formData);
             if (window.innerWidth <= 786) {
@@ -267,15 +320,10 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
               setIsFileVisibleMobile(true);
             }
           }}
-        />
-        <Button
-          text='Reset'
-          onClick={() => {
-            setFormData(initialFormData);
-            setDisplayedData(initialFormData);
-          }}
-        />
-      </Buttons>
+        >
+          Create
+        </Button>
+      </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
         className={`file ${isFileVisibleMobile ? 'show' : ''}`}
@@ -354,11 +402,12 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
         </PDFViewer>
         <Button
           className='hide-on-desktop back-button'
-          text='Back'
           onClick={() => {
             setIsFileVisibleMobile(false);
           }}
-        />
+        >
+          Back
+        </Button>
       </div>
     </main>
   );

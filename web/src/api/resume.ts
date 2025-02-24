@@ -22,6 +22,13 @@ export interface Resume {
   updated_at: string;
 }
 
+export interface ResumePayload {
+  template_name: string;
+  title: string;
+  data: { [key: string]: any };
+  file: string;
+}
+
 export const getResumeMetadatas = async (): Promise<ResumeMetadata[]> => {
   try {
     const resp = await axios.get<{ resumeMetadatas: ResumeMetadata[] }>(
@@ -52,6 +59,29 @@ export const getResume = async (resumeMetadataId: number): Promise<Resume> => {
       { withCredentials: true }
     );
     return response.data.resume;
+  } catch (error) {
+    console.error(error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.status === FORBIDDEN) {
+        throw new Error(FORBIDDEN_MESSAGE);
+      }
+    }
+
+    throw new Error('Failed to fetch resume');
+  }
+};
+
+export const createResume = async (resumePayload: ResumePayload) => {};
+
+export const updateResume = async (
+  resumeID: number,
+  resumePayload: ResumePayload
+) => {
+  try {
+    axios.patch(`${api}/resumes/${resumeID}`, resumePayload, {
+      withCredentials: true,
+    });
   } catch (error) {
     console.error(error);
 

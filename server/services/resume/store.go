@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"server/types"
 )
 
@@ -111,7 +112,8 @@ func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("no rows updated for resume %d", resume.ID)
+		log.Printf("No changes made to resume %d", resume.ID)
+		return nil
 	}
 
 	return nil
@@ -130,7 +132,8 @@ func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("no rows updated for resume ID %d and user ID %d", resumeMetadata.ResumeID, resumeMetadata.UserID)
+		log.Printf("no rows updated for resume ID %d and user ID %d", resumeMetadata.ResumeID, resumeMetadata.UserID)
+		return nil
 	}
 
 	return nil
