@@ -72,7 +72,23 @@ export const getResume = async (resumeMetadataId: number): Promise<Resume> => {
   }
 };
 
-export const createResume = async (resumePayload: ResumePayload) => {};
+export const createResume = async (resumePayload: ResumePayload) => {
+  try {
+    axios.post(`${api}/resumes`, resumePayload, {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error(error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.status === FORBIDDEN) {
+        throw new Error(FORBIDDEN_MESSAGE);
+      }
+    }
+
+    throw new Error('Failed to create resume');
+  }
+};
 
 export const updateResume = async (
   resumeID: number,
@@ -91,6 +107,6 @@ export const updateResume = async (
       }
     }
 
-    throw new Error('Failed to fetch resume');
+    throw new Error('Failed to update resume');
   }
 };

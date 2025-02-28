@@ -31,7 +31,7 @@ import { createResume, getResume, updateResume } from '@/api/resume';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { FORBIDDEN_MESSAGE } from '@/api/errors';
-import { ChevronLeft } from 'lucide-react';
+import { ConfirmBack } from '@/components/confirm-back';
 
 interface ResumeFormProps {
   isEdit: boolean;
@@ -43,6 +43,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const [displayedData, setDisplayedData] = useState<FormData>(initialFormData);
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
   const [isExample, setIsExample] = useState(false);
+  const [lastSavedResume, setLastSavedResume] = useState<FormData | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -57,6 +58,9 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     enabled: isEdit,
     retry: (_, error) => error.message !== FORBIDDEN_MESSAGE,
   });
+
+  const isResumeChanged =
+    JSON.stringify(formData) !== JSON.stringify(lastSavedResume);
 
   useEffect(() => {
     if (error) {
@@ -74,6 +78,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     if (originalResume) {
       setFormData(originalResume.data as FormData);
       setDisplayedData(originalResume.data as FormData);
+      setLastSavedResume(originalResume.data as FormData);
     }
   }, [originalResume, error]);
 
@@ -99,7 +104,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     setDisplayedData(exampleFormData);
   };
 
-  const handleBackAndSave = () => {
+  const handleCreateOrSave = () => {
     if (isEdit && originalResume) {
       try {
         updateResume(Number(id), {
@@ -108,7 +113,6 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
           data: formData,
           file: 'TEST',
         });
-        navigate('/home');
       } catch (error) {
         console.log(error);
         alert('Failed to save resume, please wait and try again.');
@@ -121,11 +125,11 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
           data: formData,
           file: 'TEST',
         });
-        navigate('/home');
       } catch (error) {
         alert('Failed to save resume, please wait and try again.');
       }
     }
+    setLastSavedResume(formData);
   };
 
   type FormDataItem = {
@@ -213,13 +217,14 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   return (
     <main>
       <div className='buttons-bar'>
+        <ConfirmBack isResumeChanged={isResumeChanged} />
         <Button
           size={'sm'}
-          className='pr-4'
-          variant={'outline'}
-          onClick={handleBackAndSave}
+          className='py-2 px-6'
+          onClick={handleCreateOrSave}
+          disabled={!isResumeChanged}
         >
-          <ChevronLeft /> Back & Save
+          {isEdit ? 'Save' : 'Create'} Resume
         </Button>
         <Buttons className='form-buttons'>
           {formsData.map((button) => (
@@ -321,7 +326,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
             }
           }}
         >
-          Create
+          Display
         </Button>
       </div>
       <div

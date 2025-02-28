@@ -45,7 +45,7 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
           <CardContent className='pt-6'>
             <h3 className='font-semibold text-lg mb-2'>{metadata.title}</h3>
             <p className='text-sm text-gray-400'>
-              Last opened:{' '}
+              Last updated:{' '}
               {new Date(metadata.updated_at)
                 .toLocaleDateString('en-GB')
                 .replace(/\//g, '-')}
