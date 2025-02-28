@@ -29,6 +29,10 @@ export interface ResumePayload {
   file: string;
 }
 
+export interface UpdateResumeMetadataTitlePayload {
+  title: string;
+}
+
 export const getResumeMetadatas = async (): Promise<ResumeMetadata[]> => {
   try {
     const resp = await axios.get<{ resumeMetadatas: ResumeMetadata[] }>(
@@ -108,5 +112,44 @@ export const updateResume = async (
     }
 
     throw new Error('Failed to update resume');
+  }
+};
+
+export const deleteResume = async (resumeID: number) => {
+  try {
+    axios.delete(`${api}/resumes/${resumeID}`, {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error(error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.status === FORBIDDEN) {
+        throw new Error(FORBIDDEN_MESSAGE);
+      }
+    }
+
+    throw new Error('Failed to delete resume');
+  }
+};
+
+export const updateResumeMetadataTitle = async (
+  resumeMetadataID: number,
+  payload: UpdateResumeMetadataTitlePayload
+) => {
+  try {
+    axios.patch(`${api}/resume_metadatas/${resumeMetadataID}/title`, payload, {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error(error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.status === FORBIDDEN) {
+        throw new Error(FORBIDDEN_MESSAGE);
+      }
+    }
+
+    throw new Error('Failed to update resume metadata title');
   }
 };
