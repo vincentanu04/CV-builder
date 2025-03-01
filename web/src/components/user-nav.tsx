@@ -51,10 +51,10 @@ const UserNav = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className='text-gray-500'>Profile</DropdownMenuItem>
+          {/* <DropdownMenuItem className='text-gray-500'>Profile</DropdownMenuItem>
           <DropdownMenuItem className='text-gray-500'>
             Settings
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>

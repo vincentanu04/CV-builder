@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 const MainNav = () => {
   return (
     <nav>
-      <ul className='flex space-x-4'>
+      <ul className='flex space-x-5 mr-2'>
         <li>
           <Link to='/home' className='text-sm font-medium'>
             Home
@@ -14,7 +14,7 @@ const MainNav = () => {
             Templates
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to='/ai-review' className='text-sm font-medium'>
             AI Review
           </Link>
@@ -23,7 +23,7 @@ const MainNav = () => {
           <Link to='/peer-review' className='text-sm font-medium'>
             Peer Review
           </Link>
-        </li>
+        </li> */}
       </ul>
     </nav>
   );

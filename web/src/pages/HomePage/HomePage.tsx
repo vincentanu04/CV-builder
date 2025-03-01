@@ -45,10 +45,15 @@ const HomePage = () => {
       </header>
 
       <main className='flex-col flex-grow container mx-auto px-20 py-8'>
-        <QuickActions />
-
         <section className='mt-8'>
-          <h2 className='text-xl font-semibold mb-4'>Your Resumes</h2>
+          <div className='flex justify-between items-center mb-5'>
+            <h2 className='text-xl font-semibold'>Your Resumes</h2>
+            <Button size='lg' asChild>
+              <Link to='/resume/new' className='no-underline'>
+                Create New Resume
+              </Link>
+            </Button>
+          </div>
           <Suspense fallback={<div>Loading resumes...</div>}>
             <ResumeList setPreviewingResumeID={setPreviewingResumeID} />
           </Suspense>
