@@ -130,6 +130,7 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
 
 - **POST** `/resumes`: Create a new resume.
 - **GET** `/resume_metadatas`: Retrieve all resumes metadatas for the authenticated user.
+- **PATCH** `/resume_metadatas/{id}/title`: Update resume metadata title.
 - **GET** `/resumes/{id}`: Retrieve a specific resume.
 - **PATCH** `/resumes/{id}`: Update a specific resume.
 - **DELETE** `/resumes/{id}`: Delete a specific resume.
