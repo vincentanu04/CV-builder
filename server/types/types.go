@@ -27,7 +27,6 @@ type ResumeMetadata struct {
 type Resume struct {
 	ID           int                    `json:"id"`
 	TemplateName string                 `json:"template_name"`
-	Title        string                 `json:"title"`
 	Data         map[string]interface{} `json:"data"`
 	CreatedAt    time.Time              `json:"created_at"`
 	UpdatedAt    time.Time              `json:"updated_at"`
@@ -41,5 +40,6 @@ type ResumeStore interface {
 	UpdateResumeByID(resume *Resume) error
 	UpdateResumeMetadata(resumeMetadata *ResumeMetadata) error
 	UpdateResumeMetadataTitle(resumeMetadata *ResumeMetadata) error
+	UpdateResumeMetadataUpdatedAt(resumeMetadata *ResumeMetadata) error
 	DeleteResumeByID(id int) error
 }

@@ -14,9 +14,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type ResumePayload struct {
+type CreateResumePayload struct {
 	TemplateName string                 `json:"template_name" validate:"required"`
 	Title        string                 `json:"title" validate:"required"`
+	Data         map[string]interface{} `json:"data" validate:"required"`
+	File         string                 `json:"file" validate:"required"` // Base64-encoded file
+}
+
+type UpdateResumePayload struct {
+	TemplateName string                 `json:"template_name" validate:"required"`
 	Data         map[string]interface{} `json:"data" validate:"required"`
 	File         string                 `json:"file" validate:"required"` // Base64-encoded file
 }
@@ -139,7 +145,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished creating resume ..")
 	}()
 
-	resumePayload := ResumePayload{}
+	resumePayload := CreateResumePayload{}
 	err := utils.ParseJSON(r, &resumePayload)
 	if err != nil {
 		log.Printf("error parsing request json, %v", err)
@@ -159,7 +165,6 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 
 	newResume := types.Resume{
 		TemplateName: resumePayload.TemplateName,
-		Title:        resumePayload.Title,
 		Data:         resumePayload.Data,
 	}
 	err = h.resumeStore.CreateResume(&newResume)
@@ -215,7 +220,7 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 		log.Println("finished updating resume ..")
 	}()
 
-	resumePayload := ResumePayload{}
+	resumePayload := UpdateResumePayload{}
 	err := utils.ParseJSON(r, &resumePayload)
 	if err != nil {
 		log.Printf("error parsing request json, %v", err)
@@ -243,7 +248,6 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 	newResume := types.Resume{
 		ID:           resumeID,
 		TemplateName: resumePayload.TemplateName,
-		Title:        resumePayload.Title,
 		Data:         resumePayload.Data,
 		UpdatedAt:    time.Now(),
 	}
@@ -256,13 +260,14 @@ func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {
 
 	userID := auth.GetUserIDFromContext(r.Context())
 	newResumeMetadata := types.ResumeMetadata{
-		Title:        resumePayload.Title,
-		ResumeID:     newResume.ID,
-		UserID:       userID,
-		ThumbnailURL: "",
-		UpdatedAt:    time.Now(),
+		ResumeID:  newResume.ID,
+		UserID:    userID,
+		UpdatedAt: time.Now(),
 	}
-	err = h.resumeStore.UpdateResumeMetadata(&newResumeMetadata)
+
+	log.Printf("updating resume metadata with request payload %+v", newResumeMetadata)
+
+	err = h.resumeStore.UpdateResumeMetadataUpdatedAt(&newResumeMetadata)
 	if err != nil {
 		log.Printf("error updating resume metadata %v", err)
 		utils.WriteError(w, err, http.StatusInternalServerError)

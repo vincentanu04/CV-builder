@@ -45,7 +45,7 @@ func (s *Store) GetResumeMetadatasByUserID(userID int) ([]*types.ResumeMetadata,
 }
 
 func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
-	query := `SELECT id, template_name, title, data, created_at, updated_at 
+	query := `SELECT id, template_name, data, created_at, updated_at 
 	          FROM resumes WHERE id = ?`
 	row := s.db.QueryRow(query, id)
 
@@ -63,8 +63,8 @@ func (s *Store) CreateResume(resume *types.Resume) error {
 		return err
 	}
 
-	query := `INSERT INTO resumes (template_name, title, data) VALUES (?, ?, ?)`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData)
+	query := `INSERT INTO resumes (template_name, data) VALUES (?, ?)`
+	result, err := s.db.Exec(query, resume.TemplateName, jsonData)
 	if err != nil {
 		return err
 	}
@@ -100,8 +100,8 @@ func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 		return err
 	}
 
-	query := `UPDATE resumes SET template_name = ?, title = ?, data = ?, updated_at = ? WHERE id = ?`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Title, jsonData, resume.UpdatedAt, resume.ID)
+	query := `UPDATE resumes SET template_name = ?, data = ?, updated_at = ? WHERE id = ?`
+	result, err := s.db.Exec(query, resume.TemplateName, jsonData, resume.UpdatedAt, resume.ID)
 	if err != nil {
 		return err
 	}
@@ -142,6 +142,26 @@ func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 func (s *Store) UpdateResumeMetadataTitle(resumeMetadata *types.ResumeMetadata) error {
 	query := `UPDATE resume_metadatas SET title = ?, updated_at = ? WHERE id = ?`
 	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.UpdatedAt, resumeMetadata.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		log.Printf("no rows updated for resumemetadata id %d", resumeMetadata.ID)
+		return nil
+	}
+
+	return nil
+}
+
+func (s *Store) UpdateResumeMetadataUpdatedAt(resumeMetadata *types.ResumeMetadata) error {
+	query := `UPDATE resume_metadatas SET updated_at = ? WHERE resume_id = ? AND user_id = ?`
+	result, err := s.db.Exec(query, resumeMetadata.UpdatedAt, resumeMetadata.ResumeID, resumeMetadata.UserID)
 	if err != nil {
 		return err
 	}
@@ -203,7 +223,6 @@ func scanRowIntoResume(row *sql.Row) (*types.Resume, error) {
 	err := row.Scan(
 		&resume.ID,
 		&resume.TemplateName,
-		&resume.Title,
 		&rawData,
 		&resume.CreatedAt,
 		&resume.UpdatedAt,

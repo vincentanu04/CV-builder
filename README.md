@@ -89,7 +89,6 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
   CREATE TABLE resumes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     template_name VARCHAR(255) NOT NULL,
-    title VARCHAR(255) NOT NULL,
     data JSON NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
