@@ -40,5 +40,6 @@ type ResumeStore interface {
 	CreateResumeMetadata(resumeMetadata *ResumeMetadata) error
 	UpdateResumeByID(resume *Resume) error
 	UpdateResumeMetadata(resumeMetadata *ResumeMetadata) error
+	UpdateResumeMetadataTitle(resumeMetadata *ResumeMetadata) error
 	DeleteResumeByID(id int) error
 }

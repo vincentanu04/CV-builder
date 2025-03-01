@@ -139,6 +139,26 @@ func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 	return nil
 }
 
+func (s *Store) UpdateResumeMetadataTitle(resumeMetadata *types.ResumeMetadata) error {
+	query := `UPDATE resume_metadatas SET title = ?, updated_at = ? WHERE id = ?`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.UpdatedAt, resumeMetadata.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		log.Printf("no rows updated for resumemetadata id %d", resumeMetadata.ID)
+		return nil
+	}
+
+	return nil
+}
+
 func (s *Store) DeleteResumeByID(id int) error {
 	query := `DELETE FROM resumes WHERE id = ?`
 	result, err := s.db.Exec(query, id)

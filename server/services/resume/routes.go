@@ -21,6 +21,10 @@ type ResumePayload struct {
 	File         string                 `json:"file" validate:"required"` // Base64-encoded file
 }
 
+type UpdateResumeMetadataTitlePayload struct {
+	Title string `json:"title" validate:"required"`
+}
+
 type Handler struct {
 	resumeStore types.ResumeStore
 	userStore   types.UserStore
@@ -32,6 +36,7 @@ func NewHandler(resumeStore types.ResumeStore, userStore types.UserStore) *Handl
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/resume_metadatas", auth.WithJWTAuth(h.handleGetResumeMetadatas, h.userStore)).Methods(http.MethodGet)
+	router.HandleFunc("/resume_metadatas/{id:[0-9]+}/title", auth.WithJWTAuth(h.handleUpdateResumeMetadataTitle, h.userStore)).Methods(http.MethodPatch)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleGetResume, h.userStore)).Methods(http.MethodGet)
 	router.HandleFunc("/resumes", auth.WithJWTAuth(h.handleCreateResume, h.userStore)).Methods(http.MethodPost)
 	router.HandleFunc("/resumes/{id:[0-9]+}", auth.WithJWTAuth(h.handleUpdateResume, h.userStore)).Methods(http.MethodPatch)
@@ -55,6 +60,53 @@ func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Reques
 	}
 
 	utils.WriteJSON(w, http.StatusOK, map[string][]*types.ResumeMetadata{"resumeMetadatas": resumes})
+}
+
+func (h *Handler) handleUpdateResumeMetadataTitle(w http.ResponseWriter, r *http.Request) {
+	log.Println("handling update resume metadata title..")
+	defer func() {
+		log.Println("finished updating resume metadata title..")
+	}()
+
+	titlePayload := UpdateResumeMetadataTitlePayload{}
+	err := utils.ParseJSON(r, &titlePayload)
+	if err != nil {
+		log.Printf("error parsing request json, %v", err)
+		utils.WriteError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	err = utils.Validate.Struct(titlePayload)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		log.Printf("error validating reqest payload, %+v", errors)
+		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("updating resume metadata title with request payload %+v", titlePayload)
+
+	vars := mux.Vars(r)
+	resumeMetadataID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Printf("error converting resumeMetadataID param to int: %v", err)
+		utils.WriteError(w, fmt.Errorf("error converting resumeMetadataID param to int: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	newResumeMetadata := types.ResumeMetadata{
+		ID:        resumeMetadataID,
+		Title:     titlePayload.Title,
+		UpdatedAt: time.Now(),
+	}
+	err = h.resumeStore.UpdateResumeMetadataTitle(&newResumeMetadata)
+	if err != nil {
+		log.Printf("error updating resume metadata %v", err)
+		utils.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "resume updated successfully"})
 }
 
 func (h *Handler) handleGetResume(w http.ResponseWriter, r *http.Request) {
