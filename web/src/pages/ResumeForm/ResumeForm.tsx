@@ -56,7 +56,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     queryKey: ['resume', id],
     queryFn: () => getResume(Number(id)),
     enabled: isEdit,
-    retry: (_, error) => error.message !== FORBIDDEN_MESSAGE,
+    retry: (_, error) => false,
   });
 
   const isResumeChanged =

@@ -37,12 +37,9 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   const updateMetadataTitleMutation = useMutation({
     mutationFn: ({ id, title }: { id: number; title: string }) =>
       updateResumeMetadataTitle(id, { title }),
-    onSuccess: () => {
-      queryClient.resetQueries({ queryKey: ['resume_metadatas'] });
-      // toast({
-      //   title: 'Success',
-      //   description: 'Resume title updated successfully',
-      // });
+    onSuccess: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      queryClient.invalidateQueries({ queryKey: ['resume_metadatas'] });
       // Reset editing state
       setEditingId(null);
     },
@@ -57,8 +54,9 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
 
   const deleteResumeMutation = useMutation({
     mutationFn: (id: number) => deleteResume(id),
-    onSuccess: (_, id) => {
-      queryClient.refetchQueries({ queryKey: ['resume_metadatas'] });
+    onSuccess: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      queryClient.invalidateQueries({ queryKey: ['resume_metadatas'] });
     },
   });
 
