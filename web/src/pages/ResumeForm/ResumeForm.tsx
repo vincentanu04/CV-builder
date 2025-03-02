@@ -217,15 +217,17 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   return (
     <main>
       <div className='buttons-bar'>
-        <ConfirmBack isResumeChanged={isResumeChanged} />
-        <Button
-          size={'sm'}
-          className='py-2 px-6'
-          onClick={handleCreateOrSave}
-          disabled={!isResumeChanged}
-        >
-          {isEdit ? 'Save' : 'Create'} Resume
-        </Button>
+        <div className='flex md:flex-col gap-4 items-center'>
+          <ConfirmBack isResumeChanged={isResumeChanged} />
+          <Button
+            size={'sm'}
+            className='py-2 px-6 flex-1'
+            onClick={handleCreateOrSave}
+            disabled={!isResumeChanged}
+          >
+            {isEdit ? 'Save' : 'Create'} Resume
+          </Button>
+        </div>
         <Buttons className='form-buttons'>
           {formsData.map((button) => (
             <NavButton

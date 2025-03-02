@@ -33,7 +33,7 @@ export const ConfirmBack = ({ isResumeChanged }: ConfirmBackProps) => {
       <AlertDialogTrigger asChild>
         <Button
           size={'sm'}
-          className='pr-4 py-1'
+          className='pr-4 py-1 h-fit self-center md:self-start'
           variant={'outline'}
           onClick={handleBack}
         >

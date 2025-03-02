@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Check, Eye, Pencil, Trash2, X } from 'lucide-react';
+import { Check, Eye, Pencil, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteResume,
   getResumeMetadatas,
-  ResumeMetadata,
+  type ResumeMetadata,
   updateResumeMetadataTitle,
 } from '@/api/resume';
 import { FORBIDDEN_MESSAGE } from '@/api/errors';
@@ -17,6 +17,7 @@ import { ConfirmDelete } from './confirm-delete';
 interface ResumeListProps {
   setPreviewingResumeID: (resumeMetadataId: number) => void;
 }
+
 const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedTitle, setEditedTitle] = useState<string>('');
@@ -106,17 +107,17 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   }
 
   return (
-    <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
       {resume_metadatas.map((metadata) => (
-        <Card key={metadata.id}>
+        <Card key={metadata.id} className='w-full'>
           <CardContent className='pt-6'>
-            <div className='flex items-center justify-between mb-2'>
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2'>
               {editingId === metadata.id ? (
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2 w-full'>
                   <Input
                     value={editedTitle}
                     onChange={(e: any) => setEditedTitle(e.target.value)}
-                    className='h-8'
+                    className='h-8 flex-grow'
                     autoFocus
                   />
                   <div className='flex gap-1'>
@@ -141,23 +142,25 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
                 </div>
               ) : (
                 <>
-                  <div className='flex items-center gap-2'>
-                    <h3 className='font-semibold text-lg flex-grow'>
-                      {metadata.title}
-                    </h3>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-8 w-8'
-                      onClick={() => startEditing(metadata)}
-                    >
-                      <Pencil className='h-4 w-4 text-blue-300' />
-                    </Button>
+                  <div className='flex items-center gap-2 w-full justify-between'>
+                    <div className='flex items-center gap-2'>
+                      <h3 className='font-semibold text-lg truncate max-w-[200px] sm:max-w-none'>
+                        {metadata.title}
+                      </h3>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        className='h-8 w-8'
+                        onClick={() => startEditing(metadata)}
+                      >
+                        <Pencil className='h-4 w-4 text-blue-300' />
+                      </Button>
+                    </div>
+                    <ConfirmDelete
+                      resumeTitle={metadata.title}
+                      deleteFunc={() => handleDelete(metadata.resume_id)}
+                    />
                   </div>
-                  <ConfirmDelete
-                    resumeTitle={metadata.title}
-                    deleteFunc={() => handleDelete(metadata.resume_id)}
-                  />
                 </>
               )}
             </div>
@@ -168,8 +171,13 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
                 .replace(/\//g, '-')}
             </p>
           </CardContent>
-          <CardFooter className='justify-between'>
-            <Button variant='outline' size='sm' asChild>
+          <CardFooter className='flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between'>
+            <Button
+              variant='outline'
+              size='sm'
+              asChild
+              className='w-full sm:w-auto'
+            >
               <Link to={`/resume/${metadata.resume_id}`}>
                 <Pencil className='w-4 h-4 mr-2' />
                 Edit
@@ -179,6 +187,7 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
               variant='outline'
               size='sm'
               onClick={() => setPreviewingResumeID(metadata.resume_id)}
+              className='w-full sm:w-auto'
             >
               <Eye className='w-4 h-4 mr-2' />
               Preview

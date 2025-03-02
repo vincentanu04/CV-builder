@@ -1,6 +1,5 @@
 import { Suspense, useEffect, useState } from 'react';
 import ResumeList from '@/components/resume-list';
-import QuickActions from '@/components/quick-actions';
 import MainNav from '@/components/main-nav';
 import UserNav from '@/components/user-nav';
 import { useAuth } from '@/contexts/AuthContext';
@@ -32,8 +31,8 @@ const HomePage = () => {
 
   return (
     <div className='flex flex-col min-h-screen'>
-      <header className='border-b  px-20'>
-        <div className='container mx-auto  py-4 flex justify-between items-center'>
+      <header className='border-b px-4 sm:px-8 md:px-12 lg:px-20'>
+        <div className='container mx-auto py-4 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0'>
           <Link to='/home'>
             <h1 className='text-2xl font-bold'>CV Builder</h1>
           </Link>
@@ -44,11 +43,11 @@ const HomePage = () => {
         </div>
       </header>
 
-      <main className='flex-col flex-grow container mx-auto px-20 py-8'>
-        <section className='mt-8'>
-          <div className='flex justify-between items-center mb-5'>
+      <main className='flex-col flex-grow container mx-auto px-4 sm:px-8 md:px-12 lg:px-20 py-6 sm:py-8'>
+        <section className='mt-2 sm:mt-4'>
+          <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-5'>
             <h2 className='text-xl font-semibold'>Your Resumes</h2>
-            <Button size='lg' asChild>
+            <Button size='lg' asChild className='w-full sm:w-auto'>
               <Link to='/resume/new' className='no-underline'>
                 Create New Resume
               </Link>
@@ -59,16 +58,17 @@ const HomePage = () => {
           </Suspense>
         </section>
       </main>
+
       {previewingResumeID && previewingResume && (
-        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='h-[95vh] border-2 border-primary bg-background relative rounded-lg shadow-lg w-3/4 max-w-4xl flex flex-col items-center p-2'>
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-2 sm:p-4'>
+          <div className='h-[90vh] sm:h-[95vh] border-2 border-primary bg-background relative rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/4 max-w-4xl flex flex-col items-center p-2'>
             <Button
               onClick={() => setPreviewingResumeID(null)}
-              className='absolute top-2 right-2'
+              className='absolute top-2 right-2 z-10'
             >
               ✖
             </Button>
-            <h2 className='text-xl font-semibold mt-1 mb-3'>
+            <h2 className='text-lg sm:text-xl font-semibold mt-1 mb-2 sm:mb-3 px-8'>
               {previewingResume.title}
             </h2>
             <div className='w-full flex justify-center items-center h-full'>
