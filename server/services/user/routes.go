@@ -117,7 +117,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors := err.(validator.ValidationErrors)
 		log.Printf("error validating request payload, %+v", errors)
-		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		utils.WriteError(w, fmt.Errorf("Invalid email or password does not meet min length: 8"), http.StatusBadRequest)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	_, err = h.store.GetUserByEmail(registerRequest.Email)
 	if err == nil { // user already exists
 		log.Printf("user with email %s already exists", registerRequest.Email)
-		utils.WriteError(w, fmt.Errorf("user with email %s already exists or error %v", registerRequest.Email, err), http.StatusBadRequest)
+		utils.WriteError(w, fmt.Errorf("User with this email already exists"), http.StatusBadRequest)
 		return
 	}
 
@@ -159,7 +159,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	auth.SetAuthCookie(w, token)
 
 	log.Printf("successfully registered user %s", newUser.Email)
-	utils.WriteJSON(w, http.StatusOK, nil)
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": newUser})
 }
 
 func (h *UserHandler) handleVerifyToken(w http.ResponseWriter, r *http.Request) {

@@ -9,11 +9,11 @@ const MainNav = () => {
             Home
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to='/templates' className='text-sm font-medium'>
             Templates
           </Link>
-        </li>
+        </li> */}
         {/* <li>
           <Link to='/ai-review' className='text-sm font-medium'>
             AI Review

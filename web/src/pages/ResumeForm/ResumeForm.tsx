@@ -120,8 +120,8 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     } else {
       try {
         createResume({
-          template_name: 'TEST',
-          title: 'TEST',
+          template_name: 'Libre',
+          title: 'New Resume',
           data: formData,
           file: 'TEST',
         });
