@@ -15,7 +15,7 @@
     --primary-foreground: 240, 14%, 4%;
     --secondary: 91, 14%, 25%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 240, 12%, 22%;
+    --muted: 240, 12%, 15%;
     --muted-foreground: 240, 8%, 75%;
     --accent: 58, 13%, 58%;
     --accent-foreground: 222.2 47.4% 11.2%;
@@ -183,7 +183,7 @@ button,
 
 .bg-dot-pattern {
   background-image: radial-gradient(
-    rgba(255, 255, 255, 0.1) 1px,
+    rgba(255, 255, 255, 0.147) 1px,
     transparent 1px
   );
   background-size: 20px 20px;

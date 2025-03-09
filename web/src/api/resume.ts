@@ -1,7 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { FORBIDDEN, FORBIDDEN_MESSAGE } from './errors';
-
-const api = 'http://localhost:8080/api';
+import { api } from './auth';
 
 export interface ResumeMetadata {
   id: number;
@@ -76,9 +75,11 @@ export const getResume = async (resumeMetadataId: number): Promise<Resume> => {
   }
 };
 
-export const createResume = async (resumePayload: ResumePayload) => {
+export const createResume = async (
+  resumePayload: ResumePayload
+): Promise<AxiosResponse<any, any>> => {
   try {
-    axios.post(`${api}/resumes`, resumePayload, {
+    return axios.post(`${api}/resumes`, resumePayload, {
       withCredentials: true,
     });
   } catch (error) {

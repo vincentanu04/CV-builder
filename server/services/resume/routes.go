@@ -211,7 +211,7 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "resume created successfully"})
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"message": "resume created successfully", "createdResumeID": newResume.ID})
 }
 
 func (h *Handler) handleUpdateResume(w http.ResponseWriter, r *http.Request) {

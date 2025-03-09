@@ -7,7 +7,7 @@ export interface User {
   email: string;
 }
 
-const api = 'http://localhost:8080/api';
+export const api = 'http://localhost:8080/api';
 
 export const verifyToken = async (): Promise<User> => {
   try {

@@ -32,32 +32,29 @@ const UserNav = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
-          <Avatar className='h-8 w-8'>
-            <AvatarImage src='/avatars/01.png' alt='@username' />
-            <AvatarFallback>
-              {user ? user.email[0].toUpperCase() : '?'}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
+        <Avatar className='h-8 w-8 hover:cursor-pointer'>
+          <AvatarImage src='/avatars/01.png' alt='@username' />
+          <AvatarFallback>
+            {user ? user.email[0].toUpperCase() : '?'}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-56' align='end' forceMount>
+      <DropdownMenuContent
+        className='w-56 bg-background text-foreground border-primary'
+        align='end'
+        forceMount
+      >
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
-            <p className='text-sm font-medium leading-none text-[#373737]'>
+            <p className='text-sm font-medium leading-none text-[#7a7a7a]'>
               {user ? user.email : '-'}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <DropdownMenuItem className='text-gray-500'>Profile</DropdownMenuItem>
-          <DropdownMenuItem className='text-gray-500'>
-            Settings
-          </DropdownMenuItem> */}
+          <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,22 +1,36 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, CheckCircle, Star, Users, Sparkles } from 'lucide-react';
 import { ResumeNotification } from '@/components/resume-notification';
 import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
 import CV from '@/components/CV/CV';
 import { exampleFormData } from '@/formData';
+import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+import AccountCard from '@/components/account-card';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
+
+  const scrollToLoginCard = () => {
+    const loginSection = document.getElementById('scrolling-login');
+    if (loginSection) {
+      loginSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  const handleGoLogin = () => {
+    scrollToLoginCard();
+    setIsSignUp(false);
+  };
+
+  const handleGoSignup = () => {
+    scrollToLoginCard();
+    setIsSignUp(true);
+  };
+
   return (
     <div className='flex flex-col min-h-screen relative overflow-hidden scroll-smooth bg-gradient-to-b from-background via-background to-background/95'>
       {/* Background Pattern that spans the entire page */}
@@ -41,7 +55,7 @@ const LandingPage = () => {
             >
               Templates
             </a>
-            <a
+            {/* <a
               href='#reviews'
               className='text-sm font-medium hover:text-primary'
             >
@@ -52,14 +66,17 @@ const LandingPage = () => {
               className='text-sm font-medium hover:text-primary'
             >
               Pricing
-            </a>
+            </a> */}
           </nav>
           <div className='flex items-center gap-4'>
-            <a href='/login' className='text-sm font-medium hover:text-primary'>
+            <a
+              className='text-sm font-medium hover:text-primary'
+              onClick={handleGoLogin}
+            >
               Log in
             </a>
-            <Button asChild size='sm'>
-              <a href='/signup'>Sign up</a>
+            <Button asChild size='sm' onClick={handleGoSignup}>
+              <a>Sign up</a>
             </Button>
           </div>
         </div>
@@ -72,9 +89,9 @@ const LandingPage = () => {
             <div className='flex flex-col lg:flex-row gap-8 items-start'>
               {/* Hero Content */}
               <div className='flex-1 space-y-6'>
-                <div className='inline-block rounded-lg px-3 py-1 text-sm text-primary bg-primary/10'>
+                <Badge className='shadow-lg shadow-muted py-1 font-thin'>
                   Build your professional future
-                </div>
+                </Badge>
                 <h1 className='text-4xl font-bold sm:text-5xl md:text-6xl'>
                   Craft the perfect resume that gets you hired
                 </h1>
@@ -83,9 +100,15 @@ const LandingPage = () => {
                   platform. Stand out from the crowd and land your dream job.
                 </p>
                 <div className='flex flex-wrap gap-4'>
-                  <Button size='lg' className='gap-2'>
+                  <Button
+                    size='lg'
+                    className='gap-2'
+                    onClick={() => {
+                      navigate('/resume/new');
+                    }}
+                  >
                     <Sparkles className='h-4 w-4' />
-                    Create Your Resume
+                    Create Resume as Guest
                   </Button>
                   <Button size='lg' variant='outline' className='gap-2'>
                     <FileText className='h-4 w-4' />
@@ -135,72 +158,12 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Sign Up Section (below hero) */}
-        <section className='py-16 bg-background relative'>
-          <div className='absolute inset-0 bg-dot-pattern opacity-5 pointer-events-none'></div>
-          <div className='absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background/0 to-background/100 -mt-24'></div>
-          <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
-            <div className='max-w-md mx-auto'>
-              <div className='relative'>
-                <div className='absolute -top-6 -left-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
-                <div className='absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
-
-                <Card className='relative border-2 shadow-lg'>
-                  <CardHeader>
-                    <CardTitle className='text-2xl'>
-                      Create your account
-                    </CardTitle>
-                    <CardDescription>
-                      Start building professional resumes today
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={(e) => e.preventDefault()}>
-                      <div className='grid gap-4'>
-                        <div className='grid gap-2'>
-                          <Label htmlFor='email'>Email</Label>
-                          <Input
-                            id='email'
-                            type='email'
-                            placeholder='name@example.com'
-                          />
-                        </div>
-                        <div className='grid gap-2'>
-                          <Label htmlFor='password'>Password</Label>
-                          <Input id='password' type='password' />
-                        </div>
-                        <Button type='submit' className='w-full'>
-                          Sign Up
-                        </Button>
-                      </div>
-                    </form>
-                  </CardContent>
-                  <CardFooter>
-                    <p className='text-xs text-muted-foreground text-center w-full'>
-                      By signing up, you agree to our{' '}
-                      <a href='#' className='underline underline-offset-2'>
-                        Terms of Service
-                      </a>{' '}
-                      and{' '}
-                      <a href='#' className='underline underline-offset-2'>
-                        Privacy Policy
-                      </a>
-                    </p>
-                  </CardFooter>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Resume Showcase Section (below signup) */}
         <section
           id='resume-showcase'
           className='py-16 md:py-24 bg-muted relative overflow-hidden'
         >
           <div className='absolute inset-0 bg-dot-pattern opacity-8 pointer-events-none'></div>
-          <div className='absolute -top-40 -right-40 w-80 h-80 rounded-full bg-primary/10 blur-3xl'></div>
-          <div className='absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-primary/10 blur-3xl'></div>
           <div className='absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background to-muted -mt-1'></div>
           <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <div className='text-center mb-12'>
@@ -214,7 +177,7 @@ const LandingPage = () => {
             </div>
 
             {/* Sample Resume */}
-            <div className='flex justify-center w-full pl-2'>
+            <div className='flex justify-center w-full pl-2 rounded-md'>
               <PDFViewer
                 style={
                   StyleSheet.create({
@@ -224,6 +187,7 @@ const LandingPage = () => {
                       height: '100dvh',
                       width: '75%',
                       overflow: 'hidden',
+                      borderRadius: '.25em',
                     },
                   }).viewer
                 }
@@ -256,7 +220,7 @@ const LandingPage = () => {
         </div>
 
         {/* Features Section */}
-        <section id='features' className='py-12 md:py-24 relative'>
+        <section id='features' className='py-12 md:py-18 relative'>
           <div className='absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none'></div>
           <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <div className='text-center mb-12'>
@@ -270,7 +234,7 @@ const LandingPage = () => {
             </div>
 
             <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted  hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg  hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <FileText className='h-6 w-6 text-primary' />
@@ -285,7 +249,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Sparkles className='h-6 w-6 text-primary' />
@@ -300,7 +264,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <CheckCircle className='h-6 w-6 text-primary' />
@@ -315,7 +279,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Users className='h-6 w-6 text-primary' />
@@ -330,7 +294,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Star className='h-6 w-6 text-primary' />
@@ -345,7 +309,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <FileText className='h-6 w-6 text-primary' />
@@ -374,20 +338,30 @@ const LandingPage = () => {
         </div>
 
         {/* Call to Action */}
-        <section className='py-12 md:py-24 bg-primary/5 relative'>
+        <section className='py-12 md:py-16 md:pb-24  relative'>
           <div className='absolute inset-0 bg-grid-pattern opacity-8 pointer-events-none animate-pattern'></div>
-          <div className='container mx-auto px-8 text-center animate-in fade-in slide-in-from-bottom-5 relative z-10'>
-            <h2 className='text-3xl font-bold tracking-tighter sm:text-4xl mb-6'>
+          <div className='container mx-auto px-6 text-center animate-in fade-in slide-in-from-bottom-5 relative z-10'>
+            <h2
+              className='text-3xl font-bold tracking-tighter sm:text-4xl mb-6 pt-6'
+              id='scrolling-login'
+            >
               Ready to build your professional resume?
             </h2>
-            <p className='text-xl text-muted-foreground max-w-2xl mx-auto mb-8'>
+            <p className='text-xl text-muted-foreground max-w-2xl mx-auto mb-0'>
               Join thousands of job seekers who have successfully landed
               interviews with resumes created on our platform.
             </p>
-            <Button size='lg' className='gap-2'>
-              <Sparkles className='h-4 w-4' />
-              Get Started Now
-            </Button>
+          </div>
+          <div className='absolute inset-0 bg-dot-pattern opacity-5 pointer-events-none'></div>
+          <div className='absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background/0 to-background/100 -mt-24'></div>
+          <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
+            <div className='max-w-md mx-auto'>
+              <div className='relative'>
+                <div className='absolute -top-6 -left-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
+                <div className='absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
+                <AccountCard isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
+              </div>
+            </div>
           </div>
         </section>
       </main>
@@ -407,12 +381,12 @@ const LandingPage = () => {
             <a href='#' className='hover:text-primary'>
               Templates
             </a>
-            <a href='#' className='hover:text-primary'>
+            {/* <a href='#' className='hover:text-primary'>
               Pricing
             </a>
             <a href='#' className='hover:text-primary'>
               About
-            </a>
+            </a> */}
             <a href='#' className='hover:text-primary'>
               Contact
             </a>

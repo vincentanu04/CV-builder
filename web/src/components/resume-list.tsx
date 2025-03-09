@@ -110,8 +110,8 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
     <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
       {resume_metadatas.length > 0 ? (
         resume_metadatas.map((metadata) => (
-          <Card key={metadata.id} className='w-full'>
-            <CardContent className='pt-6'>
+          <Card key={metadata.id} className='w-full flex flex-col'>
+            <CardContent className='pt-6 flex-1'>
               <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2'>
                 {editingId === metadata.id ? (
                   <div className='flex items-center gap-2 w-full'>
@@ -145,7 +145,7 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
                   <>
                     <div className='flex items-center gap-2 w-full justify-between'>
                       <div className='flex items-center gap-2'>
-                        <h3 className='font-semibold text-lg truncate max-w-[200px] sm:max-w-none'>
+                        <h3 className='font-semibold text-lg truncate max-w-[200px] sm:max-w-none text-wrap'>
                           {metadata.title}
                         </h3>
                         <Button

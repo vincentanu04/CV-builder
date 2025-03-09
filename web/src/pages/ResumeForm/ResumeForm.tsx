@@ -32,6 +32,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { FORBIDDEN_MESSAGE } from '@/api/errors';
 import { ConfirmBack } from '@/components/confirm-back';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ResumeFormProps {
   isEdit: boolean;
@@ -46,6 +47,14 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const [lastSavedResume, setLastSavedResume] = useState<FormData | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsGuest(true);
+    }
+  }, []);
 
   if (isEdit && (!id || isNaN(Number(id)))) {
     navigate('/home');
@@ -104,7 +113,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     setDisplayedData(exampleFormData);
   };
 
-  const handleCreateOrSave = () => {
+  const handleCreateOrSave = async () => {
     if (isEdit && originalResume) {
       try {
         updateResume(Number(id), {
@@ -119,12 +128,14 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
       }
     } else {
       try {
-        createResume({
+        const resp = await createResume({
           template_name: 'Libre',
           title: 'New Resume',
           data: formData,
           file: 'TEST',
         });
+        const createdResumeID = resp.data.createdResumeID;
+        navigate(`/resume/${createdResumeID}`);
       } catch (error) {
         alert('Failed to save resume, please wait and try again.');
       }
@@ -218,15 +229,17 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     <main className='flex max-h-screen'>
       <div className='buttons-bar'>
         <div className='flex md:flex-col gap-4 items-center'>
-          <ConfirmBack isResumeChanged={isResumeChanged} />
-          <Button
-            size={'sm'}
-            className='py-2 px-6 flex-1'
-            onClick={handleCreateOrSave}
-            disabled={!isResumeChanged}
-          >
-            {isEdit ? 'Save' : 'Create'} Resume
-          </Button>
+          {!isGuest && <ConfirmBack isResumeChanged={isResumeChanged} />}
+          {!isGuest && (
+            <Button
+              size={'sm'}
+              className='py-2 px-6 flex-1'
+              onClick={handleCreateOrSave}
+              disabled={!isResumeChanged}
+            >
+              {isEdit ? 'Save' : 'Create'} Resume
+            </Button>
+          )}
         </div>
         <Buttons className='form-buttons'>
           {formsData.map((button) => (
