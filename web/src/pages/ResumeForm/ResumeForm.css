@@ -38,11 +38,6 @@ button {
   cursor: pointer;
 }
 
-main {
-  display: flex;
-  max-height: 100vh;
-}
-
 .toolbar {
   padding: 0.5em 1em;
   display: flex;

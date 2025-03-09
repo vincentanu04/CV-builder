@@ -215,7 +215,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   );
 
   return (
-    <main>
+    <main className='flex max-h-screen'>
       <div className='buttons-bar'>
         <div className='flex md:flex-col gap-4 items-center'>
           <ConfirmBack isResumeChanged={isResumeChanged} />

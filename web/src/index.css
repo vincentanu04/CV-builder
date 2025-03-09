@@ -13,10 +13,10 @@
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 56, 13%, 48%;
     --primary-foreground: 240, 14%, 4%;
-    --secondary: 115, 13%, 18%;
+    --secondary: 91, 14%, 25%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240, 12%, 26%;
+    --muted-foreground: 240, 8%, 75%;
     --accent: 58, 13%, 58%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
@@ -73,5 +73,48 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.bg-grid-pattern {
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Animation utilities */
+.animate-in {
+  animation-duration: 300ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-bottom-5 {
+  animation-name: slideInFromBottom5;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom5 {
+  from {
+    transform: translateY(1.25rem);
+  }
+  to {
+    transform: translateY(0);
   }
 }
