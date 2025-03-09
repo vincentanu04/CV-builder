@@ -72,10 +72,6 @@
   min-height: 0.05rem;
 }
 
-.form .job-hr {
-  /* min-height: 0.75rem; */
-}
-
 .form .buttons {
   flex-direction: row;
   gap: 0.5rem;

@@ -10,24 +10,19 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  FileText,
-  CheckCircle,
-  Star,
-  Users,
-  Sparkles,
-  Phone,
-  Mail,
-  GraduationCap,
-  Briefcase,
-  Award,
-} from 'lucide-react';
+import { FileText, CheckCircle, Star, Users, Sparkles } from 'lucide-react';
 import { ResumeNotification } from '@/components/resume-notification';
+import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
+import CV from '@/components/CV/CV';
+import { exampleFormData } from '@/formData';
 
-function App() {
+const LandingPage = () => {
   return (
-    <div className='flex flex-col min-h-screen'>
-      <header className='border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+    <div className='flex flex-col min-h-screen relative overflow-hidden scroll-smooth bg-gradient-to-b from-background via-background to-background/95'>
+      {/* Background Pattern that spans the entire page */}
+      <div className='fixed inset-0 bg-grid-pattern opacity-10 pointer-events-none animate-pattern'></div>
+
+      <header className='border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 relative z-10'>
         <div className='container mx-auto flex h-16 items-center justify-between py-4 px-8'>
           <div className='flex items-center gap-2'>
             <FileText className='h-6 w-6 text-primary' />
@@ -72,15 +67,12 @@ function App() {
 
       <main className='flex flex-col flex-1'>
         {/* Hero Section with Resume Previews to the right */}
-        <section className=' border-b py-12 min-h-[calc(100vh-4rem)]'>
-          {/* Background Pattern */}
-          <div className='absolute inset-0 bg-grid-pattern opacity-5 z-0'></div>
-
-          <div className='container mx-auto relative z-10 px-8'>
+        <section className=' py-12 min-h-[calc(100vh-4rem)] relative'>
+          <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <div className='flex flex-col lg:flex-row gap-8 items-start'>
               {/* Hero Content */}
               <div className='flex-1 space-y-6'>
-                <div className='inline-block rounded-lg px-3 py-1 text-sm text-primary'>
+                <div className='inline-block rounded-lg px-3 py-1 text-sm text-primary bg-primary/10'>
                   Build your professional future
                 </div>
                 <h1 className='text-4xl font-bold sm:text-5xl md:text-6xl'>
@@ -144,16 +136,20 @@ function App() {
         </section>
 
         {/* Sign Up Section (below hero) */}
-        <section className='py-16 bg-background'>
-          <div className='container mx-auto px-8'>
+        <section className='py-16 bg-background relative'>
+          <div className='absolute inset-0 bg-dot-pattern opacity-5 pointer-events-none'></div>
+          <div className='absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background/0 to-background/100 -mt-24'></div>
+          <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <div className='max-w-md mx-auto'>
               <div className='relative'>
-                <div className='absolute -top-6 -left-6 h-24 w-24 rounded-full bg-primary/20 blur-xl'></div>
-                <div className='absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-primary/20 blur-xl'></div>
+                <div className='absolute -top-6 -left-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
+                <div className='absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
 
                 <Card className='relative border-2 shadow-lg'>
                   <CardHeader>
-                    <CardTitle>Create your account</CardTitle>
+                    <CardTitle className='text-2xl'>
+                      Create your account
+                    </CardTitle>
                     <CardDescription>
                       Start building professional resumes today
                     </CardDescription>
@@ -200,9 +196,13 @@ function App() {
         {/* Resume Showcase Section (below signup) */}
         <section
           id='resume-showcase'
-          className='py-16 md:py-24 bg-muted relative'
+          className='py-16 md:py-24 bg-muted relative overflow-hidden'
         >
-          <div className='container mx-auto px-8'>
+          <div className='absolute inset-0 bg-dot-pattern opacity-8 pointer-events-none'></div>
+          <div className='absolute -top-40 -right-40 w-80 h-80 rounded-full bg-primary/10 blur-3xl'></div>
+          <div className='absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-primary/10 blur-3xl'></div>
+          <div className='absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background to-muted -mt-1'></div>
+          <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <div className='text-center mb-12'>
               <h2 className='text-3xl font-bold tracking-tighter sm:text-4xl'>
                 See What Your Resume Could Look Like
@@ -214,176 +214,51 @@ function App() {
             </div>
 
             {/* Sample Resume */}
-            <div className='flex justify-center'>
-              <div className='w-full max-w-4xl bg-white shadow-xl rounded-lg overflow-hidden border-2 transform hover:scale-[1.02] transition-transform duration-300 relative z-10'>
-                <div className='p-8 md:p-12'>
-                  {/* Resume Header */}
-                  <div className='border-b pb-6 mb-6'>
-                    <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
-                      <div>
-                        <h2 className='text-2xl md:text-3xl font-bold text-primary'>
-                          Vincent Tanuwidjaja
-                        </h2>
-                        <div className='flex items-center gap-4 mt-2 flex-wrap'>
-                          <div className='flex items-center gap-1 text-sm text-muted-foreground'>
-                            <Phone className='h-4 w-4' />
-                            <span>(60)11-2660-3557</span>
-                          </div>
-                          <div className='flex items-center gap-1 text-sm text-muted-foreground'>
-                            <Mail className='h-4 w-4' />
-                            <span>vincentanu04@gmail.com</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Education Section */}
-                  <div className='mb-6'>
-                    <div className='flex items-center gap-2 mb-3'>
-                      <GraduationCap className='h-5 w-5 text-primary' />
-                      <h3 className='text-lg font-semibold'>Education</h3>
-                    </div>
-                    <div className='pl-7'>
-                      <div className='mb-3'>
-                        <div className='flex justify-between items-start'>
-                          <span className='font-medium'>
-                            Monash University Malaysia
-                          </span>
-                          <span className='text-sm text-muted-foreground'>
-                            2022 - 2024
-                          </span>
-                        </div>
-                        <p className='text-sm mt-1'>
-                          Bachelor's in Computer Science
-                        </p>
-                        <p className='text-sm text-muted-foreground mt-1'>
-                          Relevant coursework: Collaborative engineering for web
-                          applications, Databases using Oracle, Object-oriented
-                          design & implementation, Mobile application
-                          development (Android), Data structures and algorithms,
-                          Fundamentals of Java and Python, Discrete and
-                          continuous mathematics.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Work Experience */}
-                  <div className='mb-6'>
-                    <div className='flex items-center gap-2 mb-3'>
-                      <Briefcase className='h-5 w-5 text-primary' />
-                      <h3 className='text-lg font-semibold'>Work Experience</h3>
-                    </div>
-                    <div className='pl-7'>
-                      <div className='mb-4'>
-                        <div className='flex justify-between items-start'>
-                          <div>
-                            <span className='font-medium'>
-                              Backend Engineer Intern
-                            </span>
-                            <span className='text-primary ml-2'>Grab</span>
-                          </div>
-                          <span className='text-sm text-muted-foreground'>
-                            Aug 2024 - Dec 2024
-                          </span>
-                        </div>
-                        <ul className='list-disc pl-5 mt-2 text-sm space-y-1'>
-                          <li>Identity and Authorization team.</li>
-                          <li>
-                            Implemented ReCAPTCHA as a challenge in Grab's login
-                            system to protect against fraudsters/bots.
-                          </li>
-                          <li>
-                            Designed and implemented a bot detection system
-                            using a form of browser fingerprinting.
-                          </li>
-                          <li>
-                            Built gRPC and REST APIs using Go, Redis, and MySQL
-                            in a microservice architecture.
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div>
-                        <div className='flex justify-between items-start'>
-                          <div>
-                            <span className='font-medium'>
-                              Frontend Developer Intern
-                            </span>
-                            <span className='text-primary ml-2'>
-                              MHub Malaysia
-                            </span>
-                          </div>
-                          <span className='text-sm text-muted-foreground'>
-                            Nov 2023 - Feb 2024
-                          </span>
-                        </div>
-                        <ul className='list-disc pl-5 mt-2 text-sm space-y-1'>
-                          <li>
-                            Created reusable React components and pages based of
-                            Figma designs using TypeScript for type safety and
-                            MUI for styling with customized CSS.
-                          </li>
-                          <li>
-                            Integrated frontend with backend APIs using GraphQL,
-                            while working closely with backend devs.
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Skills Section */}
-                  <div>
-                    <div className='flex items-center gap-2 mb-3'>
-                      <Award className='h-5 w-5 text-primary' />
-                      <h3 className='text-lg font-semibold'>
-                        Technical Skills
-                      </h3>
-                    </div>
-                    <div className='pl-7'>
-                      <div className='flex flex-wrap gap-2'>
-                        {[
-                          'React',
-                          'TypeScript',
-                          'Go/Golang',
-                          'Node.js',
-                          'Express.js',
-                          'GraphQL',
-                          'MongoDB',
-                          'SQL',
-                          'Java',
-                          'Python',
-                        ].map((skill) => (
-                          <span
-                            key={skill}
-                            className='px-2 py-1 bg-primary/10 text-primary rounded text-sm'
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Watermark */}
-                <div className='absolute bottom-3 right-3 text-xs text-muted-foreground opacity-70'>
-                  Created with CV Builder
-                </div>
-              </div>
+            <div className='flex justify-center w-full pl-2'>
+              <PDFViewer
+                style={
+                  StyleSheet.create({
+                    viewer: {
+                      border: 0,
+                      padding: 0,
+                      height: '100dvh',
+                      width: '75%',
+                      overflow: 'hidden',
+                    },
+                  }).viewer
+                }
+                showToolbar={false}
+              >
+                <CV
+                  profile={exampleFormData.profile}
+                  education={exampleFormData.education}
+                  experience={exampleFormData.experience}
+                  projects={exampleFormData.projects}
+                  awards={exampleFormData.awards}
+                  additional={exampleFormData.additional}
+                  skills={exampleFormData.skills}
+                  remarks={exampleFormData.remarks}
+                />
+              </PDFViewer>
             </div>
-
-            {/* Decorative Elements */}
-            <div className='absolute -top-12 -left-12 h-64 w-64 rounded-full bg-primary/5 z-0'></div>
-            <div className='absolute -bottom-12 -right-12 h-64 w-64 rounded-full bg-primary/5 z-0'></div>
           </div>
         </section>
 
+        {/* Curved connector between sections */}
+        <div className='relative h-16 bg-muted'>
+          <div
+            className='absolute bottom-0 left-0 right-0 h-16 bg-background'
+            style={{
+              borderTopLeftRadius: '50% 100%',
+              borderTopRightRadius: '50% 100%',
+            }}
+          ></div>
+        </div>
+
         {/* Features Section */}
-        <section id='features' className='py-12 md:py-24'>
-          <div className='container mx-auto px-8'>
+        <section id='features' className='py-12 md:py-24 relative'>
+          <div className='absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none'></div>
+          <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <div className='text-center mb-12'>
               <h2 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl'>
                 Powerful Resume Building Features
@@ -395,7 +270,7 @@ function App() {
             </div>
 
             <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-              <Card className='border-2'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted  hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <FileText className='h-6 w-6 text-primary' />
@@ -410,7 +285,7 @@ function App() {
                 </CardContent>
               </Card>
 
-              <Card className='border-2'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Sparkles className='h-6 w-6 text-primary' />
@@ -425,7 +300,7 @@ function App() {
                 </CardContent>
               </Card>
 
-              <Card className='border-2'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <CheckCircle className='h-6 w-6 text-primary' />
@@ -440,7 +315,7 @@ function App() {
                 </CardContent>
               </Card>
 
-              <Card className='border-2'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Users className='h-6 w-6 text-primary' />
@@ -455,7 +330,7 @@ function App() {
                 </CardContent>
               </Card>
 
-              <Card className='border-2'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Star className='h-6 w-6 text-primary' />
@@ -470,7 +345,7 @@ function App() {
                 </CardContent>
               </Card>
 
-              <Card className='border-2'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:shadow-muted hover:-translate-y-1'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <FileText className='h-6 w-6 text-primary' />
@@ -488,9 +363,20 @@ function App() {
           </div>
         </section>
 
+        {/* Angled connector between sections */}
+        <div className='relative h-16'>
+          <div
+            className='absolute bottom-0 left-0 right-0 h-16 bg-primary/5'
+            style={{
+              clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0% 100%)',
+            }}
+          ></div>
+        </div>
+
         {/* Call to Action */}
-        <section className='py-12 md:py-24 bg-primary/5'>
-          <div className='container mx-auto px-8 text-center'>
+        <section className='py-12 md:py-24 bg-primary/5 relative'>
+          <div className='absolute inset-0 bg-grid-pattern opacity-8 pointer-events-none animate-pattern'></div>
+          <div className='container mx-auto px-8 text-center animate-in fade-in slide-in-from-bottom-5 relative z-10'>
             <h2 className='text-3xl font-bold tracking-tighter sm:text-4xl mb-6'>
               Ready to build your professional resume?
             </h2>
@@ -506,8 +392,9 @@ function App() {
         </section>
       </main>
 
-      <footer className='border-t py-6 md:py-8 mt-auto'>
-        <div className='container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-8'>
+      <footer className='border-t py-6 md:py-8 mt-auto relative'>
+        <div className='absolute inset-0 bg-dot-pattern opacity-5 pointer-events-none'></div>
+        <div className='container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-8 relative z-10'>
           <div className='flex items-center gap-2'>
             <FileText className='h-5 w-5 text-primary' />
             <span className='font-semibold'>CV Builder</span>
@@ -541,6 +428,6 @@ function App() {
       <ResumeNotification />
     </div>
   );
-}
+};
 
-export default App;
+export default LandingPage;
