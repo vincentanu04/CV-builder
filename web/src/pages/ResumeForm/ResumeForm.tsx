@@ -33,6 +33,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FORBIDDEN_MESSAGE } from '@/api/errors';
 import { ConfirmBack } from '@/components/confirm-back';
 import { useAuth } from '@/contexts/AuthContext';
+import { fromOrderedJSON, toOrderedJSON } from '@/utils/json';
 
 interface ResumeFormProps {
   isEdit: boolean;
@@ -48,13 +49,13 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
-  const [isGuest, setIsGuest] = useState(false);
+  const [isGuest, setIsGuest] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      setIsGuest(true);
+    if (user) {
+      setIsGuest(false);
     }
-  }, []);
+  }, [user]);
 
   if (isEdit && (!id || isNaN(Number(id)))) {
     navigate('/home');
@@ -73,7 +74,6 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
 
   useEffect(() => {
     if (error) {
-      console.log(error);
       switch (error.message) {
         case FORBIDDEN_MESSAGE:
           console.log('FORBIDDEN');
@@ -85,9 +85,9 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     }
 
     if (originalResume) {
-      setFormData(originalResume.data as FormData);
-      setDisplayedData(originalResume.data as FormData);
-      setLastSavedResume(originalResume.data as FormData);
+      setFormData(fromOrderedJSON(originalResume.data) as FormData);
+      setDisplayedData(fromOrderedJSON(originalResume.data) as FormData);
+      setLastSavedResume(fromOrderedJSON(originalResume.data) as FormData);
     }
   }, [originalResume, error]);
 
@@ -119,7 +119,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
         updateResume(Number(id), {
           template_name: originalResume.template_name,
           title: originalResume.title,
-          data: formData,
+          data: toOrderedJSON(formData),
           file: 'TEST',
         });
       } catch (error) {
@@ -131,7 +131,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
         const resp = await createResume({
           template_name: 'Libre',
           title: 'New Resume',
-          data: formData,
+          data: toOrderedJSON(formData),
           file: 'TEST',
         });
         const createdResumeID = resp.data.createdResumeID;

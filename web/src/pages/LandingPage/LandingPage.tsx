@@ -139,7 +139,7 @@ const LandingPage = () => {
 
               {/* Resume Previews to the right */}
               <div className='flex-1 relative h-auto hidden lg:block'>
-                <div className='absolute left-1/2 right-2/3 w-72 h-96 rotate-6 shadow-xl rounded-md border-4 border-background z-10'>
+                <div className='absolute left-1/2 right-2/3 w-72 h-96 rotate-6 shadow-xl  rounded-md border-4 border-background z-10'>
                   <img
                     src='Resume_preview.jpg'
                     alt='Resume preview'
@@ -233,8 +233,8 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg  hover:-translate-y-1'>
+            <div className='flex flex-wrap gap-8 justify-center'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg  hover:-translate-y-1 w-full sm:w-[40%] md:w-[30%]'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <FileText className='h-6 w-6 text-primary' />
@@ -249,7 +249,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[40%] md:w-[30%]'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Sparkles className='h-6 w-6 text-primary' />
@@ -264,7 +264,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[40%] md:w-[30%]'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <CheckCircle className='h-6 w-6 text-primary' />
@@ -279,7 +279,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+              {/* <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[40%] md:w-[30%]'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Users className='h-6 w-6 text-primary' />
@@ -292,9 +292,9 @@ const LandingPage = () => {
                     valuable feedback and suggestions.
                   </p>
                 </CardContent>
-              </Card>
+              </Card> */}
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[40%] md:w-[30%]'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <Star className='h-6 w-6 text-primary' />
@@ -309,7 +309,7 @@ const LandingPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+              <Card className='border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[40%] md:w-[30%]'>
                 <CardHeader>
                   <div className='p-2 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4'>
                     <FileText className='h-6 w-6 text-primary' />

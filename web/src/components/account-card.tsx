@@ -46,11 +46,8 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
         { withCredentials: true }
       );
 
-      console.log(response.data.user);
-
       if (response.status === 200) {
         setUser(response.data.user);
-        console.log('navigating home');
         navigate('/home');
       }
     } catch (err) {
@@ -75,15 +72,11 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
         { withCredentials: true }
       );
 
-      console.log(response.data.user);
-
       if (response.status === 200) {
         setUser(response.data.user);
-        console.log('navigating home');
         navigate('/home');
       }
     } catch (err) {
-      console.log(err);
       console.error(err);
       setError(
         (err as any).response?.data?.error || 'Signup failed. Please try again.'

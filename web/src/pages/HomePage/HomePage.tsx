@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import CV from '@/components/CV/CV';
 import { PDFViewer } from '@react-pdf/renderer';
 import { useQuery } from '@tanstack/react-query';
+import { fromOrderedJSON, toOrderedJSON } from '@/utils/json';
 
 const HomePage = () => {
   const { user, loading: userLoading } = useAuth();
@@ -28,6 +29,10 @@ const HomePage = () => {
     queryFn: () => getResume(previewingResumeID as number),
     enabled: !!previewingResumeID,
   });
+
+  const previewingResumeObj = previewingResume?.data
+    ? fromOrderedJSON(previewingResume.data)
+    : null;
 
   return (
     <div className='flex flex-col min-h-screen'>
@@ -59,7 +64,7 @@ const HomePage = () => {
         </section>
       </main>
 
-      {previewingResumeID && previewingResume && (
+      {previewingResumeID && previewingResume && previewingResumeObj && (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-2 sm:p-4'>
           <div className='h-[90vh] sm:h-[95vh] border-2 border-primary bg-background relative rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/4 max-w-4xl flex flex-col items-center p-2'>
             <Button
@@ -81,14 +86,14 @@ const HomePage = () => {
                 showToolbar={false}
               >
                 <CV
-                  profile={previewingResume.data.profile}
-                  education={previewingResume.data.education}
-                  experience={previewingResume.data.experience}
-                  projects={previewingResume.data.projects}
-                  awards={previewingResume.data.awards}
-                  additional={previewingResume.data.additional}
-                  skills={previewingResume.data.skills}
-                  remarks={previewingResume.data.remarks}
+                  profile={previewingResumeObj.profile}
+                  education={previewingResumeObj.education}
+                  experience={previewingResumeObj.experience}
+                  projects={previewingResumeObj.projects}
+                  awards={previewingResumeObj.awards}
+                  additional={previewingResumeObj.additional}
+                  skills={previewingResumeObj.skills}
+                  remarks={previewingResumeObj.remarks}
                 />
               </PDFViewer>
             </div>

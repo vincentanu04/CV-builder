@@ -25,11 +25,11 @@ type ResumeMetadata struct {
 }
 
 type Resume struct {
-	ID           int                    `json:"id"`
-	TemplateName string                 `json:"template_name"`
-	Data         map[string]interface{} `json:"data"`
-	CreatedAt    time.Time              `json:"created_at"`
-	UpdatedAt    time.Time              `json:"updated_at"`
+	ID           int       `json:"id"`
+	TemplateName string    `json:"template_name"`
+	Data         string    `json:"data"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type ResumeStore interface {

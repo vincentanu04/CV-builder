@@ -69,7 +69,7 @@
 .form hr {
   background-color: var(--primary-clr);
   border: none;
-  min-height: 0.05rem;
+  min-height: 0.075rem;
 }
 
 .form .buttons {

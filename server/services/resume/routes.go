@@ -15,16 +15,16 @@ import (
 )
 
 type CreateResumePayload struct {
-	TemplateName string                 `json:"template_name" validate:"required"`
-	Title        string                 `json:"title" validate:"required"`
-	Data         map[string]interface{} `json:"data" validate:"required"`
-	File         string                 `json:"file" validate:"required"` // Base64-encoded file
+	TemplateName string `json:"template_name" validate:"required"`
+	Title        string `json:"title" validate:"required"`
+	Data         string `json:"data" validate:"required"`
+	File         string `json:"file" validate:"required"` // Base64-encoded file
 }
 
 type UpdateResumePayload struct {
-	TemplateName string                 `json:"template_name" validate:"required"`
-	Data         map[string]interface{} `json:"data" validate:"required"`
-	File         string                 `json:"file" validate:"required"` // Base64-encoded file
+	TemplateName string `json:"template_name" validate:"required"`
+	Data         string `json:"data" validate:"required"`
+	File         string `json:"file" validate:"required"` // Base64-encoded file
 }
 
 type UpdateResumeMetadataTitlePayload struct {

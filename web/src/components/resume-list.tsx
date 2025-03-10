@@ -94,7 +94,6 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   };
 
   const handleDelete = (id: number) => {
-    console.log(id);
     deleteResumeMutation.mutate(id);
   };
 

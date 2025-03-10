@@ -16,7 +16,7 @@ export interface Resume {
   id: number;
   template_name: string;
   title: string;
-  data: { [key: string]: any };
+  data: string;
   created_at: string;
   updated_at: string;
 }
@@ -24,7 +24,7 @@ export interface Resume {
 export interface ResumePayload {
   template_name: string;
   title: string;
-  data: { [key: string]: any };
+  data: string;
   file: string;
 }
 

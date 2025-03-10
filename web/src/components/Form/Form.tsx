@@ -136,10 +136,10 @@ export const ExperienceForm: ExperienceFormComponent = ({
     dateUntil: '23/02/2024',
   };
 
-  function addJob() {
+  function addJob(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.push({
-      jobId: newFormValue.length + 1,
+    newFormValue.splice(idx, 0, {
+      jobId: idx,
       companyName: '',
       positionTitle: '',
       responsibilities: [''],
@@ -149,9 +149,9 @@ export const ExperienceForm: ExperienceFormComponent = ({
     onChange(newFormValue);
   }
 
-  function removeJob() {
+  function removeJob(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.pop();
+    newFormValue.splice(idx, 1);
     onChange(newFormValue);
   }
 
@@ -162,6 +162,15 @@ export const ExperienceForm: ExperienceFormComponent = ({
       {formValue.map((job, i1) => {
         return (
           <div key={i1} className='job-form'>
+            <Buttons>
+              <Button text='Add' onClick={() => addJob(i1)} />
+              <Button
+                text='Remove'
+                disabled={i1 == 0 ? true : false}
+                onClick={() => removeJob(i1 - 1)}
+              />
+            </Buttons>
+            {i1 != 0 && <hr className='job-hr' />}
             {(Object.keys(job) as Array<keyof Experience>).map((label) => {
               if (label === 'jobId') {
                 return null;
@@ -202,16 +211,15 @@ export const ExperienceForm: ExperienceFormComponent = ({
                 );
               }
             })}
-            {i1 !== formValue.length - 1 && <hr className='job-hr' />}
           </div>
         );
       })}
       <Buttons>
-        <Button text='Add' onClick={() => addJob()} />
+        <Button text='Add' onClick={() => addJob(formValue.length)} />
         <Button
           text='Remove'
           disabled={formValue.length > 1 ? false : true}
-          onClick={() => removeJob()}
+          onClick={() => removeJob(formValue.length - 1)}
         />
       </Buttons>
     </div>
@@ -236,10 +244,10 @@ export const ProjectsForm: ProjectsFormComponent = ({
     projectTechStack: 'React',
   };
 
-  function addProject() {
+  function addProject(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.push({
-      projectId: newFormValue.length + 1,
+    newFormValue.splice(idx, 0, {
+      projectId: idx,
       projectTitle: '',
       projectDescription: '',
       projectTechStack: [''],
@@ -247,9 +255,9 @@ export const ProjectsForm: ProjectsFormComponent = ({
     onChange(newFormValue);
   }
 
-  function removeProject() {
+  function removeProject(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.pop();
+    newFormValue.splice(idx, 1);
     onChange(newFormValue);
   }
 
@@ -260,6 +268,15 @@ export const ProjectsForm: ProjectsFormComponent = ({
       {formValue.map((proj, i1) => {
         return (
           <div key={i1} className='job-form'>
+            <Buttons>
+              <Button text='Add' onClick={() => addProject(i1)} />
+              <Button
+                text='Remove'
+                disabled={i1 === 0 ? true : false}
+                onClick={() => removeProject(i1 - 1)}
+              />
+            </Buttons>
+            {i1 !== 0 && <hr className='job-hr' />}
             {(Object.keys(proj) as Array<keyof Project>).map((label) => {
               if (label === 'projectId') {
                 return null;
@@ -302,16 +319,15 @@ export const ProjectsForm: ProjectsFormComponent = ({
                 );
               }
             })}
-            {i1 !== formValue.length - 1 && <hr className='job-hr' />}
           </div>
         );
       })}
       <Buttons>
-        <Button text='Add' onClick={() => addProject()} />
+        <Button text='Add' onClick={() => addProject(formValue.length)} />
         <Button
           text='Remove'
           disabled={formValue.length > 1 ? false : true}
-          onClick={() => removeProject()}
+          onClick={() => removeProject(formValue.length - 1)}
         />
       </Buttons>
     </div>
@@ -335,10 +351,10 @@ export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
     awardDate: '2024',
   };
 
-  function addAward() {
+  function addAward(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.push({
-      awardId: formValue.length + 1,
+    newFormValue.splice(idx, 0, {
+      awardId: idx,
       awardTitle: '',
       awardIssuer: '',
       awardDescription: '',
@@ -347,9 +363,9 @@ export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
     onChange(newFormValue);
   }
 
-  function removeAward() {
+  function removeAward(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.pop();
+    newFormValue.splice(idx, 1);
     onChange(newFormValue);
   }
 
@@ -359,6 +375,15 @@ export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
       <hr />
       {formValue.map((award, i1) => (
         <div key={i1} className='job-form'>
+          <Buttons>
+            <Button text='Add' onClick={() => addAward(i1)} />
+            <Button
+              text='Remove'
+              disabled={i1 === 0 ? true : false}
+              onClick={() => removeAward(i1 - 1)}
+            />
+          </Buttons>
+          {i1 !== 0 && <hr className='job-hr' />}
           {(Object.keys(award) as Array<keyof Award>).map((label) => {
             return (
               label !== 'awardId' && (
@@ -385,15 +410,14 @@ export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
               )
             );
           })}
-          {i1 !== formValue.length - 1 && <hr className='job-hr' />}
         </div>
       ))}
       <Buttons>
-        <Button text='Add' onClick={() => addAward()} />
+        <Button text='Add' onClick={() => addAward(formValue.length)} />
         <Button
           text='Remove'
           disabled={formValue.length > 1 ? false : true}
-          onClick={() => removeAward()}
+          onClick={() => removeAward(formValue.length - 1)}
         />
       </Buttons>
     </div>
@@ -418,10 +442,10 @@ export const AdditionalForm: AdditionalFormComponent = ({
     additionalDate: '2021',
   };
 
-  function addAdditional() {
+  function addAdditional(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.push({
-      additionalId: formValue.length + 1,
+    newFormValue.splice(idx, 0, {
+      additionalId: idx,
       additionalTitle: '',
       additionalDescription: '',
       additionalDate: '',
@@ -429,9 +453,9 @@ export const AdditionalForm: AdditionalFormComponent = ({
     onChange(newFormValue);
   }
 
-  function removeAdditional() {
+  function removeAdditional(idx: number) {
     const newFormValue = [...formValue];
-    newFormValue.pop();
+    newFormValue.splice(idx, 1);
     onChange(newFormValue);
   }
 
@@ -441,6 +465,15 @@ export const AdditionalForm: AdditionalFormComponent = ({
       <hr />
       {formValue.map((exp, i1) => (
         <div key={i1} className='job-form'>
+          <Buttons>
+            <Button text='Add' onClick={() => addAdditional(i1)} />
+            <Button
+              text='Remove'
+              disabled={i1 === 0 ? true : false}
+              onClick={() => removeAdditional(i1 - 1)}
+            />
+          </Buttons>
+          {i1 !== 0 && <hr className='job-hr' />}
           {(Object.keys(exp) as Array<keyof AdditionalExperience>).map(
             (label) =>
               label !== 'additionalId' && (
@@ -466,15 +499,14 @@ export const AdditionalForm: AdditionalFormComponent = ({
                 </div>
               )
           )}
-          {i1 !== formValue.length - 1 && <hr className='job-hr' />}
         </div>
       ))}
       <Buttons>
-        <Button text='Add' onClick={() => addAdditional()} />
+        <Button text='Add' onClick={() => addAdditional(formValue.length)} />
         <Button
           text='Remove'
           disabled={formValue.length > 1 ? false : true}
-          onClick={() => removeAdditional()}
+          onClick={() => removeAdditional(formValue.length - 1)}
         />
       </Buttons>
     </div>
