@@ -7,7 +7,6 @@ export interface ResumeMetadata {
   title: string;
   resume_id: number;
   user_id: number;
-  thumbnail_url: string;
   created_at: string;
   updated_at: string;
 }
@@ -32,14 +31,15 @@ export interface UpdateResumeMetadataTitlePayload {
   title: string;
 }
 
-export const getResumeMetadatas = async (): Promise<ResumeMetadata[]> => {
+export const getResumeMetadatas = async (): Promise<
+  ResumeMetadata[]
+> => {
   try {
-    const resp = await axios.get<{ resumeMetadatas: ResumeMetadata[] }>(
-      `${api}/resume_metadatas`,
-      {
-        withCredentials: true,
-      }
-    );
+    const resp = await axios.get<{
+      resumeMetadatas: ResumeMetadata[];
+    }>(`${api}/resume_metadatas`, {
+      withCredentials: true,
+    });
 
     return resp.data.resumeMetadatas;
   } catch (error) {
@@ -55,7 +55,9 @@ export const getResumeMetadatas = async (): Promise<ResumeMetadata[]> => {
   }
 };
 
-export const getResume = async (resumeMetadataId: number): Promise<Resume> => {
+export const getResume = async (
+  resumeMetadataId: number
+): Promise<Resume> => {
   try {
     const response = await axios.get<{ resume: Resume }>(
       `${api}/resumes/${resumeMetadataId}`,
@@ -100,9 +102,13 @@ export const updateResume = async (
   resumePayload: ResumePayload
 ) => {
   try {
-    axios.patch(`${api}/resumes/${resumeID}`, resumePayload, {
-      withCredentials: true,
-    });
+    axios.patch(
+      `${api}/resumes/${resumeID}`,
+      resumePayload,
+      {
+        withCredentials: true,
+      }
+    );
   } catch (error) {
     console.error(error);
 
@@ -139,9 +145,13 @@ export const updateResumeMetadataTitle = async (
   payload: UpdateResumeMetadataTitlePayload
 ) => {
   try {
-    axios.patch(`${api}/resume_metadatas/${resumeMetadataID}/title`, payload, {
-      withCredentials: true,
-    });
+    axios.patch(
+      `${api}/resume_metadatas/${resumeMetadataID}/title`,
+      payload,
+      {
+        withCredentials: true,
+      }
+    );
   } catch (error) {
     console.error(error);
 
@@ -151,6 +161,8 @@ export const updateResumeMetadataTitle = async (
       }
     }
 
-    throw new Error('Failed to update resume metadata title');
+    throw new Error(
+      'Failed to update resume metadata title'
+    );
   }
 };

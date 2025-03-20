@@ -1,9 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 import { Check, Eye, Pencil, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import {
   deleteResume,
   getResumeMetadatas,
@@ -18,9 +26,14 @@ interface ResumeListProps {
   setPreviewingResumeID: (resumeMetadataId: number) => void;
 }
 
-const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editedTitle, setEditedTitle] = useState<string>('');
+const ResumeList = ({
+  setPreviewingResumeID,
+}: ResumeListProps) => {
+  const [editingId, setEditingId] = useState<number | null>(
+    null
+  );
+  const [editedTitle, setEditedTitle] =
+    useState<string>('');
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -32,15 +45,25 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   } = useQuery<ResumeMetadata[], Error>({
     queryKey: ['resume_metadatas'],
     queryFn: getResumeMetadatas,
-    retry: (_, error) => error.message !== FORBIDDEN_MESSAGE,
+    retry: (_, error) =>
+      error.message !== FORBIDDEN_MESSAGE,
   });
 
   const updateMetadataTitleMutation = useMutation({
-    mutationFn: ({ id, title }: { id: number; title: string }) =>
-      updateResumeMetadataTitle(id, { title }),
+    mutationFn: ({
+      id,
+      title,
+    }: {
+      id: number;
+      title: string;
+    }) => updateResumeMetadataTitle(id, { title }),
     onSuccess: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      queryClient.invalidateQueries({ queryKey: ['resume_metadatas'] });
+      await new Promise((resolve) =>
+        setTimeout(resolve, 250)
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['resume_metadatas'],
+      });
       // Reset editing state
       setEditingId(null);
     },
@@ -56,8 +79,12 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
   const deleteResumeMutation = useMutation({
     mutationFn: (id: number) => deleteResume(id),
     onSuccess: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      queryClient.invalidateQueries({ queryKey: ['resume_metadatas'] });
+      await new Promise((resolve) =>
+        setTimeout(resolve, 250)
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['resume_metadatas'],
+      });
     },
   });
 
@@ -86,7 +113,10 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
       return;
     }
 
-    updateMetadataTitleMutation.mutate({ id, title: editedTitle });
+    updateMetadataTitleMutation.mutate({
+      id,
+      title: editedTitle,
+    });
   };
 
   const cancelEditing = () => {
@@ -109,14 +139,19 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
     <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
       {resume_metadatas.length > 0 ? (
         resume_metadatas.map((metadata) => (
-          <Card key={metadata.id} className='w-full flex flex-col'>
+          <Card
+            key={metadata.id}
+            className='w-full flex flex-col'
+          >
             <CardContent className='pt-6 flex-1'>
               <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2'>
                 {editingId === metadata.id ? (
                   <div className='flex items-center gap-2 w-full'>
                     <Input
                       value={editedTitle}
-                      onChange={(e: any) => setEditedTitle(e.target.value)}
+                      onChange={(e: any) =>
+                        setEditedTitle(e.target.value)
+                      }
                       className='h-8 flex-grow'
                       autoFocus
                     />
@@ -125,8 +160,12 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
                         variant='ghost'
                         size='icon'
                         className='h-8 w-8'
-                        onClick={() => saveTitle(metadata.id)}
-                        disabled={updateMetadataTitleMutation.isPending}
+                        onClick={() =>
+                          saveTitle(metadata.id)
+                        }
+                        disabled={
+                          updateMetadataTitleMutation.isPending
+                        }
                       >
                         <Check className='h-4 w-4 text-green-500' />
                       </Button>
@@ -148,17 +187,20 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
                           {metadata.title}
                         </h3>
                         <Button
-                          variant='ghost'
-                          size='icon'
-                          className='h-8 w-8'
-                          onClick={() => startEditing(metadata)}
+                          variant='icon'
+                          className='h-8 w-8 '
+                          onClick={() =>
+                            startEditing(metadata)
+                          }
                         >
                           <Pencil className='h-4 w-4 text-blue-300' />
                         </Button>
                       </div>
                       <ConfirmDelete
                         resumeTitle={metadata.title}
-                        deleteFunc={() => handleDelete(metadata.resume_id)}
+                        deleteFunc={() =>
+                          handleDelete(metadata.resume_id)
+                        }
                       />
                     </div>
                   </>
@@ -186,7 +228,9 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
               <Button
                 variant='outline'
                 size='sm'
-                onClick={() => setPreviewingResumeID(metadata.resume_id)}
+                onClick={() =>
+                  setPreviewingResumeID(metadata.resume_id)
+                }
                 className='w-full sm:w-auto'
               >
                 <Eye className='w-4 h-4 mr-2' />
@@ -196,7 +240,9 @@ const ResumeList = ({ setPreviewingResumeID }: ResumeListProps) => {
           </Card>
         ))
       ) : (
-        <div className='text-gray-500'>No resumes... start creating!</div>
+        <div className='text-gray-500'>
+          No resumes... start creating!
+        </div>
       )}
     </div>
   );

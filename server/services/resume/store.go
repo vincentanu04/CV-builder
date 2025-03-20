@@ -18,7 +18,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetResumeMetadatasByUserID(userID int) ([]*types.ResumeMetadata, error) {
-	query := `SELECT id, title, resume_id, user_id, thumbnail_url, created_at, updated_at 
+	query := `SELECT id, title, resume_id, user_id, created_at, updated_at 
 	          FROM resume_metadatas WHERE user_id = ?`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
@@ -73,8 +73,8 @@ func (s *Store) CreateResume(resume *types.Resume) error {
 }
 
 func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
-	query := `INSERT INTO resume_metadatas (title, resume_id, user_id, thumbnail_url) VALUES (?, ?, ?, ?)`
-	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ResumeID, resumeMetadata.UserID, resumeMetadata.ThumbnailURL)
+	query := `INSERT INTO resume_metadatas (title, resume_id, user_id) VALUES (?, ?, ?)`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ResumeID, resumeMetadata.UserID)
 	if err != nil {
 		return err
 	}
@@ -109,8 +109,8 @@ func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 }
 
 func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
-	query := `UPDATE resume_metadatas SET title = ?, thumbnail_url = ?, updated_at = ? WHERE resume_id = ? AND user_id = ?`
-	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ThumbnailURL, resumeMetadata.UpdatedAt, resumeMetadata.ResumeID, resumeMetadata.UserID)
+	query := `UPDATE resume_metadatas SET title = ?, updated_at = ? WHERE resume_id = ? AND user_id = ?`
+	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.UpdatedAt, resumeMetadata.ResumeID, resumeMetadata.UserID)
 	if err != nil {
 		return err
 	}
@@ -194,7 +194,6 @@ func scanRowsIntoResumeMetadata(rows *sql.Rows) (*types.ResumeMetadata, error) {
 		&metadata.Title,
 		&metadata.ResumeID,
 		&metadata.UserID,
-		&metadata.ThumbnailURL,
 		&metadata.CreatedAt,
 		&metadata.UpdatedAt,
 	)

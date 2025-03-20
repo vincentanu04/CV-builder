@@ -199,10 +199,9 @@ func (h *Handler) handleCreateResume(w http.ResponseWriter, r *http.Request) {
 	// create resume metadata with newResume.ID and s3 image link
 	userID := auth.GetUserIDFromContext(r.Context())
 	newResumeMetadata := types.ResumeMetadata{
-		Title:        resumePayload.Title,
-		ResumeID:     newResume.ID,
-		UserID:       userID,
-		ThumbnailURL: "", // TODO
+		Title:    resumePayload.Title,
+		ResumeID: newResume.ID,
+		UserID:   userID,
 	}
 	err = h.resumeStore.CreateResumeMetadata(&newResumeMetadata)
 	if err != nil {

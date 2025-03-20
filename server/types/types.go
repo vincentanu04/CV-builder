@@ -24,13 +24,12 @@ type UserStore interface {
 }
 
 type ResumeMetadata struct {
-	ID           int       `json:"id"`
-	Title        string    `json:"title"`
-	ResumeID     int       `json:"resume_id"`
-	UserID       int       `json:"user_id"`
-	ThumbnailURL string    `json:"thumbnail_url"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	ResumeID  int       `json:"resume_id"`
+	UserID    int       `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type Resume struct {

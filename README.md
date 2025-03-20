@@ -75,7 +75,6 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
     title VARCHAR(255) NOT NULL,
     resume_id INT NOT NULL,
     user_id INT NOT NULL,
-    thumbnail_url VARCHAR(1024), -- S3 URL for the thumbnail image
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (resume_id) REFERENCES resumes (id) ON DELETE CASCADE,
@@ -112,10 +111,6 @@ Enter your personal details in order to get a personalized CV printed as a PDF! 
 - **Template Storage**:
 
   - Resume templates are stored in the frontend as stylesheets and CV components.
-
-- **Thumbnail Generation**:
-  - When a user saves a resume, the frontend generates a PDF using the selected template.
-  - The PDF is sent to the backend, which converts it into an image and uploads it to S3 for use as a thumbnail.
 
 ---
 
