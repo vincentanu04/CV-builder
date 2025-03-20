@@ -15,12 +15,15 @@ import { useNavigate } from 'react-router-dom';
 
 interface ConfirmBackProps {
   isResumeChanged: boolean;
+  isGuest: boolean;
 }
 
-export const ConfirmBack = ({ isResumeChanged }: ConfirmBackProps) => {
+export const ConfirmBack = ({ isResumeChanged, isGuest }: ConfirmBackProps) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
+    if (isGuest) navigate('/');
+
     if (!isResumeChanged) {
       navigate('/home');
       return;
@@ -29,7 +32,7 @@ export const ConfirmBack = ({ isResumeChanged }: ConfirmBackProps) => {
 
   return (
     <>
-      {isResumeChanged ? (
+      {!isGuest && isResumeChanged ? (
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button

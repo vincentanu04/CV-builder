@@ -1,6 +1,14 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, Sparkles } from 'lucide-react';
+import { handleScroll } from '@/utils/scroll';
+import {
+  AtomIcon,
+  Construction,
+  ConstructionIcon,
+  FileText,
+  Sparkles,
+  Star,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Hero = () => {
@@ -29,12 +37,17 @@ export const Hero = () => {
                   navigate('/resume/new');
                 }}
               >
-                <Sparkles className='h-4 w-4' />
+                <FileText className='h-4 w-4' />
                 Create Resume as Guest
               </Button>
-              <Button size='lg' variant='outline' className='gap-2'>
-                <FileText className='h-4 w-4' />
-                View Templates
+              <Button
+                size='lg'
+                variant='outline'
+                className='gap-2'
+                onClick={() => handleScroll('features')}
+              >
+                <Sparkles className='h-4 w-4' />
+                View Features
               </Button>
             </div>
             <div className='flex items-center gap-4 pt-4'>

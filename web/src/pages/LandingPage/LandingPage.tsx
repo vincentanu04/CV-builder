@@ -47,19 +47,12 @@ const LandingPage = () => {
             >
               Features
             </a>
-            <a className='text-sm font-medium hover:text-primary'>Templates</a>
-            {/* <a
-              href='#reviews'
-              className='text-sm font-medium hover:text-primary'
-            >
-              Reviews
-            </a>
             <a
-              href='#pricing'
+              href='pricing'
               className='text-sm font-medium hover:text-primary'
             >
               Pricing
-            </a> */}
+            </a>
           </nav>
           <div className='flex items-center gap-4'>
             <a
@@ -69,7 +62,7 @@ const LandingPage = () => {
               Log in
             </a>
             <Button asChild size='sm' onClick={handleGoSignup}>
-              <a>Sign up</a>
+              <a>Get Started</a>
             </Button>
           </div>
         </div>

@@ -88,7 +88,7 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
     <Card className='relative border-2 shadow-lg mt-12'>
       <CardHeader>
         <CardTitle className='text-2xl tracking-wider'>
-          {isSignUp ? 'Create your account' : 'Welcome back!'}
+          {isSignUp ? 'Create your FREE account!' : 'Welcome back!'}
         </CardTitle>
         <CardDescription>
           {isSignUp

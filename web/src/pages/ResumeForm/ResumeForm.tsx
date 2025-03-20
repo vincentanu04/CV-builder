@@ -34,6 +34,12 @@ import { FORBIDDEN_MESSAGE } from '@/api/errors';
 import { ConfirmBack } from '@/components/confirm-back';
 import { useAuth } from '@/contexts/AuthContext';
 import { fromOrderedJSON, toOrderedJSON } from '@/utils/json';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface ResumeFormProps {
   isEdit: boolean;
@@ -49,13 +55,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
-  const [isGuest, setIsGuest] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      setIsGuest(false);
-    }
-  }, [user]);
+  const isGuest = !user;
 
   if (isEdit && (!id || isNaN(Number(id)))) {
     navigate('/home');
@@ -229,8 +229,21 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     <main className='flex max-h-screen'>
       <div className='buttons-bar'>
         <div className='flex md:flex-col gap-4 items-center'>
-          {!isGuest && <ConfirmBack isResumeChanged={isResumeChanged} />}
-          {!isGuest && (
+          <ConfirmBack isResumeChanged={isResumeChanged} isGuest={isGuest} />
+          {isGuest ? (
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button size={'sm'} className='py-2 px-6 flex-1' disabled>
+                    Save Resume
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side='bottom' align='start' alignOffset={-40}>
+                  <p>Create an account to save your resume!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
             <Button
               size={'sm'}
               className='py-2 px-6 flex-1'
