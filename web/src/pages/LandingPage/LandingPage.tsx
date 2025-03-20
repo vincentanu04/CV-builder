@@ -38,7 +38,7 @@ const LandingPage = () => {
         <div className='container mx-auto flex h-16 items-center justify-between py-4 px-8'>
           <div className='flex items-center gap-2'>
             <FileText className='h-6 w-6 text-primary' />
-            <span className='text-xl font-bold'>CV Builder</span>
+            <span className='text-xl font-bold'>CVBuilder</span>
           </div>
           <nav className='hidden md:flex gap-6'>
             <a
@@ -62,7 +62,7 @@ const LandingPage = () => {
               Log in
             </a>
             <Button asChild size='sm' onClick={handleGoSignup}>
-              <a>Get Started</a>
+              <a>Get Started (Free)</a>
             </Button>
           </div>
         </div>
@@ -140,7 +140,7 @@ const LandingPage = () => {
         <div className='container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-8 relative z-10'>
           <div className='flex items-center gap-2'>
             <FileText className='h-5 w-5 text-primary' />
-            <span className='font-semibold'>CV Builder</span>
+            <span className='font-semibold'>CVBuilder</span>
           </div>
 
           <div className='flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground'>
@@ -162,7 +162,7 @@ const LandingPage = () => {
           </div>
 
           <div className='text-sm text-muted-foreground'>
-            © {new Date().getFullYear()} CV Builder. All rights reserved.
+            © {new Date().getFullYear()} CVBuilder. All rights reserved.
           </div>
         </div>
       </footer>

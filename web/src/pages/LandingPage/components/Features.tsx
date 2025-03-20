@@ -1,9 +1,21 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, FileText, Sparkles, Star } from 'lucide-react';
+import {
+  ArrowRight,
+  Check,
+  CheckCircle,
+  CreditCard,
+  FileText,
+  Sparkles,
+  Star,
+  Zap,
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const Features = () => {
+  const navigate = useNavigate();
   return (
-    <section id='features' className='py-12 md:py-18 relative'>
+    <section id='features' className='pt-12 relative'>
       <div className='absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none'></div>
       <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
         <div className='text-center mb-12'>
@@ -100,6 +112,39 @@ export const Features = () => {
               </p>
             </CardContent>
           </Card>
+        </div>
+
+        <div className='text-center mt-16 mb-2 relative'>
+          <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 w-full max-w-xs h-16 bg-gradient-to-r from-primary to-accent opacity-10 blur-xl rounded-full'></div>
+
+          <div className='relative inline-block group '>
+            <div className='absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-300 text-foregound'></div>
+            <Button
+              size='lg'
+              className='relative px-8 py-6 text-lg text-foregound font-medium flex items-center gap-3 bg-background border-2 border-primary hover:border-accent shadow-lg group-hover:shadow-xl transition-all duration-300'
+              onClick={() => {
+                navigate('/pricing');
+              }}
+            >
+              <CreditCard className='h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300' />
+              <span className=''>View Plans & Pricing</span>
+              <ArrowRight className='h-5 w-5 text-primary ml-1 group-hover:translate-x-1 transition-transform duration-300' />
+            </Button>
+          </div>
+
+          <div className='mt-6 flex flex-col items-center justify-center gap-1'>
+            <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground'>
+              <Zap className='h-4 w-4 text-primary' />
+              <span>Unlock premium features with our Pro plan</span>
+            </div>
+            <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground'>
+              <Check className='h-4 w-4 text-accent' />
+              <span>
+                Or continue with our powerful free features — no payment
+                required
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
