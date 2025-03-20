@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FileText, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
+import { handleScroll } from '@/utils/scroll';
 
 export function ResumeNotification() {
   const [isVisible, setIsVisible] = useState(false);
@@ -16,14 +17,6 @@ export function ResumeNotification() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  const handleScroll = () => {
-    // Find the resume section and scroll to it
-    const resumeSection = document.getElementById('resume-showcase');
-    if (resumeSection) {
-      resumeSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   if (!isVisible) return null;
 
@@ -55,7 +48,7 @@ export function ResumeNotification() {
               variant='link'
               className='h-auto p-0 text-xs text-primary font-medium'
               onClick={() => {
-                handleScroll();
+                handleScroll('resume-showcase');
                 setIsVisible(false);
               }}
             >

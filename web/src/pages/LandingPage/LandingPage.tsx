@@ -8,6 +8,7 @@ import { FadeIn } from '@/components/fade-in';
 import { ResumeShowcase } from './components/ResumeShowcase';
 import { Features } from './components/Features';
 import { Hero } from './components/Hero';
+import { handleScroll } from '@/utils/scroll';
 
 const LandingPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -41,17 +42,12 @@ const LandingPage = () => {
           </div>
           <nav className='hidden md:flex gap-6'>
             <a
-              href='#features'
               className='text-sm font-medium hover:text-primary'
+              onClick={() => handleScroll('features')}
             >
               Features
             </a>
-            <a
-              href='#templates'
-              className='text-sm font-medium hover:text-primary'
-            >
-              Templates
-            </a>
+            <a className='text-sm font-medium hover:text-primary'>Templates</a>
             {/* <a
               href='#reviews'
               className='text-sm font-medium hover:text-primary'

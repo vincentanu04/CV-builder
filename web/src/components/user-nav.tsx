@@ -40,7 +40,7 @@ const UserNav = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className='w-56 bg-background text-foreground border-primary'
+        className='w-56 bg-background text-foreground border-gray-300'
         align='end'
         forceMount
       >

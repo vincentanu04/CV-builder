@@ -7,7 +7,7 @@ export const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className=' py-12 min-h-[calc(100vh-4rem)] relative'>
+    <section className=' py-12 min-h-[calc(100vh-4rem)] relative flex justify-center items-center'>
       <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
         <div className='flex flex-col lg:flex-row gap-8 items-start'>
           <div className='flex-1 space-y-6'>
