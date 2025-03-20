@@ -70,10 +70,11 @@ func TestCreateUser(t *testing.T) {
 		newUser := types.User{
 			Email:    "newuser@example.com",
 			Password: "hashedPassword",
+			Plan:     types.FreePlan,
 		}
 
-		mock.ExpectExec("INSERT INTO users \\(email, password\\) VALUES \\(\\?, \\?\\)").
-			WithArgs(newUser.Email, newUser.Password).
+		mock.ExpectExec("INSERT INTO users \\(email, password, plan\\) VALUES \\(\\?, \\?, \\?\\)").
+			WithArgs(newUser.Email, newUser.Password, newUser.Plan).
 			WillReturnResult(sqlmock.NewResult(int64(newUserID), 1))
 
 		store := NewStore(db)

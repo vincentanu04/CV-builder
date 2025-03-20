@@ -139,6 +139,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	newUser := types.User{
 		Email:    registerRequest.Email,
 		Password: hashedPassword,
+		Plan:     types.FreePlan,
 	}
 	err = h.store.CreateUser(&newUser)
 	if err != nil {

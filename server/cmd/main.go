@@ -1,46 +1,31 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"server/cmd/api"
-	"server/configs"
 	"server/db"
-
-	"github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	dbCfg := mysql.Config{
-		User:                 configs.Envs.DBUser,
-		Passwd:               configs.Envs.DBPasswd,
-		Addr:                 configs.Envs.DBAddr,
-		DBName:               configs.Envs.DBName,
-		Net:                  "tcp",
-		AllowNativePasswords: true,
-		ParseTime:            true,
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: go run main.go [webserver|migrate:up|migrate:down]")
+		os.Exit(1)
 	}
 
-	db, err := db.NewMySQLStorage(dbCfg)
-	if err != nil {
-		log.Fatal(err)
+	action := os.Args[1]
+	fmt.Println(action)
+	switch action {
+	case "webserver":
+		api.Run()
+	case "migrate:up":
+		db.RunMigration("up")
+	case "migrate:down":
+		db.RunMigration("down")
+	case "migrate:undirty":
+		db.RunMigration("undirty")
+	default:
+		log.Fatalf("Available commands are [webserver|migrate:up|migrate:down]")
 	}
-
-	initDB(db)
-
-	log.Printf("Running server on port %s ...", configs.Envs.Port)
-	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.Port), db)
-	if err := server.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func initDB(db *sql.DB) {
-	err := db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println("DB successfully connected!")
 }

@@ -70,7 +70,7 @@ func (s *Store) CreateUser(user *types.User) error {
 		log.Println("finished creating user ..")
 	}()
 
-	result, err := s.db.Exec("INSERT INTO users (email, password) VALUES (?, ?)", user.Email, user.Password)
+	result, err := s.db.Exec("INSERT INTO users (email, password, plan) VALUES (?, ?, ?)", user.Email, user.Password, user.Plan)
 	if err != nil {
 		return err
 	}

@@ -16,11 +16,11 @@ type APIServer struct {
 	db   *sql.DB
 }
 
-func NewAPIServer(addr string, db *sql.DB) *APIServer {
+func newAPIServer(addr string, db *sql.DB) *APIServer {
 	return &APIServer{addr: addr, db: db}
 }
 
-func (s *APIServer) Run() error {
+func (s *APIServer) run() error {
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api").Subrouter()
 

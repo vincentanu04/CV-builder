@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS resume_metadatas;
+DROP TABLE IF EXISTS resumes;
+DROP TABLE IF EXISTS users;

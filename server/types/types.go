@@ -2,10 +2,19 @@ package types
 
 import "time"
 
+type UserPlan string
+
+const (
+	FreePlan UserPlan = "free"
+	MidPlan  UserPlan = "mid"
+	ProPlan  UserPlan = "pro"
+)
+
 type User struct {
-	ID       int    `json:"id"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	ID       int      `json:"id"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Plan     UserPlan `json:"plan"`
 }
 
 type UserStore interface {
