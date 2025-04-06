@@ -81,7 +81,7 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, userStore types.UserStore) http.H
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, userKey, &types.User{ID: u.ID, Email: u.Email})
+		ctx = context.WithValue(ctx, userKey, &types.User{ID: u.ID, Email: u.Email, Plan: u.Plan})
 		r = r.WithContext(ctx)
 
 		handlerFunc(w, r)

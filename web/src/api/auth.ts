@@ -5,15 +5,19 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  plan: string;
 }
 
 export const api = 'http://localhost:8080/api';
 
 export const verifyToken = async (): Promise<User> => {
   try {
-    const response = await axios.get<{ user: User }>(`${api}/verify-token`, {
-      withCredentials: true,
-    });
+    const response = await axios.get<{ user: User }>(
+      `${api}/verify-token`,
+      {
+        withCredentials: true,
+      }
+    );
 
     return response.data.user;
   } catch (error) {
@@ -31,7 +35,9 @@ export const verifyToken = async (): Promise<User> => {
 
 export const logout = async () => {
   try {
-    await axios.post(`${api}/logout`, null, { withCredentials: true });
+    await axios.post(`${api}/logout`, null, {
+      withCredentials: true,
+    });
   } catch (error) {
     throw new Error('Error logging out');
   }

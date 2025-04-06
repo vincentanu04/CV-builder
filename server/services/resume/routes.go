@@ -14,6 +14,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var ResumeLimits = map[types.UserPlan]int{
+	"free": 1,
+	"mid":  3,
+	"pro":  100,
+}
+
 type CreateResumePayload struct {
 	TemplateName string `json:"template_name" validate:"required"`
 	Title        string `json:"title" validate:"required"`
@@ -55,17 +61,19 @@ func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Reques
 		log.Println("finished getting resume metadatas ..")
 	}()
 
-	userID := auth.GetUserIDFromContext(r.Context())
-	log.Printf("getting resume metadatas for user %d", userID)
+	user := auth.GetUserFromContext(r.Context())
+	log.Printf("getting resume metadatas for user %d", user)
 
-	resumes, err := h.resumeStore.GetResumeMetadatasByUserID(userID)
+	resumes, err := h.resumeStore.GetResumeMetadatasByUserID(user.ID)
 	if err != nil {
-		log.Printf("error getting resumes for user %d, %v", userID, err)
-		utils.WriteError(w, fmt.Errorf("error getting resumes for user %d", userID), http.StatusInternalServerError)
+		log.Printf("error getting resumes for user %d, %v", user.ID, err)
+		utils.WriteError(w, fmt.Errorf("error getting resumes for user %d", user.ID), http.StatusInternalServerError)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string][]*types.ResumeMetadata{"resumeMetadatas": resumes})
+	isLimited := len(resumes) >= ResumeLimits[user.Plan]
+
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"resumeMetadatas": resumes, "limited": isLimited})
 }
 
 func (h *Handler) handleUpdateResumeMetadataTitle(w http.ResponseWriter, r *http.Request) {

@@ -31,29 +31,34 @@ export interface UpdateResumeMetadataTitlePayload {
   title: string;
 }
 
-export const getResumeMetadatas = async (): Promise<
-  ResumeMetadata[]
-> => {
-  try {
-    const resp = await axios.get<{
-      resumeMetadatas: ResumeMetadata[];
-    }>(`${api}/resume_metadatas`, {
-      withCredentials: true,
-    });
+export interface getResumeMetadatasResponse {
+  resumeMetadatas: ResumeMetadata[];
+  limited: boolean;
+}
+export const getResumeMetadatas =
+  async (): Promise<getResumeMetadatasResponse> => {
+    try {
+      const resp =
+        await axios.get<getResumeMetadatasResponse>(
+          `${api}/resume_metadatas`,
+          {
+            withCredentials: true,
+          }
+        );
 
-    return resp.data.resumeMetadatas;
-  } catch (error) {
-    console.error(error);
+      return resp.data;
+    } catch (error) {
+      console.error(error);
 
-    if (axios.isAxiosError(error)) {
-      if (error.status === FORBIDDEN) {
-        throw new Error(FORBIDDEN_MESSAGE);
+      if (axios.isAxiosError(error)) {
+        if (error.status === FORBIDDEN) {
+          throw new Error(FORBIDDEN_MESSAGE);
+        }
       }
-    }
 
-    throw new Error('Failed to fetch resume metadatas');
-  }
-};
+      throw new Error('Failed to fetch resume metadatas');
+    }
+  };
 
 export const getResume = async (
   resumeMetadataId: number
