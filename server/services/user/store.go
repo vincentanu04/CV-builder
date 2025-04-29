@@ -22,6 +22,7 @@ func (s *Store) GetUserByEmail(email string) (*types.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	u := &types.User{}
 	for rows.Next() {

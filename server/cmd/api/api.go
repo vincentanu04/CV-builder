@@ -35,7 +35,8 @@ func (s *APIServer) run() error {
 	resumeHandler := resume.NewHandler(resumeStore, userStore)
 	resumeHandler.RegisterRoutes(subrouter)
 
-	corsRouter := utils.CORS(router)
+	router.Use(utils.CORS)
+	router.Use(utils.RateLimit)
 
-	return http.ListenAndServe(s.addr, corsRouter)
+	return http.ListenAndServe(s.addr, router)
 }
