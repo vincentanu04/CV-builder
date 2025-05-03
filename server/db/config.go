@@ -1,19 +1,15 @@
 package db
 
 import (
+	"fmt"
 	"server/configs"
-
-	"github.com/go-sql-driver/mysql"
 )
 
-func GetMySQLConfig() mysql.Config {
-	return mysql.Config{
-		User:                 configs.Envs.DBUser,
-		Passwd:               configs.Envs.DBPasswd,
-		Addr:                 configs.Envs.DBAddr,
-		DBName:               configs.Envs.DBName,
-		Net:                  "tcp",
-		AllowNativePasswords: true,
-		ParseTime:            true,
-	}
+func GetPostgresConnString() string {
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s/%s?sslmode=disable",
+		configs.Envs.DBUser, configs.Envs.DBPasswd, configs.Envs.DBAddr, configs.Envs.DBName,
+	)
+
+	return dsn
 }

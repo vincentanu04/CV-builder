@@ -19,7 +19,7 @@ func NewStore(db *sql.DB) *Store {
 
 func (s *Store) GetResumeMetadatasByUserID(userID int) ([]*types.ResumeMetadata, error) {
 	query := `SELECT id, title, resume_id, user_id, created_at, updated_at 
-	          FROM resume_metadatas WHERE user_id = ?`
+	          FROM resume_metadatas WHERE user_id = $1`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (s *Store) GetResumeMetadatasByUserID(userID int) ([]*types.ResumeMetadata,
 
 func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
 	query := `SELECT id, template_name, data, created_at, updated_at 
-	          FROM resumes WHERE id = ?`
+	          FROM resumes WHERE id = $1`
 	row := s.db.QueryRow(query, id)
 
 	resume, err := scanRowIntoResume(row)
@@ -57,39 +57,27 @@ func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
 }
 
 func (s *Store) CreateResume(resume *types.Resume) error {
-	query := `INSERT INTO resumes (template_name, data) VALUES (?, ?)`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Data)
+	query := `INSERT INTO resumes (template_name, data) VALUES ($1, $2) RETURNING id`
+	err := s.db.QueryRow(query, resume.TemplateName, resume.Data).Scan(&resume.ID)
 	if err != nil {
 		return err
 	}
 
-	resumeID, err := result.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	resume.ID = int(resumeID)
 	return nil
 }
 
 func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
-	query := `INSERT INTO resume_metadatas (title, resume_id, user_id) VALUES (?, ?, ?)`
-	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.ResumeID, resumeMetadata.UserID)
+	query := `INSERT INTO resume_metadatas (title, resume_id, user_id) VALUES ($1, $2, $3) RETURNING id`
+	err := s.db.QueryRow(query, resumeMetadata.Title, resumeMetadata.ResumeID, resumeMetadata.UserID).Scan(&resumeMetadata.ID)
 	if err != nil {
 		return err
 	}
 
-	resumeMetadataID, err := result.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	resumeMetadata.ID = int(resumeMetadataID)
 	return nil
 }
 
 func (s *Store) UpdateResumeByID(resume *types.Resume) error {
-	query := `UPDATE resumes SET template_name = ?, data = ?, updated_at = ? WHERE id = ?`
+	query := `UPDATE resumes SET template_name = $1, data = $2, updated_at = $3 WHERE id = $4`
 	result, err := s.db.Exec(query, resume.TemplateName, resume.Data, resume.UpdatedAt, resume.ID)
 	if err != nil {
 		return err
@@ -109,7 +97,7 @@ func (s *Store) UpdateResumeByID(resume *types.Resume) error {
 }
 
 func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error {
-	query := `UPDATE resume_metadatas SET title = ?, updated_at = ? WHERE resume_id = ? AND user_id = ?`
+	query := `UPDATE resume_metadatas SET title = $1, updated_at = $2 WHERE resume_id = $3 AND user_id = $4`
 	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.UpdatedAt, resumeMetadata.ResumeID, resumeMetadata.UserID)
 	if err != nil {
 		return err
@@ -129,7 +117,7 @@ func (s *Store) UpdateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 }
 
 func (s *Store) UpdateResumeMetadataTitle(resumeMetadata *types.ResumeMetadata) error {
-	query := `UPDATE resume_metadatas SET title = ?, updated_at = ? WHERE id = ?`
+	query := `UPDATE resume_metadatas SET title = $1, updated_at = $2 WHERE id = $3`
 	result, err := s.db.Exec(query, resumeMetadata.Title, resumeMetadata.UpdatedAt, resumeMetadata.ID)
 	if err != nil {
 		return err
@@ -149,7 +137,7 @@ func (s *Store) UpdateResumeMetadataTitle(resumeMetadata *types.ResumeMetadata) 
 }
 
 func (s *Store) UpdateResumeMetadataUpdatedAt(resumeMetadata *types.ResumeMetadata) error {
-	query := `UPDATE resume_metadatas SET updated_at = ? WHERE resume_id = ? AND user_id = ?`
+	query := `UPDATE resume_metadatas SET updated_at = $1 WHERE resume_id = $2 AND user_id = $3`
 	result, err := s.db.Exec(query, resumeMetadata.UpdatedAt, resumeMetadata.ResumeID, resumeMetadata.UserID)
 	if err != nil {
 		return err
@@ -169,7 +157,7 @@ func (s *Store) UpdateResumeMetadataUpdatedAt(resumeMetadata *types.ResumeMetada
 }
 
 func (s *Store) DeleteResumeByID(id int) error {
-	query := `DELETE FROM resumes WHERE id = ?`
+	query := `DELETE FROM resumes WHERE id = $1`
 	result, err := s.db.Exec(query, id)
 	if err != nil {
 		return err

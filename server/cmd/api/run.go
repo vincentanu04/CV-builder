@@ -9,7 +9,7 @@ import (
 )
 
 func Run() {
-	db, err := db.NewMySQLStorage(db.GetMySQLConfig())
+	db, err := db.NewPostgresStorage(db.GetPostgresConnString())
 	if err != nil {
 		log.Fatal(err)
 	}

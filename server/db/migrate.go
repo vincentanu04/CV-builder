@@ -1,27 +1,19 @@
 package db
 
 import (
-	"fmt"
 	"log"
-	"server/configs"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/mattes/migrate/source/file"
 )
 
 func RunMigration(action string) {
 	migrationsPath := "file://db/migrations"
 
-	dbURL := fmt.Sprintf(
-		"mysql://%s:%s@tcp(%s)/%s",
-		configs.Envs.DBUser,
-		configs.Envs.DBPasswd,
-		configs.Envs.DBAddr,
-		configs.Envs.DBName,
-	)
+	dbURL := GetPostgresConnString()
 
 	m, err := migrate.New(
 		migrationsPath,
