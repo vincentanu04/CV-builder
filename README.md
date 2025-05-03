@@ -6,6 +6,11 @@ Live site: https://cv-builder-04.vercel.app/
 
 Enter your personal details in order to get a personalized CV printed as a PDF! Supports export and import as JSON.
 
+Current deployment:
+- FE: Vercel
+- BE: Fly.io
+- DB: Supabase
+  
 # Design Document
 
 ## Core Features
