@@ -8,7 +8,7 @@ export interface User {
   plan: string;
 }
 
-export const api = 'http://localhost:8080/api';
+export const api = import.meta.env.VITE_API_URL;
 
 export const verifyToken = async (): Promise<User> => {
   try {
