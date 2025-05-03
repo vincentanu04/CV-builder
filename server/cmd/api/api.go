@@ -24,6 +24,11 @@ func (s *APIServer) run() error {
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api").Subrouter()
 
+	// handle preflight
+	router.Methods(http.MethodOptions).HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
 	healthChecker := health.NewHandler()
 	healthChecker.RegisterRoutes(subrouter)
 
@@ -35,6 +40,7 @@ func (s *APIServer) run() error {
 	resumeHandler := resume.NewHandler(resumeStore, userStore)
 	resumeHandler.RegisterRoutes(subrouter)
 
+	router.Use(utils.Logger)
 	router.Use(utils.CORS)
 	router.Use(utils.RateLimit)
 
