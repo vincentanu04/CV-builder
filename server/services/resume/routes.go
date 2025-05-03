@@ -62,7 +62,7 @@ func (h *Handler) handleGetResumeMetadatas(w http.ResponseWriter, r *http.Reques
 	}()
 
 	user := auth.GetUserFromContext(r.Context())
-	log.Printf("getting resume metadatas for user %d", user)
+	log.Printf("getting resume metadatas for user %d", user.ID)
 
 	resumes, err := h.resumeStore.GetResumeMetadatasByUserID(user.ID)
 	if err != nil {
