@@ -20,7 +20,10 @@ interface AccountCardProps {
   setIsSignUp: (isSignUp: boolean) => void;
 }
 
-const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
+const AccountCard = ({
+  isSignUp,
+  setIsSignUp,
+}: AccountCardProps) => {
   const { user, setUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,11 +54,17 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
         navigate('/home');
       }
     } catch (err) {
-      console.error(err);
-      setError(
-        (err as any).response?.data?.message ||
-          'Login failed. Please try again.'
-      );
+      if (axios.isAxiosError(err) && err.response) {
+        if (err.response.status === 400) {
+          setError(
+            err.response.data?.message || 'Bad request.'
+          );
+        } else {
+          setError('Login failed. Please try again.');
+        }
+      } else {
+        setError('An unexpected error occurred.');
+      }
     }
   };
 
@@ -78,9 +87,17 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
       }
     } catch (err) {
       console.error(err);
-      setError(
-        (err as any).response?.data?.error || 'Signup failed. Please try again.'
-      );
+      if (axios.isAxiosError(err) && err.response) {
+        if (err.response.status === 400) {
+          setError(
+            err.response.data?.message || 'Bad request.'
+          );
+        } else {
+          setError('Signup failed. Please try again.');
+        }
+      } else {
+        setError('An unexpected error occurred.');
+      }
     }
   };
 
@@ -88,7 +105,9 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
     <Card className='relative border-2 shadow-lg mt-12'>
       <CardHeader>
         <CardTitle className='text-2xl tracking-wider'>
-          {isSignUp ? 'Create your FREE account!' : 'Welcome back!'}
+          {isSignUp
+            ? 'Create your FREE account!'
+            : 'Welcome back!'}
         </CardTitle>
         <CardDescription>
           {isSignUp
@@ -122,14 +141,22 @@ const AccountCard = ({ isSignUp, setIsSignUp }: AccountCardProps) => {
                 name='password'
                 placeholder='*********'
                 className='bg-background'
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
               />
-              {error && <p className='text-xs text-red-500'>{error}</p>}
+              {error && (
+                <p className='text-xs text-red-500'>
+                  {error}
+                </p>
+              )}
             </div>
             <Button
               type='submit'
               className='w-full'
-              onClick={isSignUp ? handleSignup : handleLogin}
+              onClick={
+                isSignUp ? handleSignup : handleLogin
+              }
             >
               {isSignUp ? 'Sign Up' : 'Log In'}
             </Button>
