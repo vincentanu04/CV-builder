@@ -28,7 +28,7 @@ func RunMigration(action string) {
 		dbURL,
 	)
 	if err != nil {
-		log.Fatalf("failed to create migrate instance: %w", err)
+		log.Fatalf("failed to create migrate instance: %v", err)
 	}
 
 	oldVersion, dirty, err := m.Version()
