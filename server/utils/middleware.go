@@ -4,11 +4,16 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"server/configs"
 	"sync"
 	"time"
 )
 
-var allowedOrigins = []string{
+var prdAllowedOrigins = []string{
+	"https://cv-builder-04.vercel.app",
+}
+
+var devAllowedOrigins = []string{
 	"http://127.0.0.1:5173",
 	"http://localhost:5173",
 }
@@ -19,6 +24,15 @@ func CORS(next http.Handler) http.Handler {
 
 		isAllowed := false
 		log.Printf("checking cors origin, %s", origin)
+
+		allowedOrigins := []string{}
+		switch configs.Envs.Environment {
+		case "dev":
+			allowedOrigins = devAllowedOrigins
+		case "prd":
+			allowedOrigins = prdAllowedOrigins
+		}
+
 		for _, allowedOrigin := range allowedOrigins {
 			if allowedOrigin == origin {
 				isAllowed = true

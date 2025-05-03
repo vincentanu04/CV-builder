@@ -17,6 +17,7 @@ type Config struct {
 	DBName             string
 	JWTSecret          string
 	JWTExpirationInSec int64
+	Environment        string
 }
 
 var Envs = initConfig()
@@ -35,6 +36,7 @@ func initConfig() Config {
 		DBName:             getEnv("DB_NAME", "cv_builder"),
 		JWTSecret:          getEnv("JWT_SECRET", "no-fallback"),
 		JWTExpirationInSec: getEnvInt("JWT_EXPIRATION_IN_SEC", 3600*24),
+		Environment:        getEnv("ENVIRONMENT", "dev"),
 	}
 	log.Printf("with config %+v", config)
 

@@ -27,8 +27,8 @@ func TestGetUserByEmail(t *testing.T) {
 
 		mock.ExpectQuery("SELECT \\* FROM users WHERE email = ?").
 			WithArgs("exists@example.com").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).
-				AddRow(mockUser.ID, mockUser.Email, mockUser.Password))
+			WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password", "plan"}).
+				AddRow(mockUser.ID, mockUser.Email, mockUser.Password, mockUser.Plan))
 
 		user, err := store.GetUserByEmail("exists@example.com")
 		assert.NoError(t, err)
