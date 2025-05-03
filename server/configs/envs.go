@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -11,12 +10,10 @@ import (
 
 type Config struct {
 	Port               string
-	DBUser             string
-	DBPasswd           string
-	DBAddr             string
-	DBName             string
+	DBUrl              string
 	JWTSecret          string
 	JWTExpirationInSec int64
+	Environment        string
 }
 
 var Envs = initConfig()
@@ -29,12 +26,10 @@ func initConfig() Config {
 
 	config := Config{
 		Port:               getEnv("PORT", "8080"),
-		DBUser:             getEnv("DB_USER", "root"),
-		DBPasswd:           getEnv("DB_PASSWD", ""),
-		DBAddr:             fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
-		DBName:             getEnv("DB_NAME", "cv_builder"),
+		DBUrl:              getEnv("DB_URL", "root"),
 		JWTSecret:          getEnv("JWT_SECRET", "no-fallback"),
 		JWTExpirationInSec: getEnvInt("JWT_EXPIRATION_IN_SEC", 3600*24),
+		Environment:        getEnv("ENVIRONMENT", "dev"),
 	}
 	log.Printf("with config %+v", config)
 

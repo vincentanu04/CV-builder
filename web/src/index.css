@@ -1,25 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --background: 240, 13%, 9%;
+    --foreground: 240, 14%, 96%;
+    --card: 220, 12%, 18%;
+    --card-foreground: 0, 0%, 90%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+    --primary: 56, 13%, 48%;
+    --primary-foreground: 240, 14%, 4%;
+    --secondary: 91, 14%, 25%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+    --muted: 240, 12%, 15%;
+    --muted-foreground: 240, 8%, 75%;
+    --accent: 58, 13%, 58%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
+    --border: 200, 10%, 35%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --chart-1: 12 76% 61%;
@@ -30,7 +32,7 @@
     --radius: 0.5rem;
   }
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: #14141a;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -58,9 +60,144 @@
 }
 @layer base {
   * {
-    /* @apply border-border; */
+    @apply border-border;
   }
   body {
-    /* @apply bg-background text-foreground; */
+    @apply bg-background text-foreground;
   }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Section transitions */
+section {
+  position: relative;
+  transition: background-color 0.5s ease;
+}
+
+/* Enhanced animations for elements */
+.slide-up {
+  animation: slideUp 0.6s ease forwards;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.6s ease forwards;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.6s ease forwards;
+}
+
+.zoom-in {
+  animation: zoomIn 0.6s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Add a subtle parallax effect for background elements */
+.parallax {
+  transition: transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Add smooth transitions for all interactive elements */
+a,
+button,
+.card,
+.input {
+  transition: all 0.3s ease;
+}
+
+/* Add a subtle gradient overlay for section transitions */
+.section-gradient-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  z-index: 1;
+}
+
+.bg-grid-pattern {
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.147) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+}
+
+@keyframes subtleFloat {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 24px 24px;
+  }
+}
+
+.animate-pattern {
+  animation: subtleFloat 20s linear infinite;
 }

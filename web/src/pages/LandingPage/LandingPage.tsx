@@ -1,127 +1,174 @@
-import { useNavigate } from 'react-router-dom';
-import './LandingPage.css';
-import { GoogleLogin } from '@react-oauth/google';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-
-const api = 'http://localhost:8080/api';
+'use client';
+import { Button } from '@/components/ui/button';
+import { FileText } from 'lucide-react';
+import { ResumeNotification } from '@/components/resume-notification';
+import { useState } from 'react';
+import AccountCard from '@/components/account-card';
+import { FadeIn } from '@/components/fade-in';
+import { ResumeShowcase } from './components/ResumeShowcase';
+import { Features } from './components/Features';
+import { Hero } from './components/Hero';
+import { handleScroll } from '@/utils/scroll';
 
 const LandingPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = async () => {
-    if (email == '' || password == '') {
-      setError('Enter your email and password');
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${api}/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-
-      console.log(response.data);
-
-      if (response.status === 200) {
-        console.log('navigating home');
-        navigate('/home');
-      }
-    } catch (err) {
-      console.error(err);
-      setError(
-        (err as any).response?.data?.message ||
-          'Login failed. Please try again.'
-      );
+  const scrollToLoginCard = () => {
+    const loginSection = document.getElementById('scrolling-login');
+    if (loginSection) {
+      loginSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+  const handleGoLogin = () => {
+    scrollToLoginCard();
+    setIsSignUp(false);
+  };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get(`${api}/verify-token`, {
-          withCredentials: true,
-        });
-
-        if (response.status === 200) {
-          console.log('navigating home');
-          navigate('/home');
-        }
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
+  const handleGoSignup = () => {
+    scrollToLoginCard();
+    setIsSignUp(true);
+  };
 
   return (
-    <div className='page-container'>
-      <div className='landing-card'>
-        <h1>Welcome to CVBuilder</h1>
-      </div>
-      <div className='login-card'>
-        <div className='login-content'>
-          <h2 className='login-card-title'>Login to CVBuilder</h2>
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
-            }}
-            onError={() => {
-              console.log('Login Failed');
-            }}
-            text='continue_with'
-            logo_alignment='center'
-            containerProps={{
-              style: {
-                backgroundColor: 'black',
-                borderRadius: ' 5px',
-                boxShadow: ' 0px 4px 6px rgba(0, 0, 0, 0.1)',
-              },
-            }}
-          />
-          <div className='or-divider'>
-            <span>or</span>
-          </div>
-          <div className='input-container-container'>
-            <div className='input-container'>
-              <label htmlFor='email'>Your Email</label>
-              <input
-                type='email'
-                id='email'
-                name='email'
-                required
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className='input-container'>
-              <label htmlFor='password'>Your Password</label>
-              <input
-                type='password'
-                id='password'
-                name='password'
-                required
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-          <a className='forgot-password' href=''>
-            Forgot password
-          </a>
-          <p className='error-message'>{error}</p>
+    <div className='flex flex-col min-h-screen relative overflow-hidden scroll-smooth bg-gradient-to-b from-background via-background to-background/95'>
+      {/* Background Pattern that spans the entire page */}
+      <div className='fixed inset-0 bg-grid-pattern opacity-10 pointer-events-none animate-pattern'></div>
 
-          <button className='login-button' onClick={handleLogin}>
-            Log In
-          </button>
-          <p className='no-account'>
-            Dont have an account? <a href=''>Sign up</a>
-          </p>
+      <header className='border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 relative z-10'>
+        <div className='container mx-auto flex h-16 items-center justify-between py-4 px-8'>
+          <div className='flex items-center gap-2'>
+            <FileText className='h-6 w-6 text-primary' />
+            <span className='text-xl font-bold'>CVBuilder</span>
+          </div>
+          <nav className='hidden md:flex gap-6'>
+            <a
+              className='text-sm font-medium hover:text-primary'
+              onClick={() => handleScroll('features')}
+            >
+              Features
+            </a>
+            <a
+              href='pricing'
+              className='text-sm font-medium hover:text-primary'
+            >
+              Pricing
+            </a>
+          </nav>
+          <div className='flex items-center gap-4'>
+            <a
+              className='text-sm font-medium hover:text-primary'
+              onClick={handleGoLogin}
+            >
+              Log in
+            </a>
+            <Button asChild size='sm' onClick={handleGoSignup}>
+              <a>Get Started (Free)</a>
+            </Button>
+          </div>
         </div>
-      </div>
+      </header>
+
+      <main className='flex flex-col flex-1'>
+        {/* Hero Section with Resume Previews to the right */}
+        <FadeIn>
+          <Hero />
+        </FadeIn>
+
+        <FadeIn>
+          <ResumeShowcase />
+        </FadeIn>
+
+        {/* Curved connector between sections */}
+        <div className='relative h-16 bg-muted'>
+          <div
+            className='absolute bottom-0 left-0 right-0 h-16 bg-background'
+            style={{
+              borderTopLeftRadius: '50% 100%',
+              borderTopRightRadius: '50% 100%',
+            }}
+          ></div>
+        </div>
+
+        {/* Features Section */}
+        <FadeIn>
+          <Features />
+        </FadeIn>
+
+        {/* Angled connector between sections */}
+        <div className='relative h-16'>
+          <div
+            className='absolute bottom-0 left-0 right-0 h-16 bg-primary/5'
+            style={{
+              clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0% 100%)',
+            }}
+          ></div>
+        </div>
+
+        {/* Call to Action */}
+        <FadeIn>
+          <section className='py-12 md:py-16 md:pb-24  relative'>
+            <div className='absolute inset-0 bg-grid-pattern opacity-8 pointer-events-none animate-pattern'></div>
+            <div className='container mx-auto px-6 text-center animate-in fade-in slide-in-from-bottom-5 relative z-10'>
+              <h2
+                className='text-3xl font-bold tracking-tighter sm:text-4xl mb-6 pt-6'
+                id='scrolling-login'
+              >
+                Ready to build your professional resume?
+              </h2>
+              <p className='text-xl text-muted-foreground max-w-2xl mx-auto mb-0'>
+                Join thousands of job seekers who have successfully landed
+                interviews with resumes created on our platform.
+              </p>
+            </div>
+            <div className='absolute inset-0 bg-dot-pattern opacity-5 pointer-events-none'></div>
+            <div className='absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background/0 to-background/100 -mt-24'></div>
+            <div className='container mx-auto px-8 animate-in fade-in slide-in-from-bottom-5 relative z-10'>
+              <div className='max-w-md mx-auto'>
+                <div className='relative'>
+                  <div className='absolute -top-6 -left-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
+                  <div className='absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-muted blur-xl'></div>
+                  <AccountCard isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
+                </div>
+              </div>
+            </div>
+          </section>
+        </FadeIn>
+      </main>
+
+      <footer className='border-t py-6 md:py-8 mt-auto relative'>
+        <div className='absolute inset-0 bg-dot-pattern opacity-5 pointer-events-none'></div>
+        <div className='container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-8 relative z-10'>
+          <div className='flex items-center gap-2'>
+            <FileText className='h-5 w-5 text-primary' />
+            <span className='font-semibold'>CVBuilder</span>
+          </div>
+
+          <div className='flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground'>
+            <a href='#' className='hover:text-primary'>
+              Features
+            </a>
+            <a href='#' className='hover:text-primary'>
+              Templates
+            </a>
+            {/* <a href='#' className='hover:text-primary'>
+              Pricing
+            </a>
+            <a href='#' className='hover:text-primary'>
+              About
+            </a> */}
+            <a href='#' className='hover:text-primary'>
+              Contact
+            </a>
+          </div>
+
+          <div className='text-sm text-muted-foreground'>
+            © {new Date().getFullYear()} CVBuilder. All rights reserved.
+          </div>
+        </div>
+      </footer>
+
+      {/* Non-intrusive Resume Notification */}
+      <ResumeNotification />
     </div>
   );
 };

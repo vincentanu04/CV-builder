@@ -1,7 +1,8 @@
 import './ResumeForm.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Buttons from '@/components/Buttons/Buttons';
-import { NavButton, Button } from '@/components/Buttons/Buttons';
+import { Button } from '@/components/ui/button';
+import { NavButton } from '@/components/Buttons/Buttons';
 import {
   ProfileForm,
   EducationForm,
@@ -26,12 +27,69 @@ import {
   RemarksFormComponent,
   SkillsFormComponent,
 } from '@/components/CV/types';
+import { createResume, getResume, updateResume } from '@/api/resume';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { FORBIDDEN_MESSAGE } from '@/api/errors';
+import { ConfirmBack } from '@/components/confirm-back';
+import { useAuth } from '@/contexts/AuthContext';
+import { fromOrderedJSON, toOrderedJSON } from '@/utils/json';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-const ResumeForm = () => {
+interface ResumeFormProps {
+  isEdit: boolean;
+}
+
+const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const [selectedButtonId, setSelectedButtonId] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [displayedData, setDisplayedData] = useState<FormData>(initialFormData);
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
+  const [isExample, setIsExample] = useState(false);
+  const [lastSavedResume, setLastSavedResume] = useState<FormData | null>(null);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { user } = useAuth();
+  const isGuest = !user;
+
+  if (isEdit && (!id || isNaN(Number(id)))) {
+    navigate('/home');
+    return null;
+  }
+
+  const { data: originalResume, error } = useQuery({
+    queryKey: ['resume', id],
+    queryFn: () => getResume(Number(id)),
+    enabled: isEdit,
+    retry: (_, error) => false,
+  });
+
+  const isResumeChanged =
+    JSON.stringify(formData) !== JSON.stringify(lastSavedResume);
+
+  useEffect(() => {
+    if (error) {
+      switch (error.message) {
+        case FORBIDDEN_MESSAGE:
+          console.log('FORBIDDEN');
+          navigate('/');
+          break;
+        default:
+          navigate('/home');
+      }
+    }
+
+    if (originalResume) {
+      setFormData(fromOrderedJSON(originalResume.data) as FormData);
+      setDisplayedData(fromOrderedJSON(originalResume.data) as FormData);
+      setLastSavedResume(fromOrderedJSON(originalResume.data) as FormData);
+    }
+  }, [originalResume, error]);
 
   const handleNavButtonClick = (id: number) => {
     setSelectedButtonId(id);
@@ -49,6 +107,40 @@ const ResumeForm = () => {
       : 'resume';
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleShowExample = () => {
+    setDisplayedData(exampleFormData);
+  };
+
+  const handleCreateOrSave = async () => {
+    if (isEdit && originalResume) {
+      try {
+        updateResume(Number(id), {
+          template_name: originalResume.template_name,
+          title: originalResume.title,
+          data: toOrderedJSON(formData),
+          file: 'TEST',
+        });
+      } catch (error) {
+        console.log(error);
+        alert('Failed to save resume, please wait and try again.');
+      }
+    } else {
+      try {
+        const resp = await createResume({
+          template_name: 'Libre',
+          title: 'New Resume',
+          data: toOrderedJSON(formData),
+          file: 'TEST',
+        });
+        const createdResumeID = resp.data.createdResumeID;
+        navigate(`/resume/${createdResumeID}`);
+      } catch (error) {
+        alert('Failed to save resume, please wait and try again.');
+      }
+    }
+    setLastSavedResume(formData);
   };
 
   type FormDataItem = {
@@ -134,8 +226,34 @@ const ResumeForm = () => {
   );
 
   return (
-    <main>
+    <main className='flex max-h-screen'>
       <div className='buttons-bar'>
+        <div className='flex md:flex-col gap-4 items-center'>
+          <ConfirmBack isResumeChanged={isResumeChanged} isGuest={isGuest} />
+          {isGuest ? (
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button size={'sm'} className='py-2 px-6 flex-1' disabled>
+                    Save Resume
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side='bottom' align='start' alignOffset={-40}>
+                  <p>Create an account to save your resume!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              size={'sm'}
+              className='py-2 px-6 flex-1'
+              onClick={handleCreateOrSave}
+              disabled={!isResumeChanged}
+            >
+              {isEdit ? 'Save' : 'Create'} Resume
+            </Button>
+          )}
+        </div>
         <Buttons className='form-buttons'>
           {formsData.map((button) => (
             <NavButton
@@ -146,28 +264,33 @@ const ResumeForm = () => {
             />
           ))}
         </Buttons>
-        <Buttons className='action-buttons hide-on-mobile'>
+        <div className='hide-on-mobile flex flex-col gap-2 items-center'>
           <Button
-            text='Create'
             onClick={() => {
               setDisplayedData(formData);
+              setIsExample(false);
             }}
-          />
+            size={'lg'}
+            className='mb-5 w-full'
+          >
+            Display
+          </Button>
           <Button
-            text='Example'
             onClick={() => {
-              setFormData(exampleFormData);
-              setDisplayedData(exampleFormData);
+              const shouldShowExample = !isExample;
+              if (shouldShowExample) {
+                handleShowExample();
+              } else {
+                setDisplayedData(formData);
+              }
+
+              setIsExample(shouldShowExample);
             }}
-          />
-          <Button
-            text='Reset'
-            onClick={() => {
-              setFormData(initialFormData);
-              setDisplayedData(initialFormData);
-            }}
-          />
-        </Buttons>
+            variant={'outline'}
+          >
+            {isExample ? 'Hide Example' : 'Show Example'}
+          </Button>
+        </div>
       </div>
       {/* only on mobile */}
       <button
@@ -210,20 +333,19 @@ const ResumeForm = () => {
           }
         />
       </div>
-      <Buttons className='action-buttons hide-on-desktop'>
+      <div className='action-buttons hide-on-desktop'>
         <Button
-          text='Example'
           onClick={() => {
-            setFormData(exampleFormData);
-            setDisplayedData(exampleFormData);
+            handleShowExample();
             if (window.innerWidth <= 786) {
               // For mobile, only show the file div when Create is pressed
               setIsFileVisibleMobile(true);
             }
           }}
-        />
+        >
+          Show Example
+        </Button>
         <Button
-          text='Create'
           onClick={() => {
             setDisplayedData(formData);
             if (window.innerWidth <= 786) {
@@ -231,15 +353,10 @@ const ResumeForm = () => {
               setIsFileVisibleMobile(true);
             }
           }}
-        />
-        <Button
-          text='Reset'
-          onClick={() => {
-            setFormData(initialFormData);
-            setDisplayedData(initialFormData);
-          }}
-        />
-      </Buttons>
+        >
+          Display
+        </Button>
+      </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
         className={`file ${isFileVisibleMobile ? 'show' : ''}`}
@@ -318,11 +435,12 @@ const ResumeForm = () => {
         </PDFViewer>
         <Button
           className='hide-on-desktop back-button'
-          text='Back'
           onClick={() => {
             setIsFileVisibleMobile(false);
           }}
-        />
+        >
+          Back
+        </Button>
       </div>
     </main>
   );

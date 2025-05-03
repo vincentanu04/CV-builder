@@ -2,21 +2,37 @@ package utils
 
 import (
 	"log"
+	"net"
 	"net/http"
+	"server/configs"
+	"sync"
+	"time"
 )
 
-var allowedOrigins = []string{
+var prdAllowedOrigins = []string{
+	"https://cv-builder-04.vercel.app",
+}
+
+var devAllowedOrigins = []string{
 	"http://127.0.0.1:5173",
 	"http://localhost:5173",
 }
 
 func CORS(next http.Handler) http.Handler {
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
 
 		isAllowed := false
 		log.Printf("checking cors origin, %s", origin)
+
+		allowedOrigins := []string{}
+		switch configs.Envs.Environment {
+		case "dev":
+			allowedOrigins = devAllowedOrigins
+		case "prd":
+			allowedOrigins = prdAllowedOrigins
+		}
+
 		for _, allowedOrigin := range allowedOrigins {
 			if allowedOrigin == origin {
 				isAllowed = true
@@ -37,6 +53,49 @@ func CORS(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+type client struct {
+	Requests    int
+	WindowStart time.Time
+}
+
+var (
+	mu       sync.Mutex
+	clients  = make(map[string]*client)
+	rate     = 100         // max requests
+	interval = time.Minute // time window
+)
+
+func RateLimit(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+
+		mu.Lock()
+		c, exists := clients[ip]
+		if !exists || time.Since(c.WindowStart) > interval {
+			c = &client{Requests: 1, WindowStart: time.Now()}
+			clients[ip] = c
+		} else {
+			c.Requests++
+		}
+		mu.Unlock()
+
+		if c.Requests > rate {
+			http.Error(w, "Too many requests", http.StatusTooManyRequests)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func Logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("ENDPOINT: %s %s", r.Method, r.URL.Path)
 
 		next.ServeHTTP(w, r)
 	})

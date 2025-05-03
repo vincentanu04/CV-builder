@@ -26,6 +26,7 @@ func (h *UserHandler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
 	router.HandleFunc("/verify-token", auth.WithJWTAuth(h.handleVerifyToken, h.store)).Methods(http.MethodGet)
+	router.HandleFunc("/logout", auth.WithJWTAuth(h.handleLogout, h.store)).Methods(http.MethodPost)
 }
 
 type UserRequestPayload struct {
@@ -90,7 +91,9 @@ func (h *UserHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	auth.SetAuthCookie(w, token)
 
 	log.Printf("successfully logged in user %s", user.Email)
-	utils.WriteJSON(w, http.StatusOK, nil)
+
+	clientUser := types.User{ID: user.ID, Email: user.Email}
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": clientUser})
 }
 
 func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +117,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors := err.(validator.ValidationErrors)
 		log.Printf("error validating request payload, %+v", errors)
-		utils.WriteError(w, fmt.Errorf("invalid payload %+v", errors), http.StatusBadRequest)
+		utils.WriteError(w, fmt.Errorf("Invalid email or password does not meet min length: 8"), http.StatusBadRequest)
 		return
 	}
 
@@ -123,7 +126,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	_, err = h.store.GetUserByEmail(registerRequest.Email)
 	if err == nil { // user already exists
 		log.Printf("user with email %s already exists", registerRequest.Email)
-		utils.WriteError(w, fmt.Errorf("user with email %s already exists or error %v", registerRequest.Email, err), http.StatusBadRequest)
+		utils.WriteError(w, fmt.Errorf("User with this email already exists"), http.StatusBadRequest)
 		return
 	}
 
@@ -136,6 +139,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	newUser := types.User{
 		Email:    registerRequest.Email,
 		Password: hashedPassword,
+		Plan:     types.FreePlan,
 	}
 	err = h.store.CreateUser(&newUser)
 	if err != nil {
@@ -156,7 +160,7 @@ func (h *UserHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	auth.SetAuthCookie(w, token)
 
 	log.Printf("successfully registered user %s", newUser.Email)
-	utils.WriteJSON(w, http.StatusOK, nil)
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": newUser})
 }
 
 func (h *UserHandler) handleVerifyToken(w http.ResponseWriter, r *http.Request) {
@@ -165,5 +169,19 @@ func (h *UserHandler) handleVerifyToken(w http.ResponseWriter, r *http.Request) 
 		log.Println("finished verifying token ..")
 	}()
 
+	user := auth.GetUserFromContext(r.Context())
+
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{"user": user})
+}
+
+func (h *UserHandler) handleLogout(w http.ResponseWriter, r *http.Request) {
+	log.Println("handling logout ..")
+	defer func() {
+		log.Println("finished logging out ..")
+	}()
+
+	auth.ClearAuthCookie(w)
+
+	log.Println("successfully logged out user")
 	utils.WriteJSON(w, http.StatusOK, nil)
 }

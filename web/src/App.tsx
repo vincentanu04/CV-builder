@@ -5,10 +5,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<ResumeForm />} />
-        {/* <Route path='/' element={<LandingPage />} /> */}
-        {/* <Route path='/home' element={<HomePage />} />
-        <Route path='/resume' element={<ResumeForm />} /> */}
+        {/* <Route path='/' element={<ResumeForm />} /> */}
+        <Route path='/' element={<LandingPage />} />
+        <Route path='/home' element={<HomePage />} />
+        <Route path='/resume/new' element={<ResumeForm isEdit={false} />} />
+        <Route path='/resume/:id' element={<ResumeForm isEdit={true} />} />
       </Routes>
     </Router>
   );

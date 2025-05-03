@@ -1,82 +1,86 @@
 @import '../Form/Form.css';
 
 .cv {
-    margin-left: auto;
-    min-width: 50vw;
-    background: linear-gradient(90deg ,var(--background-clr), var(--secondary-clr) 75%);
-    padding: 3rem;
-    display: grid;
-    place-items: center;
+  margin-left: auto;
+  min-width: 50vw;
+  background: linear-gradient(
+    90deg,
+    var(--background-clr),
+    var(--secondary-clr) 75%
+  );
+  padding: 3rem;
+  display: grid;
+  place-items: center;
 }
 
 .paper {
-    min-height: 30rem;
-    min-width: 22rem;
-    font-family: 'Times New Roman', Times, serif;
-    font-size: .75rem;
-    background-color: var(--light-background-clr);
-    color: var(--light-text-clr);
-    padding: 2em;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    border-radius: .1rem;
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
+  min-height: 30rem;
+  min-width: 22rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.75rem;
+  background-color: var(--light-background-clr);
+  color: var(--light-text-clr);
+  padding: 2em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 0.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .paper h2 {
-    color: var(--light-text-clr);
+  color: var(--light-text-clr);
 }
 
 .paper p {
-    font-size: .5rem;
+  font-size: 0.5rem;
 }
 
 .profile {
-    display: grid;
-    place-items: center;
-    gap: .25rem;
+  display: grid;
+  place-items: center;
+  gap: 0.25rem;
 }
 
 .profile-subtitle {
-    display: flex;
-    gap: .25rem;
+  display: flex;
+  gap: 0.25rem;
 }
 
 .paper h3,
 .paper p {
-    font-size: .5rem;
+  font-size: 0.5rem;
 }
 
 .paper hr {
-    margin: 0;
+  margin: 0;
 }
 
 .subtitle {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    gap: .25rem ;
-    margin-bottom: .5rem;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .subtitle-left {
-    position: absolute;
-    left: 0;
+  position: absolute;
+  left: 0;
 }
 
 .subtitle-right {
-    position: absolute;
-    right: 0;
+  position: absolute;
+  right: 0;
 }
 
 .paper ul {
-    list-style-type: none;
-    display: flex;
-    flex-direction: column;
-    gap: .2rem;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .job-cv {
-    margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }

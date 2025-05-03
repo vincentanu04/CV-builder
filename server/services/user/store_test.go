@@ -25,10 +25,10 @@ func TestGetUserByEmail(t *testing.T) {
 			Password: "hashed_password",
 		}
 
-		mock.ExpectQuery("SELECT \\* FROM users WHERE email = ?").
+		mock.ExpectQuery("SELECT \\* FROM users WHERE email = \\$1").
 			WithArgs("exists@example.com").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).
-				AddRow(mockUser.ID, mockUser.Email, mockUser.Password))
+			WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password", "plan"}).
+				AddRow(mockUser.ID, mockUser.Email, mockUser.Password, mockUser.Plan))
 
 		user, err := store.GetUserByEmail("exists@example.com")
 		assert.NoError(t, err)
@@ -46,7 +46,7 @@ func TestGetUserByEmail(t *testing.T) {
 
 		store := NewStore(db)
 
-		mock.ExpectQuery("SELECT \\* FROM users WHERE email = ?").
+		mock.ExpectQuery("SELECT \\* FROM users WHERE email = \\$1").
 			WithArgs("nonexisting@example.com").
 			WillReturnRows(sqlmock.NewRows([]string{"id, email, password"}))
 
@@ -70,11 +70,12 @@ func TestCreateUser(t *testing.T) {
 		newUser := types.User{
 			Email:    "newuser@example.com",
 			Password: "hashedPassword",
+			Plan:     types.FreePlan,
 		}
 
-		mock.ExpectExec("INSERT INTO users \\(email, password\\) VALUES \\(\\?, \\?\\)").
-			WithArgs(newUser.Email, newUser.Password).
-			WillReturnResult(sqlmock.NewResult(int64(newUserID), 1))
+		mock.ExpectQuery("INSERT INTO users \\(email, password, plan\\) VALUES \\(\\$1, \\$2, \\$3\\) RETURNING id").
+			WithArgs(newUser.Email, newUser.Password, newUser.Plan).
+			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(newUserID))
 
 		store := NewStore(db)
 
