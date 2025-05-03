@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/auth';
 import axios from 'axios';
 import { useAuth } from '@/contexts/AuthContext';
+import { capitalizeFirstCharacter } from '@/utils/text';
 
 interface AccountCardProps {
   isSignUp: boolean;
@@ -56,8 +57,11 @@ const AccountCard = ({
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 400) {
+          console.log(err);
           setError(
-            err.response.data?.message || 'Bad request.'
+            capitalizeFirstCharacter(
+              err.response.data?.error
+            ) || 'Bad request.'
           );
         } else {
           setError('Login failed. Please try again.');
@@ -90,7 +94,9 @@ const AccountCard = ({
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 400) {
           setError(
-            err.response.data?.message || 'Bad request.'
+            capitalizeFirstCharacter(
+              err.response.data?.error
+            ) || 'Bad request.'
           );
         } else {
           setError('Signup failed. Please try again.');
