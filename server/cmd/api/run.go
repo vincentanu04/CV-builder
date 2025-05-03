@@ -9,7 +9,7 @@ import (
 )
 
 func Run() {
-	db, err := db.NewPostgresStorage(db.GetPostgresConnString())
+	db, err := db.NewPostgresStorage(configs.Envs.DBUrl)
 	if err != nil {
 		log.Fatal(err)
 	}

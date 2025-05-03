@@ -2,6 +2,7 @@ package db
 
 import (
 	"log"
+	"server/configs"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -13,7 +14,7 @@ import (
 func RunMigration(action string) {
 	migrationsPath := "file://db/migrations"
 
-	dbURL := GetPostgresConnString()
+	dbURL := configs.Envs.DBUrl
 
 	m, err := migrate.New(
 		migrationsPath,
