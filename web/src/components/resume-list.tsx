@@ -28,6 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ResumeListProps {
   setPreviewingResumeID: (resumeMetadataId: number) => void;
@@ -43,6 +44,7 @@ const ResumeList = ({
     useState<string>('');
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const { data, isLoading, isError, error } = useQuery<
     getResumeMetadatasResponse,
@@ -101,6 +103,7 @@ const ResumeList = ({
       console.log(error);
 
       if (error?.message === FORBIDDEN_MESSAGE) {
+        setUser(null);
         navigate('/');
       }
     }
