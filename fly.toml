@@ -1,0 +1,35 @@
+# fly.toml app configuration file generated for cv-builder on 2025-05-05T19:25:52+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'cv-builder'
+primary_region = 'sin'
+
+[build]
+  [build.args]
+    VITE_API_URL = "https://cv-builder.fly.dev/api"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-1x'
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  
+  # Expose HTTP and HTTPS ports
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443

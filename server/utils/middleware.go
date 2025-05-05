@@ -10,7 +10,7 @@ import (
 )
 
 var prdAllowedOrigins = []string{
-	"https://cv-builder-04.vercel.app",
+	"https://cv-builder.fly.dev",
 }
 
 var devAllowedOrigins = []string{
