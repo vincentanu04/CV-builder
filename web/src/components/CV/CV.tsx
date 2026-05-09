@@ -111,6 +111,8 @@ Font.register({
   src: LibreBaskervilleItalic,
 });
 
+Font.registerHyphenationCallback((word) => [word]);
+
 export default function CV({
   profile,
   education,

@@ -1,6 +1,7 @@
 import './Form.css';
 import { Button } from '../Buttons/Buttons';
 import Buttons from '../Buttons/Buttons';
+import AutoResizeTextarea from './components/AutoResizeTextarea';
 import MultipleInputAndParent from './components/MultipleInputAndParent';
 import MultipleInput from './components/MultipleInput';
 import {
@@ -45,8 +46,7 @@ export const ProfileForm: ProfileFormComponent = ({ formValue, onChange }) => {
       {(Object.keys(formValue) as Array<keyof Profile>).map((label) => (
         <div key={label} className='input'>
           <label htmlFor={label}>{labels[label]}</label>
-          <input
-            type='text'
+          <AutoResizeTextarea
             name={label}
             value={formValue[label]}
             placeholder={placeholders[label]}
@@ -98,8 +98,7 @@ export const EducationForm: EducationFormComponent = ({
               formValue={formValue}
             />
           ) : (
-            <input
-              type='text'
+            <AutoResizeTextarea
               name={label}
               value={formValue[label]}
               placeholder={placeholders[label]}
@@ -192,8 +191,7 @@ export const ExperienceForm: ExperienceFormComponent = ({
                 return (
                   <div key={label} className='input'>
                     <label htmlFor={label}>{labels[label]}</label>
-                    <input
-                      type='text'
+                    <AutoResizeTextarea
                       name={label}
                       value={job[label]}
                       placeholder={placeholders[label] as string}
@@ -298,8 +296,7 @@ export const ProjectsForm: ProjectsFormComponent = ({
                 return (
                   <div key={label} className='input'>
                     <label htmlFor={label}>{labels[label]}</label>
-                    <input
-                      type='text'
+                    <AutoResizeTextarea
                       name={label}
                       value={proj[label]}
                       placeholder={placeholders[label] as string}
@@ -389,8 +386,7 @@ export const AwardsForm: AwardsFormComponent = ({ formValue, onChange }) => {
               label !== 'awardId' && (
                 <div key={label} className='input'>
                   <label htmlFor={label}>{labels[label]}</label>
-                  <input
-                    type='text'
+                  <AutoResizeTextarea
                     name={label}
                     value={formValue[i1][label]}
                     placeholder={placeholders[label] as string}
@@ -479,8 +475,7 @@ export const AdditionalForm: AdditionalFormComponent = ({
               label !== 'additionalId' && (
                 <div key={label} className='input'>
                   <label htmlFor={label}>{labels[label]}</label>
-                  <input
-                    type='text'
+                  <AutoResizeTextarea
                     name={label}
                     value={formValue[i1][label]}
                     placeholder={placeholders[label] as string}
@@ -564,8 +559,7 @@ export const RemarkForm: RemarksFormComponent = ({ formValue, onChange }) => {
       {(Object.keys(formValue) as Array<keyof Remarks>).map((label) => (
         <div key={label} className='input'>
           <label htmlFor={label}>{labels[label]}</label>
-          <input
-            type='text'
+          <AutoResizeTextarea
             name={label}
             value={formValue[label]}
             placeholder={placeholders[label]}

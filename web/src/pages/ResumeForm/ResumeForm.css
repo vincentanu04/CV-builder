@@ -72,6 +72,43 @@ button {
   fill: var(--accent-clr);
 }
 
+.autosave-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  min-width: 10rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.3rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.autosave-icon {
+  font-size: 1rem;
+  font-weight: bold;
+  display: inline-block;
+  animation: autosave-pulse 1.5s ease-in-out infinite;
+}
+
+.autosave-indicator.text-green-500 .autosave-icon {
+  animation: none;
+}
+
+.autosave-text {
+  letter-spacing: 0.3px;
+}
+
+@keyframes autosave-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
 .importJSON {
   background: inherit;
   align-self: center;

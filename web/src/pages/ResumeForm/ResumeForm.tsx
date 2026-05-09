@@ -1,8 +1,9 @@
 import './ResumeForm.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Buttons from '@/components/Buttons/Buttons';
 import { Button } from '@/components/ui/button';
 import { NavButton } from '@/components/Buttons/Buttons';
+import AutosaveIndicator from '@/components/AutosaveIndicator';
 import {
   ProfileForm,
   EducationForm,
@@ -46,12 +47,19 @@ interface ResumeFormProps {
 }
 
 const ResumeForm = ({ isEdit }: ResumeFormProps) => {
+  const AUTOSAVE_DEBOUNCE_MS = 1200;
   const [selectedButtonId, setSelectedButtonId] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [displayedData, setDisplayedData] = useState<FormData>(initialFormData);
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
   const [isExample, setIsExample] = useState(false);
   const [lastSavedResume, setLastSavedResume] = useState<FormData | null>(null);
+  const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isSavingRef = useRef(false);
+  const pendingPayloadRef = useRef<string | null>(null);
+  const lastSavedPayloadRef = useRef<string>('');
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
@@ -85,11 +93,23 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     }
 
     if (originalResume) {
-      setFormData(fromOrderedJSON(originalResume.data) as FormData);
-      setDisplayedData(fromOrderedJSON(originalResume.data) as FormData);
-      setLastSavedResume(fromOrderedJSON(originalResume.data) as FormData);
+      const parsedResume = fromOrderedJSON(originalResume.data) as FormData;
+      setFormData(parsedResume);
+      setDisplayedData(parsedResume);
+      setLastSavedResume(parsedResume);
+      lastSavedPayloadRef.current = toOrderedJSON(parsedResume);
+      setAutoSaveState('saved');
+      setLastSavedTime(new Date());
     }
   }, [originalResume, error]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleNavButtonClick = (id: number) => {
     setSelectedButtonId(id);
@@ -113,20 +133,8 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     setDisplayedData(exampleFormData);
   };
 
-  const handleCreateOrSave = async () => {
-    if (isEdit && originalResume) {
-      try {
-        updateResume(Number(id), {
-          template_name: originalResume.template_name,
-          title: originalResume.title,
-          data: toOrderedJSON(formData),
-          file: 'TEST',
-        });
-      } catch (error) {
-        console.log(error);
-        alert('Failed to save resume, please wait and try again.');
-      }
-    } else {
+  const handleCreateResume = async () => {
+    if (!isEdit) {
       try {
         const resp = await createResume({
           template_name: 'Libre',
@@ -140,8 +148,77 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
         alert('Failed to save resume, please wait and try again.');
       }
     }
-    setLastSavedResume(formData);
   };
+
+  const runAutoSave = async (payload: string) => {
+    if (!isEdit || !originalResume || isGuest) {
+      return;
+    }
+
+    if (payload === lastSavedPayloadRef.current) {
+      setAutoSaveState('saved');
+      return;
+    }
+
+    if (isSavingRef.current) {
+      pendingPayloadRef.current = payload;
+      return;
+    }
+
+    isSavingRef.current = true;
+    setAutoSaveState('saving');
+
+    try {
+      await updateResume(Number(id), {
+        template_name: originalResume.template_name,
+        title: originalResume.title,
+        data: payload,
+        file: 'TEST',
+      });
+
+      lastSavedPayloadRef.current = payload;
+      setLastSavedResume(fromOrderedJSON(payload) as FormData);
+      setLastSavedTime(new Date());
+
+      if (pendingPayloadRef.current && pendingPayloadRef.current !== payload) {
+        const queuedPayload = pendingPayloadRef.current;
+        pendingPayloadRef.current = null;
+        isSavingRef.current = false;
+        await runAutoSave(queuedPayload);
+        return;
+      }
+
+      pendingPayloadRef.current = null;
+      setAutoSaveState('saved');
+    } catch (error) {
+      console.error(error);
+      setAutoSaveState('error');
+    } finally {
+      isSavingRef.current = false;
+    }
+  };
+
+  useEffect(() => {
+    if (!isEdit || !originalResume || isGuest) {
+      return;
+    }
+
+    const payload = toOrderedJSON(formData);
+    if (payload === lastSavedPayloadRef.current) {
+      setAutoSaveState('saved');
+      return;
+    }
+
+    setAutoSaveState('idle');
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      runAutoSave(payload);
+    }, AUTOSAVE_DEBOUNCE_MS);
+  }, [formData, isEdit, originalResume, isGuest]);
 
   type FormDataItem = {
     id: number;
@@ -229,29 +306,34 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     <main className='flex max-h-screen'>
       <div className='buttons-bar'>
         <div className='flex md:flex-col gap-4 items-center'>
-          <ConfirmBack isResumeChanged={isResumeChanged} isGuest={isGuest} />
-          {isGuest ? (
-            <TooltipProvider delayDuration={100}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button size={'sm'} className='py-2 px-6 flex-1' disabled>
-                    Save Resume
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side='bottom' align='start' alignOffset={-40}>
-                  <p>Create an account to save your resume!</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <ConfirmBack isResumeChanged={isEdit ? false : isResumeChanged} isGuest={isGuest} />
+          {isEdit ? (
+            <AutosaveIndicator state={autoSaveState} lastSavedTime={lastSavedTime} />
           ) : (
-            <Button
-              size={'sm'}
-              className='py-2 px-6 flex-1'
-              onClick={handleCreateOrSave}
-              disabled={!isResumeChanged}
-            >
-              {isEdit ? 'Save' : 'Create'} Resume
-            </Button>
+            <>
+              {isGuest ? (
+                <TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Button size={'sm'} className='py-2 px-6 flex-1' disabled>
+                        Create Resume
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side='bottom' align='start' alignOffset={-40}>
+                      <p>Create an account to save your resume!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <Button
+                  size={'sm'}
+                  className='py-2 px-6 flex-1'
+                  onClick={handleCreateResume}
+                >
+                  Create Resume
+                </Button>
+              )}
+            </>
           )}
         </div>
         <Buttons className='form-buttons'>

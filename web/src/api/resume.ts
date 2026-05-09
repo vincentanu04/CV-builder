@@ -107,7 +107,7 @@ export const updateResume = async (
   resumePayload: ResumePayload
 ) => {
   try {
-    axios.patch(
+    return await axios.patch(
       `${api}/resumes/${resumeID}`,
       resumePayload,
       {

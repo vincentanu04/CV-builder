@@ -1,4 +1,5 @@
 import Buttons, { MultipleInputButton } from '../../Buttons/Buttons';
+import AutoResizeTextarea from './AutoResizeTextarea';
 
 interface MultipleInputAndParentProps {
   array: string[];
@@ -19,8 +20,7 @@ const MultipleInputAndParent = ({
 }: MultipleInputAndParentProps) => {
   return array.map((val, i2) => (
     <div key={i2} className='multiple-input'>
-      <input
-        type='text'
+      <AutoResizeTextarea
         name={formValueKey}
         value={val}
         placeholder={placeholder}

@@ -1,4 +1,5 @@
 import Buttons, { MultipleInputButton } from '../../Buttons/Buttons';
+import AutoResizeTextarea from './AutoResizeTextarea';
 
 interface MultipleInputProps {
   array: string[];
@@ -17,12 +18,11 @@ const MultipleInput = ({
 }: MultipleInputProps) => {
   return array.map((value, index) => (
     <div key={index} className='multiple-input'>
-      <input
-        type='text'
+      <AutoResizeTextarea
         name={formValueKey}
         value={value}
         placeholder={placeholder}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           const updatedFormValue = { ...formValue };
           const updatedArray = [...updatedFormValue[formValueKey]];
           updatedArray[index] = e.target.value;
