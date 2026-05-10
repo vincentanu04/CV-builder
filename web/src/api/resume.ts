@@ -16,6 +16,7 @@ export interface Resume {
   template_name: string;
   title: string;
   data: string;
+  template_version: number;
   created_at: string;
   updated_at: string;
 }
@@ -25,10 +26,25 @@ export interface ResumePayload {
   title: string;
   data: string;
   file: string;
+  template_version: number;
 }
 
 export interface UpdateResumeMetadataTitlePayload {
   title: string;
+}
+
+export interface ResumeVersion {
+  id: number;
+  resume_id: number;
+  version_number: number;
+  data: string; // included in both list and single-version responses
+  label: string | null;
+  is_manual: boolean;
+  created_at: string;
+}
+
+export interface CreateNamedVersionPayload {
+  label: string;
 }
 
 export interface getResumeMetadatasResponse {
@@ -84,7 +100,7 @@ export const getResume = async (
 
 export const createResume = async (
   resumePayload: ResumePayload
-): Promise<AxiosResponse<any, any>> => {
+): Promise<AxiosResponse<{ createdResumeID: number }>> => {
   try {
     return axios.post(`${api}/resumes`, resumePayload, {
       withCredentials: true,
@@ -169,5 +185,73 @@ export const updateResumeMetadataTitle = async (
     throw new Error(
       'Failed to update resume metadata title'
     );
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Version history
+// ---------------------------------------------------------------------------
+
+export const getResumeVersions = async (
+  resumeID: number
+): Promise<ResumeVersion[]> => {
+  try {
+    const resp = await axios.get<{ versions: ResumeVersion[] }>(
+      `${api}/resumes/${resumeID}/versions`,
+      { withCredentials: true }
+    );
+    return resp.data.versions ?? [];
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch version history');
+  }
+};
+
+export const getResumeVersion = async (
+  resumeID: number,
+  versionID: number
+): Promise<ResumeVersion> => {
+  try {
+    const resp = await axios.get<{ version: ResumeVersion }>(
+      `${api}/resumes/${resumeID}/versions/${versionID}`,
+      { withCredentials: true }
+    );
+    return resp.data.version;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch version');
+  }
+};
+
+export const createNamedVersion = async (
+  resumeID: number,
+  payload: CreateNamedVersionPayload
+): Promise<ResumeVersion> => {
+  try {
+    const resp = await axios.post<{ version: ResumeVersion }>(
+      `${api}/resumes/${resumeID}/versions`,
+      payload,
+      { withCredentials: true }
+    );
+    return resp.data.version;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to create checkpoint');
+  }
+};
+
+export const restoreResumeVersion = async (
+  resumeID: number,
+  versionID: number
+): Promise<void> => {
+  try {
+    await axios.post(
+      `${api}/resumes/${resumeID}/versions/${versionID}/restore`,
+      {},
+      { withCredentials: true }
+    );
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to restore version');
   }
 };

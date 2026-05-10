@@ -12,3 +12,6 @@ migrate-down:
 
 migrate-undirty:
 	@go run ./cmd/main.go migrate:undirty
+
+migrate-data:
+	@go run ./cmd/migrate_data/main.go

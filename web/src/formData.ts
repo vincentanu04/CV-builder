@@ -1,3 +1,5 @@
+import type { SectionedFormData } from './components/CV/types';
+
 export const initialFormData = {
   profile: {
     name: '',
@@ -170,3 +172,134 @@ export const exampleFormData = {
     remarks: 'Available to work from June 27th, 2025.',
   },
 };
+
+// ---------------------------------------------------------------------------
+// V2 initial / example data helpers
+// ---------------------------------------------------------------------------
+
+export function makeExampleSectionedData(): SectionedFormData {
+  return {
+    schemaVersion: 2,
+    sections: [
+      { id: 's_profile', name: 'Profile', sectionKey: 'profile', position: 0, isVisible: true, data: exampleFormData.profile },
+      { id: 's_education', name: 'Education', sectionKey: 'education', position: 1, isVisible: true, data: exampleFormData.education },
+      { id: 's_experience', name: 'Experience', sectionKey: 'experience', position: 2, isVisible: true, data: exampleFormData.experience },
+      { id: 's_projects', name: 'Projects', sectionKey: 'projects', position: 3, isVisible: true, data: exampleFormData.projects },
+      { id: 's_awards', name: 'Awards', sectionKey: 'awards', position: 4, isVisible: true, data: exampleFormData.awards },
+      { id: 's_additional', name: 'Additional experience', sectionKey: 'additional', position: 5, isVisible: true, data: exampleFormData.additional },
+      { id: 's_skills', name: 'Skills', sectionKey: 'skills', position: 6, isVisible: true, data: exampleFormData.skills },
+      { id: 's_remarks', name: 'Remarks', sectionKey: 'remarks', position: 7, isVisible: true, data: exampleFormData.remarks },
+    ],
+  };
+}
+
+export function makeInitialSectionedData(): SectionedFormData {
+  return {
+    schemaVersion: 2,
+    sections: [
+      {
+        id: 's_profile',
+        name: 'Profile',
+        sectionKey: 'profile',
+        position: 0,
+        isVisible: true,
+        data: { name: '', email: '', phoneNumber: '', github: '', linkedin: '' },
+      },
+      {
+        id: 's_education',
+        name: 'Education',
+        sectionKey: 'education',
+        position: 1,
+        isVisible: true,
+        data: {
+          schoolName: '',
+          fromDate: '',
+          toDate: '',
+          titleOfStudy: '',
+          gpa: '',
+          relevantCoursework: [''],
+        },
+      },
+      {
+        id: 's_experience',
+        name: 'Experience',
+        sectionKey: 'experience',
+        position: 2,
+        isVisible: true,
+        data: [
+          {
+            jobId: 1,
+            companyName: '',
+            positionTitle: '',
+            responsibilities: [''],
+            dateFrom: '',
+            dateUntil: '',
+          },
+        ],
+      },
+      {
+        id: 's_projects',
+        name: 'Projects',
+        sectionKey: 'projects',
+        position: 3,
+        isVisible: true,
+        data: [
+          {
+            projectId: 1,
+            projectTitle: '',
+            projectDescription: '',
+            projectTechStack: [''],
+          },
+        ],
+      },
+      {
+        id: 's_awards',
+        name: 'Awards',
+        sectionKey: 'awards',
+        position: 4,
+        isVisible: true,
+        data: [
+          {
+            awardId: 1,
+            awardTitle: '',
+            awardIssuer: '',
+            awardDescription: '',
+            awardDate: '',
+          },
+        ],
+      },
+      {
+        id: 's_additional',
+        name: 'Additional experience',
+        sectionKey: 'additional',
+        position: 5,
+        isVisible: true,
+        data: [
+          {
+            additionalId: 1,
+            additionalTitle: '',
+            additionalDescription: '',
+            additionalDate: '',
+          },
+        ],
+      },
+      {
+        id: 's_skills',
+        name: 'Skills',
+        sectionKey: 'skills',
+        position: 6,
+        isVisible: true,
+        data: { general: [''], databases: [''], languages: [''], others: [''] },
+      },
+      {
+        id: 's_remarks',
+        name: 'Remarks',
+        sectionKey: 'remarks',
+        position: 7,
+        isVisible: true,
+        data: { remarks: '' },
+      },
+    ],
+  };
+}
+

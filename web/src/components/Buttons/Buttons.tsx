@@ -54,17 +54,22 @@ interface NavButtonProps {
   text: string;
   isSelected?: boolean;
   onClick?: () => void;
+  onDoubleClick?: () => void;
+  className?: string;
 }
 
 export function NavButton({
   text,
   isSelected = false,
   onClick,
+  onDoubleClick,
+  className = '',
 }: NavButtonProps) {
   return (
     <button
-      className={'nav-button ' + (isSelected ? 'selected' : null)}
+      className={'nav-button ' + (isSelected ? 'selected' : '') + ' ' + className}
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
     >
       {text}
     </button>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { IconCheck, IconX, IconLoader2, IconPoint } from '@tabler/icons-react';
 
 interface AutosaveIndicatorProps {
   state: 'idle' | 'saving' | 'saved' | 'error';
@@ -37,40 +38,28 @@ const AutosaveIndicator = ({ state, lastSavedTime }: AutosaveIndicatorProps) => 
 
   const getStatusColor = () => {
     switch (state) {
-      case 'saving':
-        return 'text-yellow-500';
-      case 'saved':
-        return 'text-green-500';
-      case 'error':
-        return 'text-red-500';
-      default:
-        return 'text-gray-400';
+      case 'saving': return 'text-yellow-500';
+      case 'saved':  return 'text-green-500';
+      case 'error':  return 'text-red-500';
+      default:       return 'text-gray-400';
     }
   };
 
   const getStatusIcon = () => {
     switch (state) {
-      case 'saving':
-        return '⟳';
-      case 'saved':
-        return '✓';
-      case 'error':
-        return '✕';
-      default:
-        return '◦';
+      case 'saving': return <IconLoader2 size={14} className="autosave-spin" />;
+      case 'saved':  return <IconCheck size={14} />;
+      case 'error':  return <IconX size={14} />;
+      default:       return <IconPoint size={14} />;
     }
   };
 
   const getStatusText = () => {
     switch (state) {
-      case 'saving':
-        return 'Auto-saving...';
-      case 'saved':
-        return `Saved ${timeString}`;
-      case 'error':
-        return 'Save failed, retrying...';
-      default:
-        return 'Waiting...';
+      case 'saving': return 'Saving…';
+      case 'saved':  return `Saved ${timeString}`;
+      case 'error':  return 'Save failed';
+      default:       return 'Waiting…';
     }
   };
 
@@ -83,3 +72,4 @@ const AutosaveIndicator = ({ state, lastSavedTime }: AutosaveIndicatorProps) => 
 };
 
 export default AutosaveIndicator;
+

@@ -44,7 +44,7 @@ func (s *Store) GetResumeMetadatasByUserID(userID int) ([]*types.ResumeMetadata,
 }
 
 func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
-	query := `SELECT id, template_name, data, created_at, updated_at 
+	query := `SELECT id, template_name, data, template_version, created_at, updated_at 
 	          FROM resumes WHERE id = $1`
 	row := s.db.QueryRow(query, id)
 
@@ -57,8 +57,8 @@ func (s *Store) GetResumeByID(id int) (*types.Resume, error) {
 }
 
 func (s *Store) CreateResume(resume *types.Resume) error {
-	query := `INSERT INTO resumes (template_name, data) VALUES ($1, $2) RETURNING id`
-	err := s.db.QueryRow(query, resume.TemplateName, resume.Data).Scan(&resume.ID)
+	query := `INSERT INTO resumes (template_name, data, template_version) VALUES ($1, $2, $3) RETURNING id`
+	err := s.db.QueryRow(query, resume.TemplateName, resume.Data, resume.TemplateVersion).Scan(&resume.ID)
 	if err != nil {
 		return err
 	}
@@ -77,8 +77,8 @@ func (s *Store) CreateResumeMetadata(resumeMetadata *types.ResumeMetadata) error
 }
 
 func (s *Store) UpdateResumeByID(resume *types.Resume) error {
-	query := `UPDATE resumes SET template_name = $1, data = $2, updated_at = $3 WHERE id = $4`
-	result, err := s.db.Exec(query, resume.TemplateName, resume.Data, resume.UpdatedAt, resume.ID)
+	query := `UPDATE resumes SET template_name = $1, data = $2, template_version = $3, updated_at = $4 WHERE id = $5`
+	result, err := s.db.Exec(query, resume.TemplateName, resume.Data, resume.TemplateVersion, resume.UpdatedAt, resume.ID)
 	if err != nil {
 		return err
 	}
@@ -199,6 +199,7 @@ func scanRowIntoResume(row *sql.Row) (*types.Resume, error) {
 		&resume.ID,
 		&resume.TemplateName,
 		&resume.Data,
+		&resume.TemplateVersion,
 		&resume.CreatedAt,
 		&resume.UpdatedAt,
 	)
@@ -207,4 +208,92 @@ func scanRowIntoResume(row *sql.Row) (*types.Resume, error) {
 	}
 
 	return resume, nil
+}
+
+// --- Version history ---
+
+func (s *Store) GetLatestVersionNumber(resumeID int) (int, error) {
+	query := `SELECT COALESCE(MAX(version_number), 0) FROM resume_versions WHERE resume_id = $1`
+	var latest int
+	err := s.db.QueryRow(query, resumeID).Scan(&latest)
+	return latest, err
+}
+
+func (s *Store) CreateResumeVersion(version *types.ResumeVersion) error {
+	query := `
+		INSERT INTO resume_versions (resume_id, version_number, data, label, is_manual)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, created_at`
+	return s.db.QueryRow(query,
+		version.ResumeID,
+		version.VersionNumber,
+		version.Data,
+		version.Label,
+		version.IsManual,
+	).Scan(&version.ID, &version.CreatedAt)
+}
+
+func (s *Store) GetResumeVersionsByResumeID(resumeID int) ([]*types.ResumeVersion, error) {
+	query := `
+		SELECT id, resume_id, version_number, data, label, is_manual, created_at
+		FROM resume_versions
+		WHERE resume_id = $1
+		ORDER BY version_number DESC
+		LIMIT 50`
+	rows, err := s.db.Query(query, resumeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	versions := []*types.ResumeVersion{}
+	for rows.Next() {
+		v := &types.ResumeVersion{}
+		err := rows.Scan(&v.ID, &v.ResumeID, &v.VersionNumber, &v.Data, &v.Label, &v.IsManual, &v.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		versions = append(versions, v)
+	}
+	return versions, rows.Err()
+}
+
+func (s *Store) GetResumeVersionByID(id int) (*types.ResumeVersion, error) {
+	query := `
+		SELECT id, resume_id, version_number, data, label, is_manual, created_at
+		FROM resume_versions WHERE id = $1`
+	v := &types.ResumeVersion{}
+	err := s.db.QueryRow(query, id).Scan(
+		&v.ID, &v.ResumeID, &v.VersionNumber, &v.Data, &v.Label, &v.IsManual, &v.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+// GetLatestAutoSaveVersion returns the most recent non-manual version created
+// within the last 5 minutes.  The timestamp window is evaluated inside
+// PostgreSQL so no server-side timezone arithmetic is needed.
+func (s *Store) GetLatestAutoSaveVersion(resumeID int) (*types.ResumeVersion, error) {
+	query := `
+		SELECT id, resume_id, version_number, data, label, is_manual, created_at
+		FROM resume_versions
+		WHERE resume_id = $1
+		  AND is_manual = false
+		  AND created_at > NOW() - INTERVAL '5 minutes'
+		ORDER BY version_number DESC LIMIT 1`
+	v := &types.ResumeVersion{}
+	err := s.db.QueryRow(query, resumeID).Scan(
+		&v.ID, &v.ResumeID, &v.VersionNumber, &v.Data, &v.Label, &v.IsManual, &v.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+func (s *Store) UpdateResumeVersionData(versionID int, data string) error {
+	_, err := s.db.Exec(`UPDATE resume_versions SET data = $1 WHERE id = $2`, data, versionID)
+	return err
 }

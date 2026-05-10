@@ -16,7 +16,17 @@ import LibreBaskervilleBold from '/fonts/Libre_Baskerville/LibreBaskerville-Bold
 import LibreBaskervilleItalic from '/fonts/Libre_Baskerville/LibreBaskerville-Italic.ttf';
 import { Item } from './components/List';
 import { ItemWithTitle } from './components/ItemWithTitle';
-import { FormData } from './types';
+import {
+  SectionedFormData,
+  Profile,
+  Education,
+  Experience,
+  Project,
+  Award,
+  AdditionalExperience,
+  Skills,
+  Remarks,
+} from './types';
 
 const styles = StyleSheet.create({
   page: {
@@ -113,25 +123,15 @@ Font.register({
 
 Font.registerHyphenationCallback((word) => [word]);
 
-export default function CV({
-  profile,
-  education,
-  experience,
-  projects,
-  awards,
-  additional,
-  skills,
-  remarks,
-}: FormData) {
-  const { name, email, phoneNumber, github, linkedin } = profile;
-  const {
-    schoolName,
-    titleOfStudy,
-    gpa,
-    fromDate,
-    toDate,
-    relevantCoursework,
-  } = education;
+export default function CV({ sections }: SectionedFormData) {
+  // Render only visible sections, sorted by position.
+  const orderedSections = [...sections]
+    .filter((s) => s.isVisible)
+    .sort((a, b) => a.position - b.position);
+
+  const profileSection = orderedSections.find((s) => s.sectionKey === 'profile');
+  const profile = profileSection?.data as Profile | undefined;
+  const { name = '', email = '', phoneNumber = '', github, linkedin } = profile ?? {};
 
   return (
     <Document
@@ -141,6 +141,7 @@ export default function CV({
       pageMode='fullScreen'
     >
       <Page size='A4' orientation='portrait' style={styles.page}>
+        {/* Header — always rendered from the profile section */}
         <View
           style={{
             ...styles.header,
@@ -190,220 +191,361 @@ export default function CV({
             </Link>
           )}
         </View>
-        {Object.values(education).some((v) =>
-          Array.isArray(v) ? v.some((l) => l !== '') : v !== ''
-        ) && (
-          <View>
-            <Text style={styles.sectionTitle}>Education</Text>
-            <View style={styles.hr} />
-            <View style={styles.sectionHeader}>
-              <Text>{schoolName}</Text>
-              <Text style={styles.sectionHeaderRight}>
-                {fromDate && toDate
-                  ? `${fromDate} - ${toDate}`
-                  : fromDate
-                  ? fromDate
-                  : toDate}
-              </Text>
-            </View>
-            <View style={styles.educationContent}>
-              {titleOfStudy && (
-                <Item>
-                  {titleOfStudy}
-                  {gpa && `  (${gpa})`}.
-                </Item>
-              )}
-              {relevantCoursework.some((v) => v !== '') && (
-                <Item style={styles.justify}>
-                  Relevant coursework:{'  '}
-                  {relevantCoursework.join(', ')}.
-                </Item>
-              )}
-            </View>
-          </View>
-        )}
-        {experience.some((exp) =>
-          Object.entries(exp).some(
-            ([key, value]) =>
-              key !== 'jobId' &&
-              (Array.isArray(value)
-                ? value.some((l) => l !== '')
-                : value !== '')
-          )
-        ) && (
-          <View>
-            <Text style={styles.sectionTitle}>Work Experience</Text>
-            <View style={styles.hr} />
-            {experience.map((exp, i) => (
-              <View key={i}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionHeaderLeft}>
-                    {exp.positionTitle}
-                  </Text>
-                  <Text>{exp.companyName}</Text>
-                  <Text style={styles.sectionHeaderRight}>
-                    {exp.dateFrom} {(exp.dateFrom || exp.dateUntil) && ' - '}{' '}
-                    {exp.dateUntil}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    ...styles.jobContent,
-                    ...(!exp.companyName ? { marginTop: 20 } : {}),
-                  }}
-                >
-                  {exp.responsibilities.map(
-                    (resp, i) => resp && <Item key={i}>{resp}</Item>
-                  )}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-        {projects.some((proj) =>
-          Object.entries(proj).some(
-            ([key, value]) =>
-              key !== 'projectId' &&
-              (Array.isArray(value)
-                ? value.some((l) => l !== '')
-                : value !== '')
-          )
-        ) && (
-          <View>
-            <Text style={styles.sectionTitle}>Projects</Text>
-            <View style={styles.hr} />
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 5,
-                ...styles.sectionContent,
-              }}
-            >
-              {projects.map((proj, i) => (
-                <View key={i}>
-                  <View
-                    style={{ display: 'flex', flexDirection: 'column', gap: 1 }}
-                  >
-                    <ItemWithTitle
-                      title={proj.projectTitle}
-                      data={proj.projectDescription}
-                    />
-                    {proj.projectTechStack.some((v) => v !== '') && (
-                      <ItemWithTitle
-                        title={'Tech stack'}
-                        data={`${proj.projectTechStack.join(', ')}.`}
-                        noBulletpoint
-                      />
-                    )}
-                  </View>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-        {awards.some((award) =>
-          Object.entries(award).some(
-            ([key, value]) => key !== 'awardId' && value !== ''
-          )
-        ) && (
-          <View>
-            <Text style={styles.sectionTitle}>Awards</Text>
-            <View style={styles.hr} />
-            <View
-              style={{
-                ...styles.sectionContent,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 5,
-              }}
-            >
-              {awards.map((award, i) => (
-                <View key={i}>
-                  <ItemWithTitle
-                    title={`${award.awardTitle} ${
-                      award.awardDate && `(${award.awardDate})`
-                    }`}
-                    data={`${
-                      award.awardDescription && `${award.awardDescription}. `
-                    }${award.awardIssuer && `Issued by ${award.awardIssuer}.`}`}
+
+        {/* Render non-profile sections in order */}
+        {orderedSections
+          .filter((s) => s.sectionKey !== 'profile')
+          .map((section) => {
+            switch (section.sectionKey) {
+              case 'education':
+                return (
+                  <EducationSection
+                    key={section.id}
+                    name={section.name}
+                    education={section.data as Education}
                   />
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-        {additional.some((exp) =>
-          Object.entries(exp).some(
-            ([key, value]) => key !== 'additionalId' && value !== ''
-          )
-        ) && (
-          <View>
-            <Text style={styles.sectionTitle}>
-              Additional Experience / Volunteering
-            </Text>
-            <View style={styles.hr} />
-            <View
-              style={{
-                ...styles.sectionContent,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 5,
-              }}
-            >
-              {additional.map((exp, i) => (
-                <View key={i}>
-                  <ItemWithTitle
-                    title={`${exp.additionalTitle} ${
-                      exp.additionalDate && `(${exp.additionalDate})`
-                    }`}
-                    data={exp.additionalDescription}
+                );
+              case 'experience':
+                return (
+                  <ExperienceSection
+                    key={section.id}
+                    name={section.name}
+                    experience={section.data as Experience[]}
                   />
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-        {Object.values(skills).some((v) => v.some((l) => l !== '')) && (
-          <View>
-            <Text style={styles.sectionTitle}>Technical Skills</Text>
-            <View style={styles.hr} />
-            <View style={styles.sectionContent}>
-              {skills.general.some((skill) => skill !== '') && (
-                <Item>{skills.general.join(', ')}.</Item>
-              )}
-              {skills.databases.some((skill) => skill !== '') && (
-                <ItemWithTitle
-                  title={'Databases'}
-                  data={`${skills.databases.join(', ')}.`}
-                />
-              )}
-              {skills.languages.some((skill) => skill !== '') && (
-                <ItemWithTitle
-                  title={'Languages'}
-                  data={`${skills.languages.join(', ')}.`}
-                />
-              )}
-              {skills.others.some((skill) => skill !== '') && (
-                <ItemWithTitle
-                  title={'Others'}
-                  data={`${skills.others.join(', ')}.`}
-                />
-              )}
-            </View>
-          </View>
-        )}
-        <View
-          style={{
-            textAlign: 'center',
-            marginTop: 10,
-            fontWeight: 700,
-            fontSize: 12,
-          }}
-        >
-          <Text>{remarks.remarks}</Text>
-        </View>
+                );
+              case 'projects':
+                return (
+                  <ProjectsSection
+                    key={section.id}
+                    name={section.name}
+                    projects={section.data as Project[]}
+                  />
+                );
+              case 'awards':
+                return (
+                  <AwardsSection
+                    key={section.id}
+                    name={section.name}
+                    awards={section.data as Award[]}
+                  />
+                );
+              case 'additional':
+                return (
+                  <AdditionalSection
+                    key={section.id}
+                    name={section.name}
+                    additional={section.data as AdditionalExperience[]}
+                  />
+                );
+              case 'skills':
+                return (
+                  <SkillsSection
+                    key={section.id}
+                    name={section.name}
+                    skills={section.data as Skills}
+                  />
+                );
+              case 'remarks':
+                return (
+                  <RemarksSection
+                    key={section.id}
+                    remarks={section.data as Remarks}
+                  />
+                );
+              default:
+                return null;
+            }
+          })}
       </Page>
     </Document>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Section sub-components (extracted from the original monolithic render)
+// ---------------------------------------------------------------------------
+
+function EducationSection({
+  name,
+  education,
+}: {
+  name: string;
+  education: Education;
+}) {
+  const { schoolName, titleOfStudy, gpa, fromDate, toDate, relevantCoursework } =
+    education;
+  if (!Object.values(education).some((v) =>
+    Array.isArray(v) ? v.some((l) => l !== '') : v !== ''
+  ))
+    return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      <View style={styles.sectionHeader}>
+        <Text>{schoolName}</Text>
+        <Text style={styles.sectionHeaderRight}>
+          {fromDate && toDate
+            ? `${fromDate} - ${toDate}`
+            : fromDate
+            ? fromDate
+            : toDate}
+        </Text>
+      </View>
+      <View style={styles.educationContent}>
+        {titleOfStudy && (
+          <Item>
+            {titleOfStudy}
+            {gpa && `  (${gpa})`}.
+          </Item>
+        )}
+        {relevantCoursework.some((v) => v !== '') && (
+          <Item style={styles.justify}>
+            Relevant coursework:{'  '}
+            {relevantCoursework.join(', ')}.
+          </Item>
+        )}
+      </View>
+    </View>
+  );
+}
+
+function ExperienceSection({
+  name,
+  experience,
+}: {
+  name: string;
+  experience: Experience[];
+}) {
+  if (
+    !experience.some((exp) =>
+      Object.entries(exp).some(
+        ([key, value]) =>
+          key !== 'jobId' &&
+          (Array.isArray(value) ? value.some((l) => l !== '') : value !== '')
+      )
+    )
+  )
+    return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      {experience.map((exp, i) => (
+        <View key={i}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionHeaderLeft}>{exp.positionTitle}</Text>
+            <Text>{exp.companyName}</Text>
+            <Text style={styles.sectionHeaderRight}>
+              {exp.dateFrom} {(exp.dateFrom || exp.dateUntil) && ' - '}{' '}
+              {exp.dateUntil}
+            </Text>
+          </View>
+          <View
+            style={{
+              ...styles.jobContent,
+              ...(!exp.companyName ? { marginTop: 20 } : {}),
+            }}
+          >
+            {exp.responsibilities.map(
+              (resp, i) => resp && <Item key={i}>{resp}</Item>
+            )}
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function ProjectsSection({
+  name,
+  projects,
+}: {
+  name: string;
+  projects: Project[];
+}) {
+  if (
+    !projects.some((proj) =>
+      Object.entries(proj).some(
+        ([key, value]) =>
+          key !== 'projectId' &&
+          (Array.isArray(value) ? value.some((l) => l !== '') : value !== '')
+      )
+    )
+  )
+    return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 5,
+          ...styles.sectionContent,
+        }}
+      >
+        {projects.map((proj, i) => (
+          <View key={i}>
+            <View style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <ItemWithTitle
+                title={proj.projectTitle}
+                data={proj.projectDescription}
+              />
+              {proj.projectTechStack.some((v) => v !== '') && (
+                <ItemWithTitle
+                  title={'Tech stack'}
+                  data={`${proj.projectTechStack.join(', ')}.`}
+                  noBulletpoint
+                />
+              )}
+            </View>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function AwardsSection({
+  name,
+  awards,
+}: {
+  name: string;
+  awards: Award[];
+}) {
+  if (
+    !awards.some((award) =>
+      Object.entries(award).some(
+        ([key, value]) => key !== 'awardId' && value !== ''
+      )
+    )
+  )
+    return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      <View
+        style={{
+          ...styles.sectionContent,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 5,
+        }}
+      >
+        {awards.map((award, i) => (
+          <View key={i}>
+            <ItemWithTitle
+              title={`${award.awardTitle} ${award.awardDate && `(${award.awardDate})`}`}
+              data={`${award.awardDescription && `${award.awardDescription}. `}${award.awardIssuer && `Issued by ${award.awardIssuer}.`}`}
+            />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function AdditionalSection({
+  name,
+  additional,
+}: {
+  name: string;
+  additional: AdditionalExperience[];
+}) {
+  if (
+    !additional.some((exp) =>
+      Object.entries(exp).some(
+        ([key, value]) => key !== 'additionalId' && value !== ''
+      )
+    )
+  )
+    return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      <View
+        style={{
+          ...styles.sectionContent,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 5,
+        }}
+      >
+        {additional.map((exp, i) => (
+          <View key={i}>
+            <ItemWithTitle
+              title={`${exp.additionalTitle} ${exp.additionalDate && `(${exp.additionalDate})`}`}
+              data={exp.additionalDescription}
+            />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function SkillsSection({
+  name,
+  skills,
+}: {
+  name: string;
+  skills: Skills;
+}) {
+  if (!Object.values(skills).some((v) => v.some((l) => l !== ''))) return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      <View style={styles.sectionContent}>
+        {skills.general.some((skill) => skill !== '') && (
+          <Item>{skills.general.join(', ')}.</Item>
+        )}
+        {skills.databases.some((skill) => skill !== '') && (
+          <ItemWithTitle
+            title={'Databases'}
+            data={`${skills.databases.join(', ')}.`}
+          />
+        )}
+        {skills.languages.some((skill) => skill !== '') && (
+          <ItemWithTitle
+            title={'Languages'}
+            data={`${skills.languages.join(', ')}.`}
+          />
+        )}
+        {skills.others.some((skill) => skill !== '') && (
+          <ItemWithTitle
+            title={'Others'}
+            data={`${skills.others.join(', ')}.`}
+          />
+        )}
+      </View>
+    </View>
+  );
+}
+
+function RemarksSection({ remarks }: { remarks: Remarks }) {
+  if (!remarks.remarks) return null;
+
+  return (
+    <View
+      style={{
+        textAlign: 'center',
+        marginTop: 10,
+        fontWeight: 700,
+        fontSize: 12,
+      }}
+    >
+      <Text>{remarks.remarks}</Text>
+    </View>
   );
 }

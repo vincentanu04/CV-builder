@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Println("Usage: go run main.go [webserver|migrate:up|migrate:down]")
+		fmt.Println("Usage: go run main.go [webserver|migrate:up|migrate:down|migrate:data]")
 		os.Exit(1)
 	}
 
@@ -26,6 +26,6 @@ func main() {
 	case "migrate:undirty":
 		db.RunMigration("undirty")
 	default:
-		log.Fatalf("Available commands are [webserver|migrate:up|migrate:down]")
+		log.Fatalf("Available commands are [webserver|migrate:up|migrate:down|migrate:data]")
 	}
 }

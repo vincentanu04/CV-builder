@@ -57,6 +57,7 @@ type Remarks = {
   remarks: string;
 };
 
+// Legacy v1 flat format — kept for backward-compat rendering.
 type FormData = {
   profile: Profile;
   education: Education;
@@ -67,6 +68,49 @@ type FormData = {
   skills: Skills;
   remarks: Remarks;
 };
+
+// ---------------------------------------------------------------------------
+// V2 flexible-sections format
+// ---------------------------------------------------------------------------
+
+type SectionKey =
+  | 'profile'
+  | 'education'
+  | 'experience'
+  | 'projects'
+  | 'awards'
+  | 'additional'
+  | 'skills'
+  | 'remarks';
+
+type SectionDataMap = {
+  profile: Profile;
+  education: Education;
+  experience: Experience[];
+  projects: Project[];
+  awards: Award[];
+  additional: AdditionalExperience[];
+  skills: Skills;
+  remarks: Remarks;
+};
+
+type Section<K extends SectionKey = SectionKey> = {
+  id: string;
+  name: string;
+  sectionKey: K;
+  position: number;
+  isVisible: boolean;
+  data: SectionDataMap[K];
+};
+
+type SectionedFormData = {
+  schemaVersion: 2;
+  sections: Section[];
+};
+
+// ---------------------------------------------------------------------------
+// Form component prop types
+// ---------------------------------------------------------------------------
 
 type FormComponentProps<T> = {
   formValue: T;
@@ -86,6 +130,10 @@ type RemarksFormComponent = React.FC<FormComponentProps<Remarks>>;
 
 export type {
   FormData,
+  SectionedFormData,
+  Section,
+  SectionKey,
+  SectionDataMap,
   Profile,
   Education,
   Experience,
@@ -103,3 +151,4 @@ export type {
   SkillsFormComponent,
   RemarksFormComponent,
 };
+

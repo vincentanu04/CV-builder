@@ -31,7 +31,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 
 interface ResumeListProps {
-  setPreviewingResumeID: (resumeMetadataId: number) => void;
+  setPreviewingResumeID: (id: number, title: string) => void;
 }
 
 const ResumeList = ({
@@ -290,7 +290,8 @@ const ResumeList = ({
                     size='sm'
                     onClick={() =>
                       setPreviewingResumeID(
-                        metadata.resume_id
+                        metadata.resume_id,
+                        metadata.title
                       )
                     }
                     className='w-full sm:w-auto'
