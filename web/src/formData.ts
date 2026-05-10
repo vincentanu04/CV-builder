@@ -15,6 +15,7 @@ export const initialFormData = {
     titleOfStudy: '',
     gpa: '',
     relevantCoursework: [''],
+    bulletPoints: [''],
   },
   experience: [
     {
@@ -51,7 +52,7 @@ export const initialFormData = {
       additionalDate: '',
     },
   ],
-  skills: { general: [''], databases: [''], languages: [''], others: [''] },
+  skills: { general: [''], databases: [''], languages: [''], others: [''], bulletPoints: [''] },
   remarks: { remarks: '' },
 };
 
@@ -167,6 +168,7 @@ export const exampleFormData = {
     databases: ['MongoDB', 'PostgreSQL'],
     languages: ['JavaScript', 'TypeScript', 'Python', 'Go', 'Java'],
     others: ['Git', 'Agile', 'CI/CD', 'Cloud Deployment'],
+    bulletPoints: [''],
   },
   remarks: {
     remarks: 'Available to work from June 27th, 2025.',
@@ -179,7 +181,6 @@ export const exampleFormData = {
 
 export function makeExampleSectionedData(): SectionedFormData {
   return {
-    schemaVersion: 2,
     sections: [
       { id: 's_profile', name: 'Profile', sectionKey: 'profile', position: 0, isVisible: true, data: exampleFormData.profile },
       { id: 's_education', name: 'Education', sectionKey: 'education', position: 1, isVisible: true, data: exampleFormData.education },
@@ -195,7 +196,6 @@ export function makeExampleSectionedData(): SectionedFormData {
 
 export function makeInitialSectionedData(): SectionedFormData {
   return {
-    schemaVersion: 2,
     sections: [
       {
         id: 's_profile',
@@ -218,6 +218,7 @@ export function makeInitialSectionedData(): SectionedFormData {
           titleOfStudy: '',
           gpa: '',
           relevantCoursework: [''],
+          bulletPoints: [''],
         },
       },
       {
@@ -289,7 +290,7 @@ export function makeInitialSectionedData(): SectionedFormData {
         sectionKey: 'skills',
         position: 6,
         isVisible: true,
-        data: { general: [''], databases: [''], languages: [''], others: [''] },
+        data: { general: [''], databases: [''], languages: [''], others: [''], bulletPoints: [''] },
       },
       {
         id: 's_remarks',

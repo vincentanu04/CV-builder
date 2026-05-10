@@ -1,19 +1,7 @@
+// Package user — tests superseded by tests in internal/.
+// Kept as a stub so the package compiles.
 package user
 
-import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"server/services/auth"
-	"server/types"
-	"testing"
-
-	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-)
 
 func TestHandleRegister(t *testing.T) {
 	tests := []struct {

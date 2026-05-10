@@ -1,0 +1,10 @@
+package: oapi
+generate:
+  strict-server: true
+  models: true
+  chi-server: true
+output: generated/server/generated.go
+output-options:
+  skip-prune: true
+import-mapping:
+  "github.com/oapi-codegen/runtime/types": "github.com/oapi-codegen/runtime/types"

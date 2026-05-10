@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"server/configs"
+	"os"
 	"sync"
 	"time"
 )
@@ -26,7 +26,7 @@ func CORS(next http.Handler) http.Handler {
 		log.Printf("checking cors origin, %s", origin)
 
 		allowedOrigins := []string{}
-		switch configs.Envs.Environment {
+		switch os.Getenv("ENVIRONMENT") {
 		case "dev":
 			allowedOrigins = devAllowedOrigins
 		case "prd":

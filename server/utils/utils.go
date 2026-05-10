@@ -9,11 +9,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
-
-var Validate = validator.New()
 
 func WriteJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Add("Content-Type", "application/json")

@@ -1,34 +1,23 @@
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 import ResumeList from '@/components/resume-list';
 import MainNav from '@/components/main-nav';
 import UserNav from '@/components/user-nav';
-import { useAuth } from '@/contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
-import { getResume } from '@/api/resume';
+import { Link } from 'react-router-dom';
+import { useGetResumeQuery } from '@/api/client';
 import { Button } from '@/components/ui/button';
 import CV from '@/components/CV/CV';
 import { PDFViewer } from '@react-pdf/renderer';
-import { useQuery } from '@tanstack/react-query';
 import { parseResumeData } from '@/utils/json';
 import { IconX } from '@tabler/icons-react';
 
 const HomePage = () => {
-  const { user, loading: userLoading } = useAuth();
   const [previewState, setPreviewState] =
-    useState<{ id: number; title: string } | null>(null);
-  const navigate = useNavigate();
+    useState<{ id: string; title: string } | null>(null);
 
-  useEffect(() => {
-    if (!userLoading && !user) {
-      navigate('/');
-    }
-  }, [userLoading, user, navigate]);
-
-  const { data: previewingResume } = useQuery({
-    queryKey: ['resume', previewState?.id],
-    queryFn: () => getResume(previewState!.id),
-    enabled: !!previewState,
-  });
+  const { data: previewingResume } = useGetResumeQuery(
+    { id: previewState?.id ?? '' },
+    { skip: !previewState }
+  );
 
   const previewingResumeObj = previewingResume?.data
     ? parseResumeData(previewingResume.data)
@@ -96,3 +85,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+

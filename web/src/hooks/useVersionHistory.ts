@@ -1,24 +1,19 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getResumeVersions, type ResumeVersion } from '@/api/resume';
+import { useGetResumeVersionsQuery } from '@/api/client';
+import type { ResumeVersion } from '@/api/client';
 
-export function useVersionHistory(resumeID: number) {
-  const queryClient = useQueryClient();
+export type { ResumeVersion };
 
-  const { data, isLoading, error } = useQuery<ResumeVersion[]>({
-    queryKey: ['resumeVersions', resumeID],
-    queryFn: () => getResumeVersions(resumeID),
-    enabled: resumeID > 0,
-    staleTime: 30_000,
-  });
-
-  const refetch = () => {
-    queryClient.invalidateQueries({ queryKey: ['resumeVersions', resumeID] });
-  };
+export function useVersionHistory(resumeID: string) {
+  const { data, isLoading, error, refetch } = useGetResumeVersionsQuery(
+    { id: resumeID },
+    { skip: !resumeID, refetchOnMountOrArgChange: true }
+  );
 
   return {
-    versions: data ?? [],
+    versions: data?.versions ?? [],
     isLoading,
     error,
     refetch,
   };
 }
+

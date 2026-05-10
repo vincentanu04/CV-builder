@@ -6,20 +6,13 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Check, Eye, Pencil, X } from 'lucide-react';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import {
-  deleteResume,
-  getResumeMetadatas,
-  getResumeMetadatasResponse,
-  type ResumeMetadata,
-  updateResumeMetadataTitle,
-} from '@/api/resume';
-import { FORBIDDEN_MESSAGE } from '@/api/errors';
+  useGetResumesQuery,
+  useDeleteResumeMutation,
+  usePatchResumeTitleMutation,
+  type Resume,
+} from '@/api/client';
 import { Input } from './ui/input';
 import { ConfirmDelete } from './confirm-delete';
 import {
@@ -28,114 +21,42 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface ResumeListProps {
-  setPreviewingResumeID: (id: number, title: string) => void;
+  setPreviewingResumeID: (id: string, title: string) => void;
 }
 
 const ResumeList = ({
   setPreviewingResumeID,
 }: ResumeListProps) => {
-  const [editingId, setEditingId] = useState<number | null>(
-    null
-  );
-  const [editedTitle, setEditedTitle] =
-    useState<string>('');
-  const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editedTitle, setEditedTitle] = useState<string>('');
   const navigate = useNavigate();
-  const { setUser } = useAuth();
 
-  const { data, isLoading, isError, error } = useQuery<
-    getResumeMetadatasResponse,
-    Error
-  >({
-    queryKey: ['resume_metadatas'],
-    queryFn: getResumeMetadatas,
-    retry: (_, error) =>
-      error.message !== FORBIDDEN_MESSAGE,
-  });
+  const { data, isLoading, isError } = useGetResumesQuery();
+  const [updateTitle, { isPending: isTitlePending }] = usePatchResumeTitleMutation();
+  const [deleteResume] = useDeleteResumeMutation();
 
-  const resume_metadatas = data?.resumeMetadatas ?? [];
+  const resumes = data?.resumes ?? [];
   const limited = data?.limited ?? false;
 
-  const updateMetadataTitleMutation = useMutation({
-    mutationFn: ({
-      id,
-      title,
-    }: {
-      id: number;
-      title: string;
-    }) => updateResumeMetadataTitle(id, { title }),
-    onSuccess: async () => {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 250)
-      );
-      queryClient.invalidateQueries({
-        queryKey: ['resume_metadatas'],
-      });
-      // Reset editing state
-      setEditingId(null);
-    },
-    onError: (error) => {
-      // toast({
-      //   title: 'Error',
-      //   description: 'Failed to update resume title',
-      //   variant: 'destructive',
-      // });
-    },
-  });
-
-  const deleteResumeMutation = useMutation({
-    mutationFn: (id: number) => deleteResume(id),
-    onSuccess: async () => {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 250)
-      );
-      queryClient.invalidateQueries({
-        queryKey: ['resume_metadatas'],
-      });
-    },
-  });
-
-  useEffect(() => {
-    if (isError) {
-      console.log(error);
-
-      if (error?.message === FORBIDDEN_MESSAGE) {
-        setUser(null);
-        navigate('/');
-      }
-    }
-  }, [isError, error, navigate]);
-
-  const startEditing = (metadata: ResumeMetadata) => {
-    setEditingId(metadata.id);
-    setEditedTitle(metadata.title);
+  const startEditing = (resume: Resume) => {
+    setEditingId(resume.id);
+    setEditedTitle(resume.title);
   };
 
-  const saveTitle = (id: number) => {
-    if (editedTitle.trim() === '') {
-      // toast({
-      //   title: 'Error',
-      //   description: 'Title cannot be empty',
-      //   variant: 'destructive',
-      // });
-      return;
-    }
-
-    updateMetadataTitleMutation.mutate({
-      id,
-      title: editedTitle,
-    });
+  const saveTitle = (id: string) => {
+    if (editedTitle.trim() === '') return;
+    updateTitle({ id, title: editedTitle });
+    setEditingId(null);
   };
 
   const cancelEditing = () => {
     setEditingId(null);
   };
 
-  const handleDelete = (id: number) => {
-    deleteResumeMutation.mutate(id);
+  const handleDelete = (id: string) => {
+    deleteResume({ id });
   };
 
   if (isLoading) {
@@ -193,15 +114,15 @@ const ResumeList = ({
       </div>
       <Suspense fallback={<div>Loading resumes...</div>}>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
-          {resume_metadatas.length > 0 ? (
-            resume_metadatas.map((metadata) => (
+          {resumes.length > 0 ? (
+            resumes.map((resume) => (
               <Card
-                key={metadata.id}
+                key={resume.id}
                 className='w-full flex flex-col'
               >
                 <CardContent className='pt-6 flex-1'>
                   <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2'>
-                    {editingId === metadata.id ? (
+                    {editingId === resume.id ? (
                       <div className='flex items-center gap-2 w-full'>
                         <Input
                           value={editedTitle}
@@ -216,12 +137,8 @@ const ResumeList = ({
                             variant='ghost'
                             size='icon'
                             className='h-8 w-8'
-                            onClick={() =>
-                              saveTitle(metadata.id)
-                            }
-                            disabled={
-                              updateMetadataTitleMutation.isPending
-                            }
+                            onClick={() => saveTitle(resume.id)}
+                            disabled={isTitlePending}
                           >
                             <Check className='h-4 w-4 text-green-500' />
                           </Button>
@@ -240,25 +157,19 @@ const ResumeList = ({
                         <div className='flex items-center gap-2 w-full justify-between'>
                           <div className='flex items-center gap-2'>
                             <h3 className='font-semibold text-lg truncate max-w-[200px] sm:max-w-none text-wrap'>
-                              {metadata.title}
+                              {resume.title}
                             </h3>
                             <Button
                               variant='icon'
                               className='h-8 w-8 '
-                              onClick={() =>
-                                startEditing(metadata)
-                              }
+                              onClick={() => startEditing(resume)}
                             >
                               <Pencil className='h-4 w-4 text-blue-300' />
                             </Button>
                           </div>
                           <ConfirmDelete
-                            resumeTitle={metadata.title}
-                            deleteFunc={() =>
-                              handleDelete(
-                                metadata.resume_id
-                              )
-                            }
+                            resumeTitle={resume.title}
+                            deleteFunc={() => handleDelete(resume.id)}
                           />
                         </div>
                       </>
@@ -266,7 +177,7 @@ const ResumeList = ({
                   </div>
                   <p className='text-sm text-gray-400'>
                     Last updated:{' '}
-                    {new Date(metadata.updated_at)
+                    {new Date(resume.updated_at)
                       .toLocaleDateString('en-GB')
                       .replace(/\//g, '-')}
                   </p>
@@ -278,9 +189,7 @@ const ResumeList = ({
                     asChild
                     className='w-full sm:w-auto'
                   >
-                    <Link
-                      to={`/resume/${metadata.resume_id}`}
-                    >
+                    <Link to={`/resume/${resume.id}`}>
                       <Pencil className='w-4 h-4 mr-2' />
                       Edit
                     </Link>
@@ -289,10 +198,7 @@ const ResumeList = ({
                     variant='outline'
                     size='sm'
                     onClick={() =>
-                      setPreviewingResumeID(
-                        metadata.resume_id,
-                        metadata.title
-                      )
+                      setPreviewingResumeID(resume.id, resume.title)
                     }
                     className='w-full sm:w-auto'
                   >

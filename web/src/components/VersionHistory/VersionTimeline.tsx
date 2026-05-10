@@ -11,11 +11,11 @@ import {
   IconArrowsSort,
 } from '@tabler/icons-react';
 import { useVersionHistory } from '@/hooks/useVersionHistory';
-import { restoreResumeVersion } from '@/api/resume';
-import type { ResumeVersion } from '@/api/resume';
+import { usePostResumeVersionRestoreMutation } from '@/api/client';
+import type { ResumeVersion } from '@/api/client';
 
 interface VersionTimelineProps {
-  resumeID: number;
+  resumeID: string;
   open: boolean;
   onClose: () => void;
   onRestored: () => void;
@@ -81,6 +81,7 @@ const norm = (v: any): string => (v == null ? '' : String(v).trim());
 function isEmpty(v: any): boolean {
   if (v == null || v === '') return true;
   if (typeof v === 'string') return v.trim() === '';
+  if (typeof v === 'number') return v === 0;
   if (Array.isArray(v)) return v.every(isEmpty);
   if (typeof v === 'object') return Object.values(v).every(isEmpty);
   return false;
@@ -247,6 +248,13 @@ function getContentLines(sectionKey: string, prevData: any, verData: any): DiffL
     case 'additional': return compareAdditional(prevData, verData);
     case 'skills':     return compareSkills(prevData, verData);
     case 'remarks':    return compareRemarks(prevData, verData);
+    case 'custom': {
+      const prev: string[] = prevData ?? [];
+      const ver: string[] = verData ?? [];
+      return prev.join('\n') !== ver.join('\n')
+        ? [cline('Bullets', prev.filter(Boolean).join(', ') || '(empty)', ver.filter(Boolean).join(', ') || '(empty)')]
+        : [];
+    }
     default:
       return isEmpty(prevData) === isEmpty(verData) ? [] : [cline('Content', '(different)', '(changed)')];
   }
@@ -276,7 +284,11 @@ function diffSections(prevData: string, verData: string): SectionDiff[] {
 
   ver.forEach((vs, vIdx) => {
     const ps = prevMap.get(vs.id);
-    if (!ps) { diffs.push({ id: vs.id, name: vs.name, status: 'added', lines: [] }); return; }
+    if (!ps) {
+      const addedLines = getContentLines(vs.sectionKey, null, vs.data);
+      diffs.push({ id: vs.id, name: vs.name, status: 'added', lines: addedLines });
+      return;
+    }
 
     const lines: DiffLine[] = [];
 
@@ -296,8 +308,10 @@ function diffSections(prevData: string, verData: string): SectionDiff[] {
   });
 
   prev.forEach(ps => {
-    if (!verMap.has(ps.id))
-      diffs.push({ id: ps.id, name: ps.name, status: 'removed', lines: [] });
+    if (!verMap.has(ps.id)) {
+      const removedLines = getContentLines(ps.sectionKey, ps.data, null);
+      diffs.push({ id: ps.id, name: ps.name, status: 'removed', lines: removedLines });
+    }
   });
 
   return diffs;
@@ -441,7 +455,8 @@ function ErrorBanner({ message, onDismiss }: { message: string; onDismiss: () =>
 
 export function VersionTimeline({ resumeID, open, onClose, onRestored }: VersionTimelineProps) {
   const { versions, isLoading } = useVersionHistory(resumeID);
-  const [restoringId, setRestoringId]       = useState<number | null>(null);
+  const [restoreVersion] = usePostResumeVersionRestoreMutation();
+  const [restoringId, setRestoringId]       = useState<string | null>(null);
   const [previewIdx, setPreviewIdx]         = useState<number | null>(null);
   const [errorMsg, setErrorMsg]             = useState<string | null>(null);
 
@@ -449,11 +464,11 @@ export function VersionTimeline({ resumeID, open, onClose, onRestored }: Version
   // The version just before the selected one in the list (older = higher index)
   const prevVersion    = previewIdx !== null ? versions[previewIdx + 1] : null;
 
-  const handleRestore = async (versionId: number) => {
+  const handleRestore = async (versionId: string) => {
     setRestoringId(versionId);
     setErrorMsg(null);
     try {
-      await restoreResumeVersion(resumeID, versionId);
+      await restoreVersion({ id: resumeID, vid: versionId }).unwrap();
       setPreviewIdx(null);
       onRestored();
       onClose();

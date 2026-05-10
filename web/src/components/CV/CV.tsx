@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
     marginBottom: 10,
   },
   hr: {
@@ -123,7 +122,7 @@ Font.register({
 
 Font.registerHyphenationCallback((word) => [word]);
 
-export default function CV({ sections }: SectionedFormData) {
+export default function CV({ sections }: { sections: SectionedFormData['sections'] }) {
   // Render only visible sections, sorted by position.
   const orderedSections = [...sections]
     .filter((s) => s.isVisible)
@@ -252,6 +251,14 @@ export default function CV({ sections }: SectionedFormData) {
                     remarks={section.data as Remarks}
                   />
                 );
+              case 'custom':
+                return (
+                  <CustomSection
+                    key={section.id}
+                    name={section.name}
+                    bullets={section.data as string[]}
+                  />
+                );
               default:
                 return null;
             }
@@ -272,7 +279,7 @@ function EducationSection({
   name: string;
   education: Education;
 }) {
-  const { schoolName, titleOfStudy, gpa, fromDate, toDate, relevantCoursework } =
+  const { schoolName, titleOfStudy, gpa, fromDate, toDate, relevantCoursework, bulletPoints } =
     education;
   if (!Object.values(education).some((v) =>
     Array.isArray(v) ? v.some((l) => l !== '') : v !== ''
@@ -306,6 +313,9 @@ function EducationSection({
             {relevantCoursework.join(', ')}.
           </Item>
         )}
+        {bulletPoints && bulletPoints.filter((v) => v !== '').map((bp, i) => (
+          <Item key={i}>{bp}</Item>
+        ))}
       </View>
     </View>
   );
@@ -528,6 +538,30 @@ function SkillsSection({
             data={`${skills.others.join(', ')}.`}
           />
         )}
+        {skills.bulletPoints && skills.bulletPoints.some((v) => v !== '') && (
+          <View style={{ gap: 0 }}>
+            {skills.bulletPoints.filter((v) => v !== '').map((bp, i) => (
+              <Item key={i} style={styles.justify}>{bp}</Item>
+            ))}
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
+
+function CustomSection({ name, bullets }: { name: string; bullets: string[] }) {
+  const nonEmpty = (bullets ?? []).filter((b) => b !== '');
+  if (nonEmpty.length === 0) return null;
+
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{name}</Text>
+      <View style={styles.hr} />
+      <View style={styles.sectionContent}>
+        {nonEmpty.map((b, i) => (
+          <Item key={i} style={styles.justify}>{b}</Item>
+        ))}
       </View>
     </View>
   );

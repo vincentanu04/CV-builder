@@ -13,6 +13,7 @@ type Education = {
   fromDate?: string;
   toDate?: string;
   relevantCoursework: string[];
+  bulletPoints: string[];
 };
 
 type Experience = {
@@ -51,22 +52,11 @@ type Skills = {
   databases: string[];
   languages: string[];
   others: string[];
+  bulletPoints: string[];
 };
 
 type Remarks = {
   remarks: string;
-};
-
-// Legacy v1 flat format — kept for backward-compat rendering.
-type FormData = {
-  profile: Profile;
-  education: Education;
-  experience: Experience[];
-  projects: Project[];
-  awards: Award[];
-  additional: AdditionalExperience[];
-  skills: Skills;
-  remarks: Remarks;
 };
 
 // ---------------------------------------------------------------------------
@@ -81,7 +71,8 @@ type SectionKey =
   | 'awards'
   | 'additional'
   | 'skills'
-  | 'remarks';
+  | 'remarks'
+  | 'custom';
 
 type SectionDataMap = {
   profile: Profile;
@@ -92,6 +83,7 @@ type SectionDataMap = {
   additional: AdditionalExperience[];
   skills: Skills;
   remarks: Remarks;
+  custom: string[];
 };
 
 type Section<K extends SectionKey = SectionKey> = {
@@ -104,7 +96,6 @@ type Section<K extends SectionKey = SectionKey> = {
 };
 
 type SectionedFormData = {
-  schemaVersion: 2;
   sections: Section[];
 };
 
@@ -129,7 +120,6 @@ type SkillsFormComponent = React.FC<FormComponentProps<Skills>>;
 type RemarksFormComponent = React.FC<FormComponentProps<Remarks>>;
 
 export type {
-  FormData,
   SectionedFormData,
   Section,
   SectionKey,

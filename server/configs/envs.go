@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	Port               string
-	DBUrl              string
+	DatabaseURL        string
 	JWTSecret          string
 	JWTExpirationInSec int64
 	Environment        string
@@ -19,20 +19,17 @@ type Config struct {
 var Envs = initConfig()
 
 func initConfig() Config {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println(err)
+	if err := godotenv.Load("../.env.local"); err != nil {
+		log.Println("No .env.local file found, reading env from environment")
 	}
 
 	config := Config{
 		Port:               getEnv("PORT", "8080"),
-		DBUrl:              getEnv("DB_URL", "root"),
+		DatabaseURL:        getEnv("DATABASE_URL", ""),
 		JWTSecret:          getEnv("JWT_SECRET", "no-fallback"),
 		JWTExpirationInSec: getEnvInt("JWT_EXPIRATION_IN_SEC", 3600*24),
 		Environment:        getEnv("ENVIRONMENT", "dev"),
 	}
-	log.Printf("with config %+v", config)
-
 	return config
 }
 
@@ -41,7 +38,6 @@ func getEnv(key string, fallback string) string {
 	if ok {
 		return value
 	}
-
 	return fallback
 }
 
@@ -52,9 +48,9 @@ func getEnvInt(key string, fallback int64) int64 {
 		if err != nil {
 			return fallback
 		}
-
 		return i
 	}
-
 	return fallback
 }
+
+

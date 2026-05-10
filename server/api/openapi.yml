@@ -1,0 +1,488 @@
+openapi: "3.0.3"
+info:
+  title: CV Builder API
+  version: "1.0"
+
+security:
+  - cookieAuth: []
+
+paths:
+  /health:
+    get:
+      operationId: GetHealth
+      security: []
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+
+  /auth/login:
+    post:
+      operationId: PostAuthLogin
+      security: []
+      summary: Log in with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentials'
+      responses:
+        "200":
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUser'
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/register:
+    post:
+      operationId: PostAuthRegister
+      security: []
+      summary: Register a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentials'
+      responses:
+        "200":
+          description: Registered and logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUser'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      operationId: PostAuthLogout
+      security: []
+      summary: Clear session cookie
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: GetAuthMe
+      summary: Return the currently authenticated user
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUser'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /resumes:
+    get:
+      operationId: GetResumes
+      summary: List all resumes for the authenticated user
+      responses:
+        "200":
+          description: Resume list with plan-limit flag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeListResponse'
+    post:
+      operationId: PostResume
+      summary: Create a new resume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateResumeRequest'
+      responses:
+        "201":
+          description: Resume created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resume'
+        "403":
+          description: Plan resume limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /resumes/{id}:
+    get:
+      operationId: GetResume
+      summary: Get a resume by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Resume
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resume'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      operationId: PatchResume
+      summary: Update resume data and template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateResumeRequest'
+      responses:
+        "200":
+          description: Updated resume
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resume'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      operationId: DeleteResume
+      summary: Delete a resume (cascades to versions)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /resumes/{id}/title:
+    patch:
+      operationId: PatchResumeTitle
+      summary: Update only the resume title
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateResumeTitleRequest'
+      responses:
+        "200":
+          description: Updated resume
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resume'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /resumes/{id}/versions:
+    get:
+      operationId: GetResumeVersions
+      summary: List version history for a resume
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Version list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [versions]
+                properties:
+                  versions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResumeVersion'
+    post:
+      operationId: PostResumeVersion
+      summary: Create a named (manual) version snapshot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVersionRequest'
+      responses:
+        "201":
+          description: Version created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeVersion'
+        "404":
+          description: Resume not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /resumes/{id}/versions/{vid}:
+    get:
+      operationId: GetResumeVersion
+      summary: Get a specific version snapshot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: vid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Version snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeVersion'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /resumes/{id}/versions/{vid}/restore:
+    post:
+      operationId: PostResumeVersionRestore
+      summary: Restore a version snapshot as the current resume data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: vid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Resume after restore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resume'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    AuthCredentials:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
+    AuthUser:
+      type: object
+      required: [id, email, plan]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        plan:
+          type: string
+          enum: [free, mid, pro]
+
+    Resume:
+      type: object
+      required: [id, title, templateName, templateVersion, data, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        templateName:
+          type: string
+        templateVersion:
+          type: integer
+        data:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ResumeListResponse:
+      type: object
+      required: [resumes, limited]
+      properties:
+        resumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resume'
+        limited:
+          type: boolean
+
+    CreateResumeRequest:
+      type: object
+      required: [title, templateName, data]
+      properties:
+        title:
+          type: string
+        templateName:
+          type: string
+        templateVersion:
+          type: integer
+          default: 1
+        data:
+          type: string
+
+    UpdateResumeRequest:
+      type: object
+      required: [templateName, data]
+      properties:
+        templateName:
+          type: string
+        templateVersion:
+          type: integer
+        data:
+          type: string
+
+    UpdateResumeTitleRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+
+    ResumeVersion:
+      type: object
+      required: [id, resumeId, versionNumber, data, isManual, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        resumeId:
+          type: string
+          format: uuid
+        versionNumber:
+          type: integer
+        data:
+          type: string
+        label:
+          type: string
+          nullable: true
+        isManual:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateVersionRequest:
+      type: object
+      required: [label]
+      properties:
+        label:
+          type: string

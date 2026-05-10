@@ -1,12 +1,9 @@
-'use client';
-
-import { logout } from '@/api/auth';
+import { useGetAuthMeQuery, usePostAuthLogoutMutation } from '@/api/client';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,18 +13,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/contexts/AuthContext';
 import { capitalizeFirstCharacter } from '@/utils/text';
 import { useNavigate } from 'react-router-dom';
 
 const UserNav = () => {
-  const { user, setUser } = useAuth();
+  const { data: user } = useGetAuthMeQuery();
+  const [logout] = usePostAuthLogoutMutation();
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     try {
-      logout();
-      setUser(null);
+      await logout();
       navigate('/');
     } catch (error) {
       console.error(error);

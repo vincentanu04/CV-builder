@@ -1,15 +1,12 @@
-import { User, verifyToken } from '@/api/auth';
+import { useGetAuthMeQuery, type AuthUser } from '@/api/client';
 import {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
-  useState,
 } from 'react';
 
 interface AuthContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: AuthUser | null;
   loading: boolean;
 }
 
@@ -20,26 +17,10 @@ interface AuthProviderProps {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const user = await verifyToken();
-        setUser(user);
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getUser();
-  }, []);
+  const { data: user = null, isLoading: loading } = useGetAuthMeQuery();
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );
@@ -52,3 +33,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

@@ -1,5 +1,6 @@
 import './Form.css';
-import { Button } from '../Buttons/Buttons';
+import React from 'react';
+import { Button, MultipleInputButton } from '../Buttons/Buttons';
 import Buttons from '../Buttons/Buttons';
 import AutoResizeTextarea from './components/AutoResizeTextarea';
 import MultipleInputAndParent from './components/MultipleInputAndParent';
@@ -71,6 +72,7 @@ export const EducationForm: EducationFormComponent = ({
     titleOfStudy: 'Title of Study',
     gpa: 'GPA',
     relevantCoursework: 'Relevant Coursework',
+    bulletPoints: 'Bullet Points',
   };
 
   const placeholders: Record<keyof Education, string> = {
@@ -80,6 +82,7 @@ export const EducationForm: EducationFormComponent = ({
     titleOfStudy: "Bachelor's in Computer Science",
     gpa: '3.8/4',
     relevantCoursework: 'Relevant coursework',
+    bulletPoints: 'Add a bullet point',
   };
 
   return (
@@ -514,6 +517,7 @@ export const SkillsForm: SkillsFormComponent = ({ formValue, onChange }) => {
     databases: 'Databases',
     languages: 'Programming Languages',
     others: 'Others',
+    bulletPoints: 'Bullet Points',
   };
 
   const placeholders: Record<keyof Skills, string> = {
@@ -521,6 +525,7 @@ export const SkillsForm: SkillsFormComponent = ({ formValue, onChange }) => {
     databases: 'MongoDB',
     languages: 'Go',
     others: 'Linux',
+    bulletPoints: 'Add a bullet point',
   };
 
   return (
@@ -567,6 +572,53 @@ export const RemarkForm: RemarksFormComponent = ({ formValue, onChange }) => {
               onChange({ ...formValue, [label]: e.target.value })
             }
           />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const BulletListForm: React.FC<{ formValue: string[]; onChange: (v: string[]) => void }> = ({
+  formValue,
+  onChange,
+}) => {
+  const items = formValue.length > 0 ? formValue : [''];
+
+  return (
+    <div className='form scroll'>
+      <h2>Bullet Points</h2>
+      <hr />
+      {items.map((value, index) => (
+        <div key={index} className='multiple-input'>
+          <AutoResizeTextarea
+            name={`bullet_${index}`}
+            value={value}
+            placeholder='Enter a bullet point'
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              const updated = [...items];
+              updated[index] = e.target.value;
+              onChange(updated);
+            }}
+          />
+          <Buttons>
+            <MultipleInputButton
+              text='+'
+              onClick={() => {
+                const updated = [...items];
+                updated.splice(index + 1, 0, '');
+                onChange(updated);
+              }}
+            />
+            <MultipleInputButton
+              text='-'
+              disabled={items.length <= 1}
+              onClick={() => {
+                const updated = [...items];
+                updated.splice(index, 1);
+                onChange(updated);
+              }}
+            />
+          </Buttons>
         </div>
       ))}
     </div>

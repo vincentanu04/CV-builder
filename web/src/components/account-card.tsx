@@ -11,9 +11,11 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '@/api/auth';
-import axios from 'axios';
-import { useAuth } from '@/contexts/AuthContext';
+import {
+  useGetAuthMeQuery,
+  usePostAuthLoginMutation,
+  usePostAuthRegisterMutation,
+} from '@/api/client';
 import { capitalizeFirstCharacter } from '@/utils/text';
 
 interface AccountCardProps {
@@ -25,11 +27,15 @@ const AccountCard = ({
   isSignUp,
   setIsSignUp,
 }: AccountCardProps) => {
-  const { user, setUser } = useAuth();
+  const { data: user } = useGetAuthMeQuery();
+  const [login, { isLoading: isLoginLoading }] = usePostAuthLoginMutation();
+  const [register, { isLoading: isRegisterLoading }] = usePostAuthRegisterMutation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const isLoading = isLoginLoading || isRegisterLoading;
 
   useEffect(() => {
     if (user) {
@@ -42,32 +48,21 @@ const AccountCard = ({
       setError('Please enter your email and password!');
       return;
     }
-
+    setError('');
     try {
-      const response = await axios.post(
-        `${api}/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        setUser(response.data.user);
-        navigate('/home');
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        if (err.response.status === 400) {
-          console.log(err);
-          setError(
-            capitalizeFirstCharacter(
-              err.response.data?.error
-            ) || 'Bad request.'
-          );
-        } else {
-          setError('Login failed. Please try again.');
-        }
+      await login({ email, password }).unwrap();
+      navigate('/home');
+    } catch (err: any) {
+      const status = err?.status;
+      const message = err?.data?.message;
+      if (status === 400) {
+        setError(
+          capitalizeFirstCharacter(message) || 'Bad request.'
+        );
+      } else if (status === 401) {
+        setError('Invalid email or password.');
       } else {
-        setError('An unexpected error occurred.');
+        setError('Login failed. Please try again.');
       }
     }
   };
@@ -77,32 +72,21 @@ const AccountCard = ({
       setError('Please enter your email and password!');
       return;
     }
-
+    setError('');
     try {
-      const response = await axios.post(
-        `${api}/register`,
-        { email, password },
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        setUser(response.data.user);
-        navigate('/home');
-      }
-    } catch (err) {
-      console.error(err);
-      if (axios.isAxiosError(err) && err.response) {
-        if (err.response.status === 400) {
-          setError(
-            capitalizeFirstCharacter(
-              err.response.data?.error
-            ) || 'Bad request.'
-          );
-        } else {
-          setError('Signup failed. Please try again.');
-        }
+      await register({ email, password }).unwrap();
+      navigate('/home');
+    } catch (err: any) {
+      const status = err?.status;
+      const message = err?.data?.message;
+      if (status === 400) {
+        setError(
+          capitalizeFirstCharacter(message) || 'Bad request.'
+        );
+      } else if (status === 409) {
+        setError('An account with this email already exists.');
       } else {
-        setError('An unexpected error occurred.');
+        setError('Signup failed. Please try again.');
       }
     }
   };
@@ -160,11 +144,16 @@ const AccountCard = ({
             <Button
               type='submit'
               className='w-full'
+              disabled={isLoading}
               onClick={
                 isSignUp ? handleSignup : handleLogin
               }
             >
-              {isSignUp ? 'Sign Up' : 'Log In'}
+              {isLoading
+                ? 'Please wait...'
+                : isSignUp
+                ? 'Sign Up'
+                : 'Log In'}
             </Button>
           </div>
         </form>

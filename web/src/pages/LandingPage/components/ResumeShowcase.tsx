@@ -1,6 +1,8 @@
 import CV from '@/components/CV/CV';
-import { exampleFormData } from '@/formData';
+import { makeExampleSectionedData } from '@/formData';
 import { PDFViewer, StyleSheet } from '@react-pdf/renderer';
+
+const exampleData = makeExampleSectionedData();
 
 export const ResumeShowcase = () => {
   return (
@@ -37,16 +39,7 @@ export const ResumeShowcase = () => {
             }
             showToolbar={false}
           >
-            <CV
-              profile={exampleFormData.profile}
-              education={exampleFormData.education}
-              experience={exampleFormData.experience}
-              projects={exampleFormData.projects}
-              awards={exampleFormData.awards}
-              additional={exampleFormData.additional}
-              skills={exampleFormData.skills}
-              remarks={exampleFormData.remarks}
-            />
+            <CV sections={exampleData.sections} />
           </PDFViewer>
         </div>
       </div>

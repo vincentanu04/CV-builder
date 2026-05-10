@@ -12,17 +12,21 @@ import {
   SkillsForm,
   RemarkForm,
   AwardsForm,
+  BulletListForm,
 } from '@/components/Form/Form';
 import CV from '@/components/CV/CV';
-import { PDFDownloadLink, PDFViewer, StyleSheet } from '@react-pdf/renderer';
+import { PDFViewer, pdf } from '@react-pdf/renderer';
 import { makeInitialSectionedData, makeExampleSectionedData } from '@/formData';
 import type { SectionedFormData, Section, SectionKey, Profile } from '@/components/CV/types';
-import { createResume, getResume, updateResume } from '@/api/resume';
+import {
+  useGetResumeQuery,
+  usePatchResumeMutation,
+  usePostResumesMutation,
+  useGetAuthMeQuery,
+} from '@/api/client';
+import type { Resume } from '@/api/client';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { FORBIDDEN_MESSAGE } from '@/api/errors';
 import { ConfirmBack } from '@/components/confirm-back';
-import { useAuth } from '@/contexts/AuthContext';
 import { parseResumeData, serializeResumeData } from '@/utils/json';
 import {
   Tooltip,
@@ -74,6 +78,7 @@ const SECTION_FORM_MAP: Record<SectionKey, React.FC<any>> = {
   additional: AdditionalForm,
   skills: SkillsForm,
   remarks: RemarkForm,
+  custom: BulletListForm,
 };
 
 const DEFAULT_SECTION_OPTIONS: { key: SectionKey; label: string }[] = [
@@ -367,8 +372,10 @@ function AddSectionModal({ open, onClose, onAdd }: AddSectionModalProps) {
 
 const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const AUTOSAVE_DEBOUNCE_MS = 1200;
+  const PREVIEW_DEBOUNCE_MS = 600;
 
   const [sectionedData, setSectionedData] = useState<SectionedFormData>(makeInitialSectionedData);
+  const [previewData, setPreviewData] = useState<SectionedFormData>(makeInitialSectionedData);
   const [selectedSectionId, setSelectedSectionId] = useState<string>('s_profile');
   const [isFileVisibleMobile, setIsFileVisibleMobile] = useState(false);
   const [isExample, setIsExample] = useState(false);
@@ -384,6 +391,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const [pendingDeleteSection, setPendingDeleteSection] = useState<Section | null>(null);
 
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSavingRef = useRef(false);
   const pendingPayloadRef = useRef<string | null>(null);
   const lastSavedPayloadRef = useRef<string>('');
@@ -391,50 +399,64 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   // into sectionedData — prevents overwriting real content with the empty
   // initial state that exists before the first fetch completes.
   const isLoadedRef = useRef(false);
-  const originalResumeRef = useRef<typeof originalResume>(null);
+  const originalResumeRef = useRef<Resume | null>(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const { user } = useAuth();
+  const { data: user } = useGetAuthMeQuery();
   const isGuest = !user;
-  const queryClient = useQueryClient();
+  const [patchResume] = usePatchResumeMutation();
+  const [createResume] = usePostResumesMutation();
 
-  if (isEdit && (!id || isNaN(Number(id)))) {
-    navigate('/home');
-    return null;
-  }
-
-  const { data: originalResume, error } = useQuery({
-    queryKey: ['resume', id],
-    queryFn: () => getResume(Number(id)),
-    enabled: isEdit,
-    retry: false,
-  });
+  const { data: originalResume, error } = useGetResumeQuery(
+    { id: id ?? '' },
+    { skip: !isEdit || !id }
+  );
 
   const isResumeChanged = JSON.stringify(sectionedData) !== JSON.stringify(lastSavedData);
 
   useEffect(() => {
     if (error) {
-      switch (error.message) {
-        case FORBIDDEN_MESSAGE: navigate('/'); break;
-        default: navigate('/home');
+      const status = (error as any)?.status;
+      if (status === 401 || status === 403) {
+        navigate('/');
+      } else {
+        navigate('/home');
       }
     }
     if (originalResume) {
       originalResumeRef.current = originalResume;
       const parsed = parseResumeData(originalResume.data);
-      setSectionedData(parsed);
+      // Only reset the editable state on initial load.
+      // Subsequent refetches (after autosave) should only update the reference
+      // so we don't clobber in-flight edits.
+      if (!isLoadedRef.current) {
+        setSectionedData(parsed);
+        setPreviewData(parsed);
+        isLoadedRef.current = true;
+      }
       setLastSavedData(parsed);
       lastSavedPayloadRef.current = serializeResumeData(parsed);
-      isLoadedRef.current = true;
       setAutoSaveState('saved');
       setLastSavedTime(new Date());
     }
   }, [originalResume, error]);
 
   useEffect(() => {
-    return () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current); };
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+    };
   }, []);
+
+  // Debounce preview updates so the PDF renderer isn't hit on every keystroke
+  useEffect(() => {
+    if (isExample) return;
+    if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+    previewTimerRef.current = setTimeout(() => {
+      setPreviewData(sectionedData);
+    }, PREVIEW_DEBOUNCE_MS);
+  }, [sectionedData, isExample]);
 
   // Pragmatic DnD monitor
   useEffect(() => {
@@ -477,21 +499,16 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     setAutoSaveState('saving');
 
     try {
-      await updateResume(Number(id), {
+      await patchResume({
+        id: resume.id,
         template_name: resume.template_name,
-        title: resume.title,
         data: payload,
-        file: 'TEST',
         template_version: 2,
-      });
+      }).unwrap();
 
       lastSavedPayloadRef.current = payload;
       setLastSavedData(parseResumeData(payload));
       setLastSavedTime(new Date());
-
-      // Invalidate the version history cache so the list refreshes immediately.
-      // The backend now saves the version synchronously before responding.
-      queryClient.invalidateQueries({ queryKey: ['resumeVersions', Number(id)] });
 
       if (pendingPayloadRef.current && pendingPayloadRef.current !== payload) {
         const queued = pendingPayloadRef.current;
@@ -568,9 +585,8 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const handleAddSection = (name: string, preset: SectionKey | '') => {
     const sId = `s_custom_${Date.now()}`;
     const position = sectionedData.sections.length;
-    // Blank (no preset) → 'additional' form type but start with no entries
-    const sectionKey: SectionKey = preset || 'additional';
-    const data = preset ? makeSectionDefaults(preset) : [];
+    const sectionKey: SectionKey = preset || 'custom';
+    const data = preset ? makeSectionDefaults(preset) : [''];
     setSectionedData((prev) => ({
       ...prev,
       sections: [...prev.sections, { id: sId, name, sectionKey, position, isVisible: true, data }],
@@ -582,14 +598,13 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const handleCreateResume = async () => {
     if (!isEdit) {
       try {
-        const resp = await createResume({
+        const result = await createResume({
           template_name: 'Libre',
           title: 'New Resume',
           data: serializeResumeData(sectionedData),
-          file: 'TEST',
           template_version: 2,
-        });
-        navigate(`/resume/${resp.data.createdResumeID}`);
+        }).unwrap();
+        navigate(`/resume/${result.id}`);
       } catch {
         setErrorMsg('Failed to save resume. Please wait and try again.');
       }
@@ -627,38 +642,37 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   };
 
   const handleVersionRestored = () => {
-    isLoadedRef.current = false; // Block autosave until fresh data is loaded
+    // After restore, the RTK Query cache for this resume is already invalidated
+    // (by postResumeVersionRestore). The useGetResumeQuery will auto-refetch
+    // and trigger the load effect below to update sectionedData.
+    isLoadedRef.current = false;
     if (debounceTimerRef.current) { clearTimeout(debounceTimerRef.current); debounceTimerRef.current = null; }
-    getResume(Number(id)).then((fresh) => {
-      originalResumeRef.current = fresh;
-      const parsed = parseResumeData(fresh.data);
-      setSectionedData(parsed);
-      setLastSavedData(parsed);
-      lastSavedPayloadRef.current = serializeResumeData(parsed);
-      isLoadedRef.current = true;
-      setAutoSaveState('saved');
-      setLastSavedTime(new Date());
-      // Update both caches so stale data never triggers a spurious save
-      queryClient.invalidateQueries({ queryKey: ['resume', id] });
-      queryClient.invalidateQueries({ queryKey: ['resumeVersions', Number(id)] });
-    });
     setShowVersionHistory(false);
   };
 
   const selectedSection = sectionedData.sections.find((s) => s.id === selectedSectionId);
   const SelectedFormComponent = selectedSection ? SECTION_FORM_MAP[selectedSection.sectionKey] : null;
-  const displayedData = isExample ? makeExampleSectionedData() : sectionedData;
+  const displayedData = isExample ? makeExampleSectionedData() : previewData;
+  const displayedSections = displayedData.sections;
 
-  const styles = StyleSheet.create({
-    viewer: {
-      flex: 'auto',
-      border: 0,
-      padding: 0,
-      background: 'linear-gradient(90deg, var(--background-clr), var(--secondary-clr) 75%)',
-    },
-  });
+  const viewerKey = displayedSections.map(s => s.id + s.position).join(',');
 
-  const CVComponent = <CV sections={displayedData.sections} schemaVersion={2} />;
+  const viewerStyle = {
+    flex: 'auto' as const,
+    border: 0,
+    padding: 0,
+    background: 'linear-gradient(90deg, var(--background-clr), var(--secondary-clr) 75%)',
+  };
+
+  const handleDownloadPDF = async () => {
+    const blob = await pdf(<CV sections={displayedSections} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = profileData?.name ? `${profileData.name}_resume.pdf` : 'resume.pdf';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <main className="flex max-h-screen">
@@ -780,9 +794,9 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
       </AlertDialog.Root>
 
       {/* Version history modal */}
-      {isEdit && (
+      {isEdit && showVersionHistory && (
         <VersionTimeline
-          resumeID={Number(id)}
+          resumeID={id ?? ''}
           open={showVersionHistory}
           onClose={() => setShowVersionHistory(false)}
           onRestored={handleVersionRestored}
@@ -809,21 +823,15 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
       </div>
 
       <div
-        style={{ display: 'flex', flexDirection: 'column', ...styles.viewer }}
+        style={{ display: 'flex', flexDirection: 'column', ...viewerStyle }}
         className={`file ${isFileVisibleMobile ? 'show' : ''}`}
       >
         <div className="toolbar">
           <div className="downloadButtons">
-            <PDFDownloadLink
-              document={CVComponent}
-              fileName={profileData?.name ? `${profileData.name}_resume` : 'resume'}
-              style={{ textDecoration: 'none' }}
-            >
-              <button className="downloadButton">
-                <IconDownload size={26} className="svg" />
-                <p>PDF</p>
-              </button>
-            </PDFDownloadLink>
+            <button className="downloadButton" onClick={handleDownloadPDF}>
+              <IconDownload size={26} className="svg" />
+              <p>PDF</p>
+            </button>
             <button className="downloadButton" onClick={handleDownloadClick}>
               <IconFileDownload size={26} className="svg" />
               <p>JSON</p>
@@ -834,8 +842,8 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
             IMPORT JSON
           </button>
         </div>
-        <PDFViewer style={styles.viewer} showToolbar={false}>
-          {CVComponent}
+        <PDFViewer key={viewerKey} style={viewerStyle} showToolbar={false}>
+          <CV sections={displayedSections} />
         </PDFViewer>
         <Button className="hide-on-desktop back-button" onClick={() => setIsFileVisibleMobile(false)}>
           Back
