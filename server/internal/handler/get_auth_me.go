@@ -19,5 +19,5 @@ func (h *Handler) GetAuthMe(ctx context.Context, _ oapi.GetAuthMeRequestObject) 
 		return oapi.GetAuthMe401JSONResponse{Message: "unauthorized"}, nil
 	}
 
-	return oapi.GetAuthMe200JSONResponse{Id: user.ID, Email: user.Email, Plan: user.Plan}, nil
+	return oapi.GetAuthMe200JSONResponse{Id: user.ID, Email: user.Email, Plan: oapi.AuthUserPlan(user.Plan)}, nil
 }

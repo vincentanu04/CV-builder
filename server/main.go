@@ -46,6 +46,7 @@ func main() {
 
 	d := deps.Deps{DB: db}
 	h := handler.NewHandler(d)
+	strictH := oapi.NewStrictHandler(h, nil)
 
 	r := chi.NewRouter()
 	r.Use(chimiddleware.Logger)
@@ -55,7 +56,7 @@ func main() {
 	// API routes under /api prefix
 	r.Route("/api", func(apiRouter chi.Router) {
 		apiRouter.Use(middleware.Auth)
-		oapi.HandlerFromMux(h, apiRouter)
+		oapi.HandlerFromMux(strictH, apiRouter)
 	})
 
 	// SPA fallback — serve built frontend from ./web/dist in production

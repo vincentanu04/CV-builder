@@ -12,7 +12,7 @@ import (
 func (h *Handler) DeleteResume(ctx context.Context, request oapi.DeleteResumeRequestObject) (oapi.DeleteResumeResponseObject, error) {
 	userID := middleware.UserIDFromContext(ctx)
 
-	err := resume.DeleteResume(ctx, h.deps, request.Params.Id, userID)
+	err := resume.DeleteResume(ctx, h.deps, request.Id, userID)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.DeleteResume404JSONResponse{Message: "resume not found"}, nil

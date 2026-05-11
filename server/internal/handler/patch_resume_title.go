@@ -12,7 +12,7 @@ import (
 func (h *Handler) PatchResumeTitle(ctx context.Context, request oapi.PatchResumeTitleRequestObject) (oapi.PatchResumeTitleResponseObject, error) {
 	userID := middleware.UserIDFromContext(ctx)
 
-	r, err := resume.UpdateResumeTitle(ctx, h.deps, request.Params.Id, userID, request.Body.Title)
+	r, err := resume.UpdateResumeTitle(ctx, h.deps, request.Id, userID, request.Body.Title)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.PatchResumeTitle404JSONResponse{Message: "resume not found"}, nil

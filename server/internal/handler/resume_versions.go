@@ -12,7 +12,7 @@ import (
 func (h *Handler) GetResumeVersions(ctx context.Context, request oapi.GetResumeVersionsRequestObject) (oapi.GetResumeVersionsResponseObject, error) {
 	userID := middleware.UserIDFromContext(ctx)
 
-	versions, err := resume.ListVersions(ctx, h.deps, request.Params.Id, userID)
+	versions, err := resume.ListVersions(ctx, h.deps, request.Id, userID)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.GetResumeVersions200JSONResponse{Versions: []oapi.ResumeVersion{}}, nil
@@ -37,7 +37,7 @@ func (h *Handler) GetResumeVersions(ctx context.Context, request oapi.GetResumeV
 }
 
 func (h *Handler) GetResumeVersion(ctx context.Context, request oapi.GetResumeVersionRequestObject) (oapi.GetResumeVersionResponseObject, error) {
-	_, err := resume.GetResume(ctx, h.deps, request.Params.Id, middleware.UserIDFromContext(ctx))
+	_, err := resume.GetResume(ctx, h.deps, request.Id, middleware.UserIDFromContext(ctx))
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.GetResumeVersion404JSONResponse{Message: "resume not found"}, nil
@@ -45,7 +45,7 @@ func (h *Handler) GetResumeVersion(ctx context.Context, request oapi.GetResumeVe
 		return nil, err
 	}
 
-	v, err := resume.GetVersion(ctx, h.deps, request.Params.Vid)
+	v, err := resume.GetVersion(ctx, h.deps, request.Vid)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.GetResumeVersion404JSONResponse{Message: "version not found"}, nil
@@ -67,7 +67,7 @@ func (h *Handler) GetResumeVersion(ctx context.Context, request oapi.GetResumeVe
 func (h *Handler) PostResumeVersion(ctx context.Context, request oapi.PostResumeVersionRequestObject) (oapi.PostResumeVersionResponseObject, error) {
 	userID := middleware.UserIDFromContext(ctx)
 
-	v, err := resume.CreateNamedVersion(ctx, h.deps, request.Params.Id, userID, request.Body.Label)
+	v, err := resume.CreateNamedVersion(ctx, h.deps, request.Id, userID, request.Body.Label)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.PostResumeVersion404JSONResponse{Message: "resume not found"}, nil
@@ -89,7 +89,7 @@ func (h *Handler) PostResumeVersion(ctx context.Context, request oapi.PostResume
 func (h *Handler) PostResumeVersionRestore(ctx context.Context, request oapi.PostResumeVersionRestoreRequestObject) (oapi.PostResumeVersionRestoreResponseObject, error) {
 	userID := middleware.UserIDFromContext(ctx)
 
-	r, err := resume.RestoreVersion(ctx, h.deps, request.Params.Id, request.Params.Vid, userID)
+	r, err := resume.RestoreVersion(ctx, h.deps, request.Id, request.Vid, userID)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.PostResumeVersionRestore404JSONResponse{Message: "resume or version not found"}, nil

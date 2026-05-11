@@ -37,7 +37,7 @@ func (h *Handler) PostAuthRegister(ctx context.Context, request oapi.PostAuthReg
 	}
 
 	return registerCookieResponse{
-		user:  oapi.AuthUser{Id: user.ID, Email: user.Email, Plan: user.Plan},
+		user:  oapi.AuthUser{Id: user.ID, Email: user.Email, Plan: oapi.AuthUserPlan(user.Plan)},
 		token: token,
 	}, nil
 }

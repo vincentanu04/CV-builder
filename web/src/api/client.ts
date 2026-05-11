@@ -1,211 +1,251 @@
-// Auto-generated RTK Query API client — matches server/api/openapi.yml.
-// Regenerate with: npm run codegen (from web/)
-import { baseApi as api } from '@/store/api';
-
-export const addTagTypes = [
-  'Health',
-  'Auth',
-  'Resumes',
-  'ResumeVersions',
-] as const;
-
-// ── Schema types ──────────────────────────────────────────────────────────────
-
-export interface ErrorResponse {
+import { baseApi as api } from "../store/api";
+export const addTagTypes = [] as const;
+const injectedRtkApi = api
+  .enhanceEndpoints({
+    addTagTypes,
+  })
+  .injectEndpoints({
+    endpoints: (build) => ({
+      getHealth: build.query<GetHealthApiResponse, GetHealthApiArg>({
+        query: () => ({ url: `/health` }),
+        providesTags: [],
+      }),
+      postAuthLogin: build.mutation<
+        PostAuthLoginApiResponse,
+        PostAuthLoginApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/login`,
+          method: "POST",
+          body: queryArg.authCredentials,
+        }),
+        invalidatesTags: [],
+      }),
+      postAuthRegister: build.mutation<
+        PostAuthRegisterApiResponse,
+        PostAuthRegisterApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/register`,
+          method: "POST",
+          body: queryArg.authCredentials,
+        }),
+        invalidatesTags: [],
+      }),
+      postAuthLogout: build.mutation<
+        PostAuthLogoutApiResponse,
+        PostAuthLogoutApiArg
+      >({
+        query: () => ({ url: `/logout`, method: "POST" }),
+        invalidatesTags: [],
+      }),
+      getAuthMe: build.query<GetAuthMeApiResponse, GetAuthMeApiArg>({
+        query: () => ({ url: `/me` }),
+        providesTags: [],
+      }),
+      getResumes: build.query<GetResumesApiResponse, GetResumesApiArg>({
+        query: () => ({ url: `/resumes` }),
+        providesTags: [],
+      }),
+      postResume: build.mutation<PostResumeApiResponse, PostResumeApiArg>({
+        query: (queryArg) => ({
+          url: `/resumes`,
+          method: "POST",
+          body: queryArg.createResumeRequest,
+        }),
+        invalidatesTags: [],
+      }),
+      getResume: build.query<GetResumeApiResponse, GetResumeApiArg>({
+        query: (queryArg) => ({ url: `/resumes/${queryArg.id}` }),
+        providesTags: [],
+      }),
+      patchResume: build.mutation<PatchResumeApiResponse, PatchResumeApiArg>({
+        query: (queryArg) => ({
+          url: `/resumes/${queryArg.id}`,
+          method: "PATCH",
+          body: queryArg.updateResumeRequest,
+        }),
+        invalidatesTags: [],
+      }),
+      deleteResume: build.mutation<DeleteResumeApiResponse, DeleteResumeApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/resumes/${queryArg.id}`,
+            method: "DELETE",
+          }),
+          invalidatesTags: [],
+        },
+      ),
+      patchResumeTitle: build.mutation<
+        PatchResumeTitleApiResponse,
+        PatchResumeTitleApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/resumes/${queryArg.id}/title`,
+          method: "PATCH",
+          body: queryArg.updateResumeTitleRequest,
+        }),
+        invalidatesTags: [],
+      }),
+      getResumeVersions: build.query<
+        GetResumeVersionsApiResponse,
+        GetResumeVersionsApiArg
+      >({
+        query: (queryArg) => ({ url: `/resumes/${queryArg.id}/versions` }),
+        providesTags: [],
+      }),
+      postResumeVersion: build.mutation<
+        PostResumeVersionApiResponse,
+        PostResumeVersionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/resumes/${queryArg.id}/versions`,
+          method: "POST",
+          body: queryArg.createVersionRequest,
+        }),
+        invalidatesTags: [],
+      }),
+      getResumeVersion: build.query<
+        GetResumeVersionApiResponse,
+        GetResumeVersionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/resumes/${queryArg.id}/versions/${queryArg.vid}`,
+        }),
+        providesTags: [],
+      }),
+      postResumeVersionRestore: build.mutation<
+        PostResumeVersionRestoreApiResponse,
+        PostResumeVersionRestoreApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/resumes/${queryArg.id}/versions/${queryArg.vid}/restore`,
+          method: "POST",
+        }),
+        invalidatesTags: [],
+      }),
+    }),
+    overrideExisting: false,
+  });
+export { injectedRtkApi as api };
+export type GetHealthApiResponse = unknown;
+export type GetHealthApiArg = void;
+export type PostAuthLoginApiResponse =
+  /** status 200 Logged in successfully */ AuthUser;
+export type PostAuthLoginApiArg = {
+  authCredentials: AuthCredentials;
+};
+export type PostAuthRegisterApiResponse =
+  /** status 200 Registered and logged in */ AuthUser;
+export type PostAuthRegisterApiArg = {
+  authCredentials: AuthCredentials;
+};
+export type PostAuthLogoutApiResponse = unknown;
+export type PostAuthLogoutApiArg = void;
+export type GetAuthMeApiResponse =
+  /** status 200 Authenticated user */ AuthUser;
+export type GetAuthMeApiArg = void;
+export type GetResumesApiResponse =
+  /** status 200 Resume list with plan-limit flag */ ResumeListResponse;
+export type GetResumesApiArg = void;
+export type PostResumeApiResponse = /** status 201 Resume created */ Resume;
+export type PostResumeApiArg = {
+  createResumeRequest: CreateResumeRequest;
+};
+export type GetResumeApiResponse = /** status 200 Resume */ Resume;
+export type GetResumeApiArg = {
+  id: string;
+};
+export type PatchResumeApiResponse = /** status 200 Updated resume */ Resume;
+export type PatchResumeApiArg = {
+  id: string;
+  updateResumeRequest: UpdateResumeRequest;
+};
+export type DeleteResumeApiResponse = unknown;
+export type DeleteResumeApiArg = {
+  id: string;
+};
+export type PatchResumeTitleApiResponse =
+  /** status 200 Updated resume */ Resume;
+export type PatchResumeTitleApiArg = {
+  id: string;
+  updateResumeTitleRequest: UpdateResumeTitleRequest;
+};
+export type GetResumeVersionsApiResponse = /** status 200 Version list */ {
+  versions: ResumeVersion[];
+};
+export type GetResumeVersionsApiArg = {
+  id: string;
+};
+export type PostResumeVersionApiResponse =
+  /** status 201 Version created */ ResumeVersion;
+export type PostResumeVersionApiArg = {
+  id: string;
+  createVersionRequest: CreateVersionRequest;
+};
+export type GetResumeVersionApiResponse =
+  /** status 200 Version snapshot */ ResumeVersion;
+export type GetResumeVersionApiArg = {
+  id: string;
+  vid: string;
+};
+export type PostResumeVersionRestoreApiResponse =
+  /** status 200 Resume after restore */ Resume;
+export type PostResumeVersionRestoreApiArg = {
+  id: string;
+  vid: string;
+};
+export type AuthUser = {
+  id: string;
+  email: string;
+  plan: "free" | "mid" | "pro";
+};
+export type ErrorResponse = {
   message: string;
-}
-
-export interface AuthCredentials {
+};
+export type AuthCredentials = {
   email: string;
   password: string;
-}
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  plan: 'free' | 'mid' | 'pro';
-}
-
-export interface Resume {
+};
+export type Resume = {
   id: string;
   title: string;
-  template_name: string;
-  template_version: number;
+  templateName: string;
+  templateVersion: number;
   data: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ResumeListResponse {
+  createdAt: string;
+  updatedAt: string;
+};
+export type ResumeListResponse = {
   resumes: Resume[];
   limited: boolean;
-}
-
-export interface CreateResumeRequest {
+};
+export type CreateResumeRequest = {
   title: string;
-  template_name: string;
-  template_version?: number;
-  data?: string;
-}
-
-export interface UpdateResumeRequest {
-  template_name?: string;
-  template_version?: number;
-  data?: string;
-}
-
-export interface UpdateResumeTitleRequest {
-  title: string;
-}
-
-export interface ResumeVersion {
-  id: string;
-  resume_id: string;
-  version_number: number;
+  templateName: string;
+  templateVersion?: number;
   data: string;
-  label: string | null;
-  is_manual: boolean;
-  created_at: string;
-}
-
-export interface ResumeVersionsResponse {
-  versions: ResumeVersion[];
-}
-
-export interface CreateVersionRequest {
+};
+export type UpdateResumeRequest = {
+  templateName: string;
+  templateVersion?: number;
+  data: string;
+};
+export type UpdateResumeTitleRequest = {
+  title: string;
+};
+export type ResumeVersion = {
+  id: string;
+  resumeId: string;
+  versionNumber: number;
+  data: string;
+  label?: string | null;
+  isManual: boolean;
+  createdAt: string;
+};
+export type CreateVersionRequest = {
   label: string;
-}
-
-// ── Injected endpoints ────────────────────────────────────────────────────────
-
-const injectedRtkApi = api.injectEndpoints({
-  endpoints: (build) => ({
-    getHealth: build.query<void, void>({
-      query: () => ({ url: '/health', method: 'GET' }),
-      providesTags: ['Health'],
-    }),
-
-    postAuthLogin: build.mutation<AuthUser, AuthCredentials>({
-      query: (body) => ({ url: '/auth/login', method: 'POST', body }),
-      invalidatesTags: ['Auth', 'Resumes', 'ResumeVersions'],
-    }),
-
-    postAuthRegister: build.mutation<AuthUser, AuthCredentials>({
-      query: (body) => ({ url: '/auth/register', method: 'POST', body }),
-      invalidatesTags: ['Auth', 'Resumes', 'ResumeVersions'],
-    }),
-
-    postAuthLogout: build.mutation<void, void>({
-      query: () => ({ url: '/auth/logout', method: 'POST' }),
-      invalidatesTags: ['Auth', 'Resumes', 'ResumeVersions'],
-    }),
-
-    getAuthMe: build.query<AuthUser, void>({
-      query: () => ({ url: '/auth/me', method: 'GET' }),
-      providesTags: ['Auth'],
-    }),
-
-    getResumes: build.query<ResumeListResponse, void>({
-      query: () => ({ url: '/resumes', method: 'GET' }),
-      providesTags: ['Resumes'],
-    }),
-
-    postResumes: build.mutation<Resume, CreateResumeRequest>({
-      query: (body) => ({ url: '/resumes', method: 'POST', body }),
-      invalidatesTags: ['Resumes'],
-    }),
-
-    getResume: build.query<Resume, { id: string }>({
-      query: ({ id }) => ({ url: `/resumes/${id}`, method: 'GET' }),
-      providesTags: (_result, _error, { id }) => [{ type: 'Resumes', id }],
-    }),
-
-    patchResume: build.mutation<Resume, { id: string } & UpdateResumeRequest>({
-      query: ({ id, ...body }) => ({
-        url: `/resumes/${id}`,
-        method: 'PATCH',
-        body,
-      }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Resumes', id },
-        'Resumes',
-      ],
-    }),
-
-    deleteResume: build.mutation<void, { id: string }>({
-      query: ({ id }) => ({ url: `/resumes/${id}`, method: 'DELETE' }),
-      invalidatesTags: ['Resumes'],
-    }),
-
-    patchResumeTitle: build.mutation<
-      Resume,
-      { id: string } & UpdateResumeTitleRequest
-    >({
-      query: ({ id, ...body }) => ({
-        url: `/resumes/${id}/title`,
-        method: 'PATCH',
-        body,
-      }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Resumes', id },
-        'Resumes',
-      ],
-    }),
-
-    getResumeVersions: build.query<ResumeVersionsResponse, { id: string }>({
-      query: ({ id }) => ({ url: `/resumes/${id}/versions`, method: 'GET' }),
-      providesTags: (_result, _error, { id }) => [
-        { type: 'ResumeVersions', id },
-      ],
-    }),
-
-    postResumeVersion: build.mutation<
-      ResumeVersion,
-      { id: string } & CreateVersionRequest
-    >({
-      query: ({ id, ...body }) => ({
-        url: `/resumes/${id}/versions`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'ResumeVersions', id },
-      ],
-    }),
-
-    getResumeVersion: build.query<
-      ResumeVersion,
-      { id: string; vid: string }
-    >({
-      query: ({ id, vid }) => ({
-        url: `/resumes/${id}/versions/${vid}`,
-        method: 'GET',
-      }),
-      providesTags: (_result, _error, { vid }) => [
-        { type: 'ResumeVersions', id: vid },
-      ],
-    }),
-
-    postResumeVersionRestore: build.mutation<
-      Resume,
-      { id: string; vid: string }
-    >({
-      query: ({ id, vid }) => ({
-        url: `/resumes/${id}/versions/${vid}/restore`,
-        method: 'POST',
-      }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Resumes', id },
-        'Resumes',
-        { type: 'ResumeVersions', id },
-      ],
-    }),
-  }),
-  overrideExisting: false,
-});
-
-export { injectedRtkApi as api };
-
+};
 export const {
   useGetHealthQuery,
   usePostAuthLoginMutation,
@@ -213,7 +253,7 @@ export const {
   usePostAuthLogoutMutation,
   useGetAuthMeQuery,
   useGetResumesQuery,
-  usePostResumesMutation,
+  usePostResumeMutation,
   useGetResumeQuery,
   usePatchResumeMutation,
   useDeleteResumeMutation,

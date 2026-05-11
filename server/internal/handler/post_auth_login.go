@@ -34,7 +34,7 @@ func (h *Handler) PostAuthLogin(ctx context.Context, request oapi.PostAuthLoginR
 	}
 
 	return loginCookieResponse{
-		user:  oapi.AuthUser{Id: user.ID, Email: user.Email, Plan: user.Plan},
+		user:  oapi.AuthUser{Id: user.ID, Email: user.Email, Plan: oapi.AuthUserPlan(user.Plan)},
 		token: token,
 	}, nil
 }

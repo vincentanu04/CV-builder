@@ -17,7 +17,7 @@ func (h *Handler) PatchResume(ctx context.Context, request oapi.PatchResumeReque
 		templateVersion = *request.Body.TemplateVersion
 	}
 
-	r, err := resume.UpdateResume(ctx, h.deps, request.Params.Id, userID, request.Body.TemplateName, templateVersion, request.Body.Data)
+	r, err := resume.UpdateResume(ctx, h.deps, request.Id, userID, request.Body.TemplateName, templateVersion, request.Body.Data)
 	if err != nil {
 		if errors.Is(err, resume.ErrNotFound) {
 			return oapi.PatchResume404JSONResponse{Message: "resume not found"}, nil

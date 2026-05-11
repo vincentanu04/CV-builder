@@ -22,9 +22,9 @@ func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/health",
-			"/auth/login",
-			"/auth/register",
-			"/auth/logout":
+			"/login",
+			"/register",
+			"/logout":
 			next.ServeHTTP(w, r)
 			return
 		}
