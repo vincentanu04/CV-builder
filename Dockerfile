@@ -14,7 +14,7 @@ ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build
 
 # ---------- Backend build ----------
-FROM golang:1.23 AS backend
+FROM golang:1.25 AS backend
 WORKDIR /app/server
 COPY server/go.mod server/go.sum .
 RUN go mod download
