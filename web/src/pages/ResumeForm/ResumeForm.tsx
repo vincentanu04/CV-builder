@@ -21,7 +21,7 @@ import type { SectionedFormData, Section, SectionKey, Profile } from '@/componen
 import {
   useGetResumeQuery,
   usePatchResumeMutation,
-  usePostResumesMutation,
+  usePostResumeMutation,
   useGetAuthMeQuery,
 } from '@/api/client';
 import type { Resume } from '@/api/client';
@@ -406,7 +406,7 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
   const { data: user } = useGetAuthMeQuery();
   const isGuest = !user;
   const [patchResume] = usePatchResumeMutation();
-  const [createResume] = usePostResumesMutation();
+  const [createResume] = usePostResumeMutation();
 
   const { data: originalResume, error } = useGetResumeQuery(
     { id: id ?? '' },
