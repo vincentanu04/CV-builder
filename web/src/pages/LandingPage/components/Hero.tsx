@@ -2,12 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { handleScroll } from '@/utils/scroll';
 import {
-  AtomIcon,
-  Construction,
-  ConstructionIcon,
   FileText,
   Sparkles,
-  Star,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

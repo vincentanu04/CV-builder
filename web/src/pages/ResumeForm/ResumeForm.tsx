@@ -501,9 +501,11 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     try {
       await patchResume({
         id: resume.id,
-        template_name: resume.template_name,
-        data: payload,
-        template_version: 2,
+        updateResumeRequest: {
+          templateName: resume.templateName,
+          data: payload,
+          templateVersion: 2,
+        },
       }).unwrap();
 
       lastSavedPayloadRef.current = payload;
@@ -599,10 +601,12 @@ const ResumeForm = ({ isEdit }: ResumeFormProps) => {
     if (!isEdit) {
       try {
         const result = await createResume({
-          template_name: 'Libre',
-          title: 'New Resume',
-          data: serializeResumeData(sectionedData),
-          template_version: 2,
+          createResumeRequest: {
+            templateName: 'Libre',
+            title: 'New Resume',
+            data: serializeResumeData(sectionedData),
+            templateVersion: 2,
+          },
         }).unwrap();
         navigate(`/resume/${result.id}`);
       } catch {

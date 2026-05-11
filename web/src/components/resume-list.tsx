@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -31,10 +31,9 @@ const ResumeList = ({
 }: ResumeListProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedTitle, setEditedTitle] = useState<string>('');
-  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useGetResumesQuery();
-  const [updateTitle, { isPending: isTitlePending }] = usePatchResumeTitleMutation();
+  const [updateTitle, { isLoading: isTitlePending }] = usePatchResumeTitleMutation();
   const [deleteResume] = useDeleteResumeMutation();
 
   const resumes = data?.resumes ?? [];
@@ -47,7 +46,7 @@ const ResumeList = ({
 
   const saveTitle = (id: string) => {
     if (editedTitle.trim() === '') return;
-    updateTitle({ id, title: editedTitle });
+    updateTitle({ id, updateResumeTitleRequest: { title: editedTitle } });
     setEditingId(null);
   };
 
@@ -177,7 +176,7 @@ const ResumeList = ({
                   </div>
                   <p className='text-sm text-gray-400'>
                     Last updated:{' '}
-                    {new Date(resume.updated_at)
+                    {new Date(resume.updatedAt)
                       .toLocaleDateString('en-GB')
                       .replace(/\//g, '-')}
                   </p>

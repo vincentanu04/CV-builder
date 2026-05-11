@@ -53,8 +53,8 @@ function formatAbsoluteDate(dateStr: string): string {
 
 function getVersionLabel(v: ResumeVersion): string {
   if (v.label) return v.label;
-  if (v.version_number === 1) return 'Initial save';
-  return `Version ${v.version_number}`;
+  if (v.versionNumber === 1) return 'Initial save';
+  return `Version ${v.versionNumber}`;
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -335,7 +335,6 @@ function lcs(a: string[], b: string[]): number[][] {
 }
 
 function wordDiff(before: string, after: string): { before: Token[]; after: Token[] } {
-  const empty = (s: string): Token[] => [{ text: s, type: 'same' }];
   if (!before && !after) return { before: [], after: [] };
   if (!before) return { before: [], after: [{ text: after, type: 'ins' }] };
   if (!after)  return { before: [{ text: before, type: 'del' }], after: [] };
@@ -518,9 +517,9 @@ export function VersionTimeline({ resumeID, open, onClose, onRestored }: Version
           {previewVersion ? (
             <div className="version-preview">
               <p className="version-preview-meta">
-                Saved {formatAbsoluteDate(previewVersion.created_at)}
+                Saved {formatAbsoluteDate(previewVersion.createdAt)}
                 {prevVersion
-                  ? ` — changes since ${formatAbsoluteDate(prevVersion.created_at)}`
+                  ? ` — changes since ${formatAbsoluteDate(prevVersion.createdAt)}`
                   : ' — initial save'
                 }
               </p>
@@ -590,8 +589,8 @@ export function VersionTimeline({ resumeID, open, onClose, onRestored }: Version
                 <button key={v.id} className="version-item" onClick={() => setPreviewIdx(idx)}>
                   <div className="version-item-meta">
                     <span className="version-label">{getVersionLabel(v)}</span>
-                    <span className="version-time" title={formatAbsoluteDate(v.created_at)}>
-                      {formatDate(v.created_at)}
+                    <span className="version-time" title={formatAbsoluteDate(v.createdAt)}>
+                      {formatDate(v.createdAt)}
                       {idx === 0 && <span className="version-badge">Latest</span>}
                     </span>
                   </div>

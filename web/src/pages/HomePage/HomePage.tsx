@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import ResumeList from '@/components/resume-list';
 import MainNav from '@/components/main-nav';
 import UserNav from '@/components/user-nav';

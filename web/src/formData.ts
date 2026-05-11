@@ -78,6 +78,7 @@ export const exampleFormData = {
       'Mobile application development',
       'Cloud computing fundamentals',
     ],
+    bulletPoints: [],
   },
   experience: [
     {
