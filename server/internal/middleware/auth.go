@@ -21,10 +21,10 @@ const userIDKey contextKey = "userID"
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/api/health",
-			"/api/auth/login",
-			"/api/auth/register",
-			"/api/auth/logout":
+		case "/health",
+			"/auth/login",
+			"/auth/register",
+			"/auth/logout":
 			next.ServeHTTP(w, r)
 			return
 		}
