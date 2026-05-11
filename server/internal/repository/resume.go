@@ -74,7 +74,7 @@ func GetLatestVersionNumber(ctx context.Context, db qrm.DB, resumeID uuid.UUID) 
 // GetLatestAutoSaveVersion returns the most recent auto-save version created within the last 5 minutes.
 func GetLatestAutoSaveVersion(ctx context.Context, db qrm.DB, resumeID uuid.UUID) (*model.ResumeVersionTbl, error) {
 	tbl := table.ResumeVersionTbl
-	cutoff := time.Now().Add(-2 * time.Minute)
+	cutoff := time.Now().Add(-1 * time.Minute)
 
 	stmt := pg.SELECT(tbl.AllColumns).
 		FROM(tbl).
