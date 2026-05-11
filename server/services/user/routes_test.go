@@ -2,6 +2,20 @@
 // Kept as a stub so the package compiles.
 package user
 
+import (
+	"bytes"
+	"cvbuilder/services/auth"
+	"cvbuilder/types"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+)
 
 func TestHandleRegister(t *testing.T) {
 	tests := []struct {

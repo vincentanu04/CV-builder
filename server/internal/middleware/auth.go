@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -19,12 +20,14 @@ const userIDKey contextKey = "userID"
 // Auth validates the JWT cookie on every request.
 // Public routes are bypassed by exact path match.
 func Auth(next http.Handler) http.Handler {
+	log.Println("auth middleware initialized")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("auth middleware: %s %s", r.Method, r.URL.Path)
 		switch r.URL.Path {
-		case "/health",
-			"/login",
-			"/register",
-			"/logout":
+		case "/api/health",
+			"/api/login",
+			"/api/register",
+			"/api/logout":
 			next.ServeHTTP(w, r)
 			return
 		}
