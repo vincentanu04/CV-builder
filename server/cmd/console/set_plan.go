@@ -32,7 +32,7 @@ func runSetPlan(d deps.Deps, args []string) error {
 	tbl := table.UserTbl
 
 	stmt := tbl.UPDATE(pg.ColumnList{tbl.Plan}).
-		MODEL(model.UserTbl{Plan: plan}).
+		MODEL(model.UserTbl{Plan: model.UserPlan(plan)}).
 		WHERE(tbl.Email.EQ(pg.String(email))).
 		RETURNING(tbl.AllColumns)
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	oapi "cvbuilder/generated/server"
@@ -25,6 +26,7 @@ func (r registerCookieResponse) VisitPostAuthRegisterResponse(w http.ResponseWri
 }
 
 func (h *Handler) PostAuthRegister(ctx context.Context, request oapi.PostAuthRegisterRequestObject) (oapi.PostAuthRegisterResponseObject, error) {
+	log.Printf("handling PostAuthRegister for email: %s", request.Body.Email)
 	user, token, err := auth.Register(ctx, h.deps, string(request.Body.Email), request.Body.Password)
 	if err != nil {
 		if errors.Is(err, auth.ErrEmailTaken) {

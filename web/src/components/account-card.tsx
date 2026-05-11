@@ -50,7 +50,7 @@ const AccountCard = ({
     }
     setError('');
     try {
-      await login({ email, password }).unwrap();
+      await login({ authCredentials: { email, password } }).unwrap();
       navigate('/home');
     } catch (err: any) {
       const status = err?.status;
@@ -74,7 +74,7 @@ const AccountCard = ({
     }
     setError('');
     try {
-      await register({ email, password }).unwrap();
+      await register({ authCredentials: { email, password } }).unwrap();
       navigate('/home');
     } catch (err: any) {
       const status = err?.status;

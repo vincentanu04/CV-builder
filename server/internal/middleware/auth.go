@@ -22,7 +22,6 @@ const userIDKey contextKey = "userID"
 func Auth(next http.Handler) http.Handler {
 	log.Println("auth middleware initialized")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("auth middleware: %s %s", r.Method, r.URL.Path)
 		switch r.URL.Path {
 		case "/api/health",
 			"/api/login",

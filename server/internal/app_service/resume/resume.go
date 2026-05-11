@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	ErrNotFound    = errors.New("resume not found")
+	ErrNotFound     = errors.New("resume not found")
 	ErrLimitReached = errors.New("resume limit reached for current plan")
 )
 
@@ -44,7 +44,7 @@ func ListResumes(ctx context.Context, d deps.Deps, userID uuid.UUID) (*ListResul
 		return nil, err
 	}
 
-	limit := PlanLimits[user.Plan]
+	limit := PlanLimits[string(user.Plan)]
 	return &ListResult{
 		Resumes: resumes,
 		Limited: len(resumes) >= limit,
@@ -76,7 +76,7 @@ func CreateResume(ctx context.Context, d deps.Deps, userID uuid.UUID, title, tem
 		return nil, err
 	}
 
-	limit := PlanLimits[user.Plan]
+	limit := PlanLimits[string(user.Plan)]
 	if len(existing) >= limit {
 		return nil, ErrLimitReached
 	}
