@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   educationContent: {
-    marginTop: 15,
+    marginTop: 5,
     display: 'flex',
     flexDirection: 'column',
     marginBottom: 10,

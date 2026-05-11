@@ -24,7 +24,7 @@ COPY --from=frontend /app/web/dist ./web/dist
 # COPY --from=builder /run-app /usr/local/bin/
 # COPY --from=builder /usr/src/app/db/migrations ./db/migrations
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
 
 # ---------- Final image ----------
 FROM debian:bullseye-slim
@@ -35,4 +35,4 @@ COPY --from=backend /app/server/web/dist ./web/dist
 # (Optional) Set port exposed by your Go backend
 EXPOSE 8080
 
-CMD ["./main", "webserver"]
+CMD ["./main"]
