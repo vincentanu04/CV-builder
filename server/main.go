@@ -21,6 +21,7 @@ import (
 	"cvbuilder/internal/deps"
 	"cvbuilder/internal/handler"
 	"cvbuilder/internal/middleware"
+	"cvbuilder/jobs"
 )
 
 func main() {
@@ -84,6 +85,8 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	jobs.KeepDBAlive(ctx, db)
 
 	go func() {
 		log.Printf("server listening on :%s", port)
